@@ -3,9 +3,35 @@ import type React from "react";
 export const INITIAL_Z_INDEX = 1000;
 export const DEFAULT_THEME = "";
 
-export type appKeys = "notes" | "settings" | "browser" | "terminal" | "calculator" | "calendar" | "music" | "store" | "game"
+export interface AppInstance {
+	id: string;
+	name: string;
+	title: string;
+	logo: string;
+	isPinned: boolean;
+	theme: string;
+	component: React.ReactNode;
+}
 
-export const Apps: Record<string, AppInstance> = {
+export interface WindowInstance {
+	id: string;
+	appId: string;
+	title: string;
+	theme: string;
+	zIndex: number;
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+	minimized: boolean;
+	maximized: boolean;
+	focused: boolean;
+	isOpened: boolean;
+}
+
+export type appKeys = "notes" | "settings" | "browser" | "terminal" | "calculator" | "calendar" | "music" | "store" | "game" | `app_${string}`
+
+export const Apps: Record<appKeys, AppInstance> = {
 	notes: {
 		id: "notes",
 		name: "Frotes",
@@ -89,7 +115,7 @@ export const Apps: Record<string, AppInstance> = {
 	},
 };
 
-export const Windows: Record<string, Array<WindowInstance>> = {
+export const Windows: Record<appKeys, Array<WindowInstance>> = {
 	notes: [
 		{
 			id: "notes",
@@ -244,29 +270,3 @@ export const Windows: Record<string, Array<WindowInstance>> = {
 		},
 	],
 };
-
-export interface AppInstance {
-	id: string;
-	name: string;
-	title: string;
-	logo: string;
-	isPinned: boolean;
-	theme: string;
-	component: React.ReactNode;
-}
-
-export interface WindowInstance {
-	id: string;
-	appId: string;
-	title: string;
-	theme: string;
-	zIndex: number;
-	x: number;
-	y: number;
-	width: number;
-	height: number;
-	minimized: boolean;
-	maximized: boolean;
-	focused: boolean;
-	isOpened: boolean;
-}
