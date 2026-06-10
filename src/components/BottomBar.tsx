@@ -4,11 +4,15 @@ import { HiSpeakerWave } from "react-icons/hi2";
 import { PiMagnifyingGlassDuotone } from "react-icons/pi";
 import { getDateTime } from "#/lib/utils.ts";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
-import type { AppInstance, WindowInstance } from "../constants";
+import {
+	type AppInstance,
+	INITIAL_Z_INDEX,
+	type WindowInstance,
+} from "../constants";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 function BottomBar() {
-	const { apps, windows, openApp, focusWindow, unfocusWindow } =
+	const { apps, windows, openApp, focusWindow, minimizeWindow } =
 		useWindowStore();
 	const [dateTimeData, setDateTimeData] = useState(() => getDateTime());
 	const [searchQuery, setSearchQuery] = useState("");
@@ -21,6 +25,7 @@ function BottomBar() {
 	}, []);
 
 	const toggleApp = (app: AppInstance) => {
+		console.table(windows)
 		const appWindows = findAppWindows(windows, app.id);
 
 		if (appWindows.length === 0) {
@@ -29,21 +34,42 @@ function BottomBar() {
 		}
 
 		if (appWindows.length === 1 && appWindows[0]) {
-			const topWindow = Object.values(windows).reduce(
-				(top, win) => (win && (!top || win.zIndex > top.zIndex) ? win : top),
-				null as WindowInstance | null,
-			);
+			const window = appWindows[0];
 
-			if (topWindow && topWindow.id === appWindows[0].id) {
-				unfocusWindow(appWindows[0].id);
+			if (window.minimized) {
+				focusWindow(window.id);
+				return;
+			}
+
+			const topWindow = Object.values(windows)
+				.filter(
+					(win): win is WindowInstance => win !== undefined && !win.minimized,
+				)
+				.reduce(
+					(top, win) => (win.zIndex > (top?.zIndex ?? -1) ? win : top),
+					null as WindowInstance | null,
+				);
+
+			if (topWindow && topWindow.id === window.id) {
+				minimizeWindow(window.id);
 			} else {
-				focusWindow(appWindows[0].id);
+				focusWindow(window.id);
 			}
 		} else {
 			// Handle operation to show multiple options to open a window
-		}
 
-		console.log("Windows: ", windows)
+			// const visible = appWindows.filter(
+			// 	(win): win is WindowInstance => win !== undefined && !win.minimized,
+			// );
+			// if (visible.length > 0) {
+			// 	const top = visible.sort((a, b) => b.zIndex - a.zIndex)[0];
+			// 	focusWindow(top.id);
+			// } else {
+			// 	if (appWindows[0]) {
+			// 		focusWindow(appWindows[0].id);
+			// 	}
+			// }
+		}
 	};
 
 	return (

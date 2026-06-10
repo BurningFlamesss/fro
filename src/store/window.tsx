@@ -10,7 +10,6 @@ import {
 	Windows,
 } from "../constants";
 
-
 interface WindowStore {
 	windows: typeof Windows;
 	apps: typeof Apps;
@@ -18,7 +17,7 @@ interface WindowStore {
 
 	openApp: (appId: AppId) => void;
 	focusWindow: (windowId: WindowId) => void;
-	unfocusWindow: (windowId: WindowId) => void;
+	minimizeWindow: (windowId: WindowId) => void;
 	closeWindow: (windowId: WindowId) => void;
 }
 
@@ -37,6 +36,7 @@ export const useWindowStore = create<WindowStore>()(
 						(win) => win?.appId === app.id,
 					);
 					if (existing) {
+						existing.minimized = false;
 						existing.zIndex = state.nextZIndex++;
 						return;
 					}
@@ -52,6 +52,7 @@ export const useWindowStore = create<WindowStore>()(
 					title: app.title,
 					theme: app?.theme ?? "",
 					logo: app.logo,
+					minimized: false,
 					zIndex: state.nextZIndex++,
 				};
 			}),
@@ -60,14 +61,16 @@ export const useWindowStore = create<WindowStore>()(
 			set((state) => {
 				const win = state.windows[windowId];
 				if (win) {
+					win.minimized = false;
 					win.zIndex = state.nextZIndex++;
 				}
 			}),
 
-		unfocusWindow: (windowId) =>
+		minimizeWindow: (windowId) =>
 			set((state) => {
 				const win = state.windows[windowId];
-				if (win) {
+				if (win && !win.minimized) {
+					win.minimized = true;
 					win.zIndex = BACK_Z_INDEX;
 				}
 			}),
@@ -80,7 +83,5 @@ export const useWindowStore = create<WindowStore>()(
 );
 
 export const findAppWindows = (windows: typeof Windows, appId: AppId) => {
-	const wins = Object.values(windows);
-
-	return wins.filter((win) => win?.appId === appId);
+	return Object.values(windows).filter((win) => win?.appId === appId);
 };
