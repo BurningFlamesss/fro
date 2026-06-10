@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { FaBatteryThreeQuarters, FaWifi } from "react-icons/fa6";
 import { HiSpeakerWave } from "react-icons/hi2";
 import { PiMagnifyingGlassDuotone } from "react-icons/pi";
+import { Apps } from "#/constants/index.tsx";
 import { getDateTime } from "#/lib/utils.ts";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import { Apps } from "#/constants/index.tsx";
 
 function BottomBar() {
 	const [dateTimeData, setDateTimeData] = useState(() => getDateTime());
@@ -41,8 +41,8 @@ function BottomBar() {
 			</section>
 
 			<section className="flex items-center gap-1">
-				{Apps.map((app) => (
-					<Tooltip key={`app-${app.name}`}>
+				{Object.entries(Apps).map(([key, app]) => (
+					<Tooltip key={key}>
 						<TooltipTrigger
 							type="button"
 							className="group p-2 rounded-xl transition-colors duration-150 hover:bg-background/5 cursor-pointer"
