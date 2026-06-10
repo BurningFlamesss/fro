@@ -4,7 +4,7 @@ import { HiSpeakerWave } from "react-icons/hi2";
 import { PiMagnifyingGlassDuotone } from "react-icons/pi";
 import { getDateTime } from "#/lib/utils.ts";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
-import type { AppInstance } from "../constants";
+import type { AppInstance, WindowInstance } from "../constants";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 function BottomBar() {
@@ -20,28 +20,30 @@ function BottomBar() {
 		return () => clearInterval(timer);
 	}, []);
 
-	const log = () => {
-		console.log("Windows: ", windows);
-	};
-
 	const toggleApp = (app: AppInstance) => {
-		const app_window = findAppWindows(windows, app.id);
-		
-		if (app_window.length) {
-			if (app_window.length === 1 && app_window[0]) {
-				if (app_window[0].focused) {
-					unfocusWindow(app_window[0].id);
-				} else {
-					focusWindow(app_window[0].id);
-				}
-			} else {
-				// Handle operation to show multiple options to open a window
-			}
-		} else {
+		const appWindows = findAppWindows(windows, app.id);
+
+		if (appWindows.length === 0) {
 			openApp(app.id);
+			return;
 		}
 
-		log()
+		if (appWindows.length === 1 && appWindows[0]) {
+			const topWindow = Object.values(windows).reduce(
+				(top, win) => (win && (!top || win.zIndex > top.zIndex) ? win : top),
+				null as WindowInstance | null,
+			);
+
+			if (topWindow && topWindow.id === appWindows[0].id) {
+				unfocusWindow(appWindows[0].id);
+			} else {
+				focusWindow(appWindows[0].id);
+			}
+		} else {
+			// Handle operation to show multiple options to open a window
+		}
+
+		console.log("Windows: ", windows)
 	};
 
 	return (

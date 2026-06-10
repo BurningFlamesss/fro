@@ -1,6 +1,7 @@
 import type React from "react";
 
 export const INITIAL_Z_INDEX = 1000;
+export const BACK_Z_INDEX = 0;
 export const DEFAULT_THEME = "";
 
 export interface AppInstance {
@@ -26,7 +27,6 @@ export interface WindowInstance {
 	height: number;
 	minimized: boolean;
 	maximized: boolean;
-	focused: boolean;
 	theme?: string;
 }
 
@@ -130,14 +130,16 @@ export const Apps: Record<AppId, AppInstance> = {
 
 export const Windows: Partial<Record<WindowId, WindowInstance>> = {};
 
-export const DEFAULT_WINDOW_INSTANCE_CONFIG: Omit<WindowInstance, "id" | "appId" | "title" | "logo"> = {
+export const DEFAULT_WINDOW_INSTANCE_CONFIG: Omit<
+	WindowInstance,
+	"id" | "appId" | "title" | "logo"
+> = {
 	x: 0,
 	y: 0,
 	height: 0,
 	width: 0,
 	maximized: false,
 	minimized: false,
-	focused: false,
-	theme: DEFAULT_THEME,
+	theme: "",
 	zIndex: INITIAL_Z_INDEX,
 };
