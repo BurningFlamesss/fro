@@ -8,7 +8,8 @@ import type { AppInstance } from "../constants";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 function BottomBar() {
-	const { apps, windows, openApp, focusWindow, closeWindow, nextZIndex } = useWindowStore();
+	const { apps, windows, openApp, focusWindow, unfocusWindow } =
+		useWindowStore();
 	const [dateTimeData, setDateTimeData] = useState(() => getDateTime());
 	const [searchQuery, setSearchQuery] = useState("");
 
@@ -19,21 +20,29 @@ function BottomBar() {
 		return () => clearInterval(timer);
 	}, []);
 
+	const log = () => {
+		console.log("Windows: ", windows);
+	};
+
 	const toggleApp = (app: AppInstance) => {
-		const app_window = findAppWindows(windows, app.id)
+		const app_window = findAppWindows(windows, app.id);
+		
 		if (app_window.length) {
 			if (app_window.length === 1 && app_window[0]) {
-				app_window[0].focused = true
-				app_window[0].zIndex = nextZIndex
+				if (app_window[0].focused) {
+					unfocusWindow(app_window[0].id);
+				} else {
+					focusWindow(app_window[0].id);
+				}
 			} else {
 				// Handle operation to show multiple options to open a window
 			}
 		} else {
-			openApp(app.id)
+			openApp(app.id);
 		}
-		
-		console.log("Windows: ", windows)
-	}
+
+		log()
+	};
 
 	return (
 		<footer className="glassmorphism h-16 w-[80dvw] flex items-center justify-between px-4 absolute bottom-3 left-1/2 -translate-x-1/2 rounded-2xl">
