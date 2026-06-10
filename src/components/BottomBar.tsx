@@ -20,54 +20,89 @@ const Apps = [
 
 function BottomBar() {
 	const [dateTimeData, setDateTimeData] = useState(() => getDateTime());
+	const [searchQuery, setSearchQuery] = useState("");
 
 	useEffect(() => {
 		const timer = setInterval(() => {
-			setDateTimeData(() => getDateTime());
+			setDateTimeData(getDateTime());
 		}, 60_000);
-
 		return () => clearInterval(timer);
 	}, []);
 
 	return (
-		<footer className="glassmorphism h-16 w-[80dvw] flex flex-row items-center justify-between p-2 absolute bottom-2 left-1/2 -translate-x-1/2 rounded-xl">
-			<section className="h-full flex flex-row gap-4 items-center justify-center">
-				<img className="w-12 h-12" src="/public/logo.png" alt="" />
-				<div className="w-48 h-8 rounded-full glassmorphism flex flex-row px-2 justify-between items-center">
-					<div className="flex flex-row justify-center items-center text-sm text-gray-50 gap-2">
-						<PiMagnifyingGlassDuotone /> Search
+		<footer className="glassmorphism h-16 w-[80dvw] flex items-center justify-between px-4 absolute bottom-3 left-1/2 -translate-x-1/2 rounded-2xl">
+			<section className="flex items-center gap-4 h-full">
+				<div className="relative flex items-center justify-center w-10 h-10 rounded-full">
+					<img
+						className="w-8 h-8 object-contain"
+						src="/public/logo.png"
+						alt="Logo"
+					/>
+				</div>
+
+				<div className="relative flex items-center">
+					<PiMagnifyingGlassDuotone className="absolute left-3 top-1/2 -translate-y-1/2 text-background pointer-events-none" />
+					<input
+						type="text"
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+						placeholder="Search"
+						className="w-52 h-9 pl-10 pr-4 rounded-full bg-background/10 border border-border/30 text-sm text-background/80 placeholder:text-background/50 focus:outline-none focus:bg-background/20 transition-colors duration-150"
+					/>
+				</div>
+			</section>
+
+			<section className="flex items-center gap-1">
+				{Apps.map((app) => (
+					<Tooltip key={`app-${app.name}`}>
+						<TooltipTrigger
+							type="button"
+							className="group p-2 rounded-xl transition-colors duration-150 hover:bg-background/5 cursor-pointer"
+						>
+							<img
+								className="w-7 h-7 object-contain opacity-90 group-hover:opacity-100"
+								src={app.logo}
+								alt={app.name}
+							/>
+						</TooltipTrigger>
+						<TooltipContent className="">
+							<p>{app.name}</p>
+						</TooltipContent>
+					</Tooltip>
+				))}
+			</section>
+
+			<section className="flex items-center gap-5 h-full">
+				<div className="flex items-center gap-3 text-background text-lg">
+					<Tooltip>
+						<TooltipTrigger className="cursor-default">
+							<FaWifi className="" />
+						</TooltipTrigger>
+						<TooltipContent>Wi-Fi</TooltipContent>
+					</Tooltip>
+					<Tooltip>
+						<TooltipTrigger className="cursor-default">
+							<HiSpeakerWave className="" />
+						</TooltipTrigger>
+						<TooltipContent>Volume</TooltipContent>
+					</Tooltip>
+					<Tooltip>
+						<TooltipTrigger className="cursor-default">
+							<FaBatteryThreeQuarters className="" />
+						</TooltipTrigger>
+						<TooltipContent>Battery</TooltipContent>
+					</Tooltip>
+				</div>
+
+				<div className="flex items-center gap-3 pl-3 border-l border-border/30">
+					<div className="flex flex-col items-end leading-tight">
+						<p className="text-sm font-semibold text-background">
+							{dateTimeData.time}
+						</p>
+						<p className="text-xs text-background/90 font-medium">
+							{dateTimeData.date}
+						</p>
 					</div>
-				</div>
-			</section>
-			<section>
-				<div className="h-full flex flex-row items-center justify-between gap-3">
-					{Apps.map((app) => {
-						return (
-							<Tooltip key={`app-${app.name}`}>
-								<TooltipTrigger type="button" className="cursor-pointer">
-									<img
-										className="w-8 h-8 object-cover object-center"
-										src={app.logo}
-										alt=""
-									/>
-								</TooltipTrigger>
-								<TooltipContent>
-									<p>{app.name}</p>
-								</TooltipContent>
-							</Tooltip>
-						);
-					})}
-				</div>
-			</section>
-			<section className="h-full flex flex-row gap-4 items-center justify-center">
-				<div className="stats-panel flex flex-row items-center justify-center gap-2">
-					<FaWifi />
-					<HiSpeakerWave />
-					<FaBatteryThreeQuarters />
-				</div>
-				<div className="date-panel flex flex-col items-center justify-start">
-					<p>{dateTimeData.time}</p>
-					<p>{dateTimeData.date}</p>
 				</div>
 			</section>
 		</footer>
