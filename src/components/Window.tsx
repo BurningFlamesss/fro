@@ -56,7 +56,9 @@ function Window({
 			minHeight={200}
 		>
 			<div className="window-drag-handle flex flex-row items-center justify-between p-2 bg-foreground text-background cursor-grab active:cursor-grabbing">
-				<div />
+				<div>
+                    <img className="w-6 h-6" src={logo} alt="" />
+                </div>
 				<p>{title}</p>
 				<div className="menu flex flex-row items-center">
 					<img
