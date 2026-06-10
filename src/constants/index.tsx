@@ -9,15 +9,15 @@ export interface AppInstance {
 	title: string;
 	logo: string;
 	isPinned: boolean;
-	theme: string;
 	component: React.ReactNode;
+	theme?: string;
+	singleInstance?: boolean;
 }
 
 export interface WindowInstance {
 	id: string;
 	appId: string;
 	title: string;
-	theme: string;
 	zIndex: number;
 	x: number;
 	y: number;
@@ -26,12 +26,24 @@ export interface WindowInstance {
 	minimized: boolean;
 	maximized: boolean;
 	focused: boolean;
-	isOpened: boolean;
+	theme?: string;
 }
 
-export type appKeys = "notes" | "settings" | "browser" | "terminal" | "calculator" | "calendar" | "music" | "store" | "game" | `app_${string}`
+export type AppId =
+	| "notes"
+	| "settings"
+	| "browser"
+	| "terminal"
+	| "calculator"
+	| "calendar"
+	| "music"
+	| "store"
+	| "game"
+	| `app_${string}`;
 
-export const Apps: Record<appKeys, AppInstance> = {
+export type WindowId = `${AppId}_${string}`;
+
+export const Apps: Record<AppId, AppInstance> = {
 	notes: {
 		id: "notes",
 		name: "Frotes",
@@ -115,158 +127,19 @@ export const Apps: Record<appKeys, AppInstance> = {
 	},
 };
 
-export const Windows: Record<appKeys, Array<WindowInstance>> = {
-	notes: [
-		{
-			id: "notes",
-			appId: "notes",
-			title: "",
-			theme: DEFAULT_THEME,
-			x: 0,
-			y: 0,
-			height: 0,
-			width: 0,
-			maximized: false,
-			minimized: false,
-			focused: false,
-			zIndex: INITIAL_Z_INDEX,
-			isOpened: false,
-		},
-	],
-	settings: [
-		{
-			id: "settings",
-			appId: "settings",
-			title: "",
-			theme: DEFAULT_THEME,
-			x: 0,
-			y: 0,
-			height: 0,
-			width: 0,
-			maximized: false,
-			minimized: false,
-			focused: false,
-			zIndex: INITIAL_Z_INDEX,
-			isOpened: false,
-		},
-	],
-	browser: [
-		{
-			id: "browser",
-			appId: "browser",
-			title: "",
-			theme: DEFAULT_THEME,
-			x: 0,
-			y: 0,
-			height: 0,
-			width: 0,
-			maximized: false,
-			minimized: false,
-			focused: false,
-			zIndex: INITIAL_Z_INDEX,
-			isOpened: false,
-		},
-	],
-	terminal: [
-		{
-			id: "terminal",
-			appId: "terminal",
-			title: "",
-			theme: DEFAULT_THEME,
-			x: 0,
-			y: 0,
-			height: 0,
-			width: 0,
-			maximized: false,
-			minimized: false,
-			focused: false,
-			zIndex: INITIAL_Z_INDEX,
-			isOpened: false,
-		},
-	],
-	calculator: [
-		{
-			id: "calculator",
-			appId: "calculator",
-			title: "",
-			theme: DEFAULT_THEME,
-			x: 0,
-			y: 0,
-			height: 0,
-			width: 0,
-			maximized: false,
-			minimized: false,
-			focused: false,
-			zIndex: INITIAL_Z_INDEX,
-			isOpened: false,
-		},
-	],
-	calendar: [
-		{
-			id: "calendar",
-			appId: "calendar",
-			title: "",
-			theme: DEFAULT_THEME,
-			x: 0,
-			y: 0,
-			height: 0,
-			width: 0,
-			maximized: false,
-			minimized: false,
-			focused: false,
-			zIndex: INITIAL_Z_INDEX,
-			isOpened: false,
-		},
-	],
-	music: [
-		{
-			id: "music",
-			appId: "music",
-			title: "",
-			theme: DEFAULT_THEME,
-			x: 0,
-			y: 0,
-			height: 0,
-			width: 0,
-			maximized: false,
-			minimized: false,
-			focused: false,
-			zIndex: INITIAL_Z_INDEX,
-			isOpened: false,
-		},
-	],
-	store: [
-		{
-			id: "store",
-			appId: "store",
-			title: "",
-			theme: DEFAULT_THEME,
-			x: 0,
-			y: 0,
-			height: 0,
-			width: 0,
-			maximized: false,
-			minimized: false,
-			focused: false,
-			zIndex: INITIAL_Z_INDEX,
-			isOpened: false,
-		},
-	],
-	game: [
-		{
-			id: "game",
-			appId: "game",
-			title: "",
-			theme: DEFAULT_THEME,
-			x: 0,
-			y: 0,
-			height: 0,
-			width: 0,
-			maximized: false,
-			minimized: false,
-			focused: false,
-			zIndex: INITIAL_Z_INDEX,
-			isOpened: false,
-		},
-	],
+export const Windows: Record<string, WindowInstance> = {};
+
+export const DEFAULT_WINDOW_INSTANCE_CONFIG = {
+	id: "",
+	appId: "",
+	title: "",
+	x: 0,
+	y: 0,
+	height: 0,
+	width: 0,
+	maximized: false,
+	minimized: false,
+	focused: false,
+	theme: DEFAULT_THEME,
+	zIndex: INITIAL_Z_INDEX,
 };

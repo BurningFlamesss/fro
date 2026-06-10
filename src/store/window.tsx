@@ -8,7 +8,7 @@ interface WindowStore {
 	nextZIndex: number;
 
 	openWindow: (
-		windowKey: keyof typeof Windows,
+		AppId: keyof typeof Apps,
 		component?: React.ReactNode,
 	) => void;
 }
@@ -19,10 +19,10 @@ export const useWindowStore = create<WindowStore>()(
 		apps: Apps,
 		nextZIndex: INITIAL_Z_INDEX + 1,
 
-		openWindow: (windowKey, component = <></>) =>
+		openWindow: (AppId) =>
 			set((state) => {
-				const windowInstance = state.windows[windowKey];
-				windowInstance[0].isOpened = true
+				const app = state.apps[AppId]
+                
 			}),
 	})),
 );
