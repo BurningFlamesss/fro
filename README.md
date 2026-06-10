@@ -21,7 +21,7 @@ Fro is a productive first WebOS.
 5. Calculator (Simple arithmetic calculations)
 6. Calendar (Day, Month, and Year view)
 7. Music Player (Play some musics)
-8. Fro Store (Downloads some extra apps)
+8. Fro Store (Downloads some extra apps and games)
 
 ## Widgets
 
