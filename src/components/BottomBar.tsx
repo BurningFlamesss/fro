@@ -32,7 +32,7 @@ function BottomBar() {
 	return (
 		<footer className="glassmorphism h-16 w-[80dvw] flex items-center justify-between px-4 absolute bottom-3 left-1/2 -translate-x-1/2 rounded-2xl">
 			<section className="flex items-center gap-4 h-full">
-				<div className="relative flex items-center justify-center w-10 h-10 rounded-full">
+				<div className="relative flex items-center justify-center w-11 h-11 rounded-xl transition-colors duration-150 hover:bg-background/5 cursor-pointer">
 					<img
 						className="w-8 h-8 object-contain"
 						src="/public/logo.png"
@@ -47,7 +47,7 @@ function BottomBar() {
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
 						placeholder="Search"
-						className="w-52 h-9 pl-10 pr-4 rounded-full bg-background/10 border border-border/30 text-sm text-background/80 placeholder:text-background/50 focus:outline-none focus:bg-background/20 transition-colors duration-150"
+						className="w-52 h-9 pl-10 pr-4 rounded-full bg-background/10 border border-border/30 text-sm text-background/80 placeholder:text-background/50 hover:bg-background/20 focus:outline-none focus:bg-background/20 transition-colors duration-150"
 					/>
 				</div>
 			</section>
