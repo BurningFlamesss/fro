@@ -83,7 +83,7 @@ function Window({
 					<img
 						onClick={() =>
 							updateWindowRect(id, {
-								x: 0,
+								x: 160,
 								y: 0,
 								width: innerWidth,
 								height: innerHeight,
