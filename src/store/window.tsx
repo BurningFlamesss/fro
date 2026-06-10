@@ -15,6 +15,7 @@ interface WindowStore {
 	nextZIndex: number;
 
 	openApp: (appId: AppId) => void;
+	focusWindow: (windowId: WindowId) => void;
 	closeWindow: (windowId: WindowId) => void;
 }
 
@@ -32,7 +33,7 @@ export const useWindowStore = create<WindowStore>()(
 
 				if (app.singleInstance) {
 					const existing = Object.values(state.windows).find(
-						(window) => window?.appId === app.id,
+						(window_ins) => window_ins?.appId === app.id,
 					);
 
 					if (existing) {
@@ -58,6 +59,18 @@ export const useWindowStore = create<WindowStore>()(
 				};
 
 				state.nextZIndex++;
+			}),
+
+		focusWindow: (windowId) =>
+			set((state) => {
+				unfocusAll(state.windows);
+
+				const focusingWindow = state.windows[windowId];
+
+				if (focusingWindow) {
+					focusingWindow.focused = true;
+					focusingWindow.zIndex = state.nextZIndex++;
+				}
 			}),
 
 		closeWindow: (windowId) =>
@@ -97,3 +110,9 @@ const unfocusAll = (windows: typeof Windows) => {
 		}
 	});
 };
+
+export const findAppWindows = (windows: typeof Windows, appId: AppId) => {
+	const wins = Object.values(windows)
+
+	return wins.filter((win) => win?.appId === appId)
+}

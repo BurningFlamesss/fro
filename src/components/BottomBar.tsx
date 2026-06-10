@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { FaBatteryThreeQuarters, FaWifi } from "react-icons/fa6";
 import { HiSpeakerWave } from "react-icons/hi2";
 import { PiMagnifyingGlassDuotone } from "react-icons/pi";
-import { Apps } from "#/constants/index.tsx";
 import { getDateTime } from "#/lib/utils.ts";
+import { findAppWindows, useWindowStore } from "#/store/window.tsx";
+import type { AppInstance } from "../constants";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 function BottomBar() {
+	const { apps, windows, openApp, focusWindow, closeWindow, nextZIndex } = useWindowStore();
 	const [dateTimeData, setDateTimeData] = useState(() => getDateTime());
 	const [searchQuery, setSearchQuery] = useState("");
 
@@ -16,6 +18,22 @@ function BottomBar() {
 		}, 60_000);
 		return () => clearInterval(timer);
 	}, []);
+
+	const toggleApp = (app: AppInstance) => {
+		const app_window = findAppWindows(windows, app.id)
+		if (app_window.length) {
+			if (app_window.length === 1 && app_window[0]) {
+				app_window[0].focused = true
+				app_window[0].zIndex = nextZIndex
+			} else {
+				// Handle operation to show multiple options to open a window
+			}
+		} else {
+			openApp(app.id)
+		}
+		
+		console.log("Windows: ", windows)
+	}
 
 	return (
 		<footer className="glassmorphism h-16 w-[80dvw] flex items-center justify-between px-4 absolute bottom-3 left-1/2 -translate-x-1/2 rounded-2xl">
@@ -41,10 +59,11 @@ function BottomBar() {
 			</section>
 
 			<section className="flex items-center gap-1">
-				{Object.entries(Apps).map(([key, app]) => (
+				{Object.entries(apps).map(([key, app]) => (
 					<Tooltip key={key}>
 						<TooltipTrigger
 							type="button"
+							onClick={() => toggleApp(app)}
 							className="group p-2 rounded-xl transition-colors duration-150 hover:bg-background/5 cursor-pointer"
 						>
 							<img
