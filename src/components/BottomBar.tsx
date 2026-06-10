@@ -4,19 +4,7 @@ import { HiSpeakerWave } from "react-icons/hi2";
 import { PiMagnifyingGlassDuotone } from "react-icons/pi";
 import { getDateTime } from "#/lib/utils.ts";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-
-const Apps = [
-	{
-		id: "notes",
-		name: "Frotes",
-		logo: "/apps/Notepad.svg",
-	},
-	{
-		id: "settings",
-		name: "Frottings",
-		logo: "/apps/Settings.svg",
-	},
-];
+import { Apps } from "#/constants/index.tsx";
 
 function BottomBar() {
 	const [dateTimeData, setDateTimeData] = useState(() => getDateTime());
