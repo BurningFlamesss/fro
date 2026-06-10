@@ -9,8 +9,14 @@ function Window({
 	win: WindowInstance;
 	apps: Record<AppId, AppInstance>;
 }) {
-	const { minimizeWindow, focusWindow, closeWindow, updateWindowRect } =
-		useWindowStore();
+	const {
+		minimizeWindow,
+		maximizeWindow,
+		restoreOriginalPosition,
+		focusWindow,
+		closeWindow,
+		updateWindowRect,
+	} = useWindowStore();
 	const {
 		id,
 		appId,
@@ -37,13 +43,27 @@ function Window({
 		<Rnd
 			bounds="parent"
 			dragHandleClassName="window-drag-handle"
-			position={{ x: win.x, y: win.y }}
-			size={{ width: win.width, height: win.height }}
+			position={{
+				x: maximized ? 160 : win.x,
+				y: maximized ? 0 : win.y,
+			}}
+			size={{
+				width: maximized ? innerWidth : win.width,
+				height: maximized ? innerHeight : win.height,
+			}}
 			style={{ zIndex }}
 			onDragStop={(e, d) => {
-				updateWindowRect(id, { x: d.x, y: d.y, width, height });
+				if (d.y === 0) {
+					maximizeWindow(id)
+				} else {
+					restoreOriginalPosition(id)
+					updateWindowRect(id, { x: d.x, y: d.y, width, height });
+				}
 			}}
 			onResizeStop={(e, direction, ref, delta, position) => {
+				if (delta.height !== 0 || delta.width !== 0) {
+					restoreOriginalPosition(id)
+				}
 				updateWindowRect(id, {
 					x: position.x,
 					y: position.y,
@@ -55,16 +75,9 @@ function Window({
 			minHeight={200}
 		>
 			<div
-				onDoubleClick={() =>
-					updateWindowRect(id, {
-						x: 160,
-						y: 0,
-						width: innerWidth,
-						height: innerHeight,
-					})
-				}
-				onClick={() => focusWindow(id)}
-				onKeyUp={() => focusWindow(id)}
+				onDoubleClick={maximizeWindow.bind(null, id)}
+				onClick={focusWindow.bind(null, id)}
+				onKeyUp={focusWindow.bind(null, id)}
 				className="window-drag-handle flex flex-row items-center justify-between p-2 bg-foreground text-background cursor-grab active:cursor-grabbing"
 			>
 				<div>
@@ -81,22 +94,8 @@ function Window({
 						alt="Minimize"
 					/>
 					<img
-						onClick={() =>
-							updateWindowRect(id, {
-								x: 160,
-								y: 0,
-								width: innerWidth,
-								height: innerHeight,
-							})
-						}
-						onKeyUp={() =>
-							updateWindowRect(id, {
-								x: 160,
-								y: 0,
-								width: innerWidth,
-								height: innerHeight,
-							})
-						}
+						onClick={maximizeWindow.bind(null, id)}
+						onKeyUp={maximizeWindow.bind(null, id)}
 						onMouseDown={stopPropagation}
 						className="w-8 h-8 p-2 transition-colors duration-150 hover:bg-blue-400/10 cursor-pointer"
 						src="/public/general/Maximize.svg"
@@ -114,8 +113,8 @@ function Window({
 			</div>
 
 			<div
-				onClick={() => focusWindow(id)}
-				onKeyUp={() => focusWindow(id)}
+				onClick={focusWindow.bind(null, id)}
+				onKeyUp={focusWindow.bind(null, id)}
 				className="w-full h-[calc(100%-2.5rem)] overflow-auto pseudo-glassmorphism"
 			>
 				{component}

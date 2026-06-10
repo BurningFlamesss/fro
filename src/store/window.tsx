@@ -18,6 +18,8 @@ interface WindowStore {
 	openApp: (appId: AppId) => void;
 	focusWindow: (windowId: WindowId) => void;
 	minimizeWindow: (windowId: WindowId) => void;
+	maximizeWindow: (windowId: WindowId) => void;
+	restoreOriginalPosition: (windowId: WindowId) => void;
 	closeWindow: (windowId: WindowId) => void;
 	updateWindowRect: (
 		windowId: WindowId,
@@ -76,6 +78,28 @@ export const useWindowStore = create<WindowStore>()(
 				if (win && !win.minimized) {
 					win.minimized = true;
 					win.zIndex = BACK_Z_INDEX;
+				}
+			}),
+
+		maximizeWindow: (windowId) =>
+			set((state) => {
+				const win = state.windows[windowId];
+				if (win) {
+					if (!win.maximized) {
+						win.maximized = true;
+						win.zIndex = state.nextZIndex++;
+					} else {
+						win.maximized = false;
+					}
+				}
+			}),
+
+		restoreOriginalPosition: (windowId) =>
+			set((state) => {
+				const win = state.windows[windowId];
+				if (win && win.maximized) {
+					win.maximized = false;
+					win.zIndex = state.nextZIndex++;
 				}
 			}),
 
