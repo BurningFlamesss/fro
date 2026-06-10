@@ -136,8 +136,8 @@ export const DEFAULT_WINDOW_INSTANCE_CONFIG: Omit<
 	WindowInstance,
 	"id" | "appId" | "title" | "logo"
 > = {
-	x: 50,
-	y: 60,
+	x: 500,
+	y: 80,
 	height: 400,
 	width: 900,
 	maximized: false,

@@ -54,15 +54,15 @@ function Window({
 			style={{ zIndex }}
 			onDragStop={(e, d) => {
 				if (d.y === 0) {
-					maximizeWindow(id)
+					maximizeWindow(id);
 				} else {
-					restoreOriginalPosition(id)
+					restoreOriginalPosition(id);
 					updateWindowRect(id, { x: d.x, y: d.y, width, height });
 				}
 			}}
 			onResizeStop={(e, direction, ref, delta, position) => {
 				if (delta.height !== 0 || delta.width !== 0) {
-					restoreOriginalPosition(id)
+					restoreOriginalPosition(id);
 				}
 				updateWindowRect(id, {
 					x: position.x,
