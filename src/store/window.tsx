@@ -14,8 +14,8 @@ interface WindowStore {
 	apps: typeof Apps;
 	nextZIndex: number;
 
-	openApp: (AppId: AppId) => void;
-	closeWindow: (WindowId: WindowId) => void;
+	openApp: (appId: AppId) => void;
+	closeWindow: (windowId: WindowId) => void;
 }
 
 export const useWindowStore = create<WindowStore>()(
@@ -24,17 +24,11 @@ export const useWindowStore = create<WindowStore>()(
 		apps: Apps,
 		nextZIndex: INITIAL_Z_INDEX + 1,
 
-		openApp: (AppId) =>
+		openApp: (appId) =>
 			set((state) => {
-				Object.values(state.windows).forEach((window_ins) => {
-					if (window_ins) {
-						window_ins.focused = false;
-					}
-				});
+				unfocusAll(state.windows);
 
-				const app = state.apps[AppId];
-				const id = crypto.randomUUID();
-				const key = `${app.id}_${id}` as WindowId;
+				const app = state.apps[appId];
 
 				if (app.singleInstance) {
 					const existing = Object.values(state.windows).find(
@@ -48,6 +42,9 @@ export const useWindowStore = create<WindowStore>()(
 						return;
 					}
 				}
+
+				const id = crypto.randomUUID();
+				const key = `${app.id}_${id}` as WindowId;
 
 				state.windows[key] = {
 					...DEFAULT_WINDOW_INSTANCE_CONFIG,
@@ -63,27 +60,16 @@ export const useWindowStore = create<WindowStore>()(
 				state.nextZIndex++;
 			}),
 
-		closeWindow: (WindowId) =>
+		closeWindow: (windowId) =>
 			set((state) => {
-				const closing = state.windows[WindowId];
+				const closing = state.windows[windowId];
 
-				delete state.windows[WindowId];
+				delete state.windows[windowId];
 
 				if (closing?.focused) {
-					const windows = Object.values(state.windows);
+					unfocusAll(state.windows);
 
-					windows.forEach((window_ins) => {
-						if (window_ins) {
-							window_ins.focused = false;
-						}
-					});
-
-					const topWindow = Object.values(state.windows).sort((a, b) => {
-						if (a && b) {
-							return b.zIndex - a.zIndex;
-						}
-						return 0;
-					})[0];
+					const topWindow = getTopWindow(state.windows);
 
 					if (topWindow) {
 						topWindow.focused = true;
@@ -92,3 +78,22 @@ export const useWindowStore = create<WindowStore>()(
 			}),
 	})),
 );
+
+const getTopWindow = (windows: typeof Windows) => {
+	return Object.values(windows).sort((a, b) => {
+		if (a && b) {
+			return b.zIndex - a.zIndex;
+		}
+		return 0;
+	})[0];
+};
+
+const unfocusAll = (windows: typeof Windows) => {
+	const wins = Object.values(windows);
+
+	wins.forEach((window_ins) => {
+		if (window_ins) {
+			window_ins.focused = false;
+		}
+	});
+};
