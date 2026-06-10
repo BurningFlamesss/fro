@@ -4,7 +4,7 @@ export const INITIAL_Z_INDEX = 1000;
 export const DEFAULT_THEME = "";
 
 export interface AppInstance {
-	id: string;
+	id: AppId;
 	name: string;
 	title: string;
 	logo: string;
@@ -15,9 +15,10 @@ export interface AppInstance {
 }
 
 export interface WindowInstance {
-	id: string;
-	appId: string;
+	id: WindowId;
+	appId: AppId;
 	title: string;
+	logo: string;
 	zIndex: number;
 	x: number;
 	y: number;
@@ -127,12 +128,9 @@ export const Apps: Record<AppId, AppInstance> = {
 	},
 };
 
-export const Windows: Record<string, WindowInstance> = {};
+export const Windows: Partial<Record<WindowId, WindowInstance>> = {};
 
-export const DEFAULT_WINDOW_INSTANCE_CONFIG = {
-	id: "",
-	appId: "",
-	title: "",
+export const DEFAULT_WINDOW_INSTANCE_CONFIG: Omit<WindowInstance, "id" | "appId" | "title" | "logo"> = {
 	x: 0,
 	y: 0,
 	height: 0,
