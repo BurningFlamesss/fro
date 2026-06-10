@@ -19,6 +19,10 @@ interface WindowStore {
 	focusWindow: (windowId: WindowId) => void;
 	minimizeWindow: (windowId: WindowId) => void;
 	closeWindow: (windowId: WindowId) => void;
+	updateWindowRect: (
+		windowId: WindowId,
+		rect: { x: number; y: number; width: number; height: number },
+	) => void;
 }
 
 export const useWindowStore = create<WindowStore>()(
@@ -78,6 +82,17 @@ export const useWindowStore = create<WindowStore>()(
 		closeWindow: (windowId) =>
 			set((state) => {
 				delete state.windows[windowId];
+			}),
+
+		updateWindowRect: (windowId, rect) =>
+			set((state) => {
+				const win = state.windows[windowId];
+				if (win) {
+					win.x = rect.x;
+					win.y = rect.y;
+					win.width = rect.width;
+					win.height = rect.height;
+				}
 			}),
 	})),
 );

@@ -1,22 +1,25 @@
-import React from "react";
 import { useWindowStore } from "#/store/window.tsx";
+import type { WindowInstance } from "../constants";
 import Window from "./Window";
 
 function WindowOverlays() {
-    const { windows, apps } = useWindowStore()
-    
-	return (
-        <main className="absolute">
-            {
-                windows ? Object.entries(windows).map(([key, win]) => {
+	const { windows, apps } = useWindowStore();
 
-                    return (
-                        <Window key={key} win={win} apps={apps} />
-                    )
-                }) : null
-            }
-        </main>
-    );
+	const visibleWindows = Object.values(windows).filter(
+		(win): win is WindowInstance => win !== undefined,
+	);
+
+	return (
+		<main className="absolute inset-0">
+			{visibleWindows.map((win) => (
+				<Window
+					key={win.id}
+					win={win}
+					apps={apps}
+				/>
+			))}
+		</main>
+	);
 }
 
 export default WindowOverlays;

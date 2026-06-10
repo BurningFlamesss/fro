@@ -70,7 +70,9 @@ export const Apps: Record<AppId, AppInstance> = {
 		logo: "/apps/Browser.svg",
 		isPinned: true,
 		theme: DEFAULT_THEME,
-		component: <></>,
+		component: <>
+			Hello World!!!
+		</>,
 	},
 	terminal: {
 		id: "terminal",
@@ -134,10 +136,10 @@ export const DEFAULT_WINDOW_INSTANCE_CONFIG: Omit<
 	WindowInstance,
 	"id" | "appId" | "title" | "logo"
 > = {
-	x: 0,
-	y: 0,
-	height: 0,
-	width: 0,
+	x: 50,
+	y: 60,
+	height: 400,
+	width: 900,
 	maximized: false,
 	minimized: false,
 	theme: "",
