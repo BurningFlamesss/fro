@@ -10,7 +10,7 @@ function WindowOverlays() {
 	);
 
 	return (
-		<main className="absolute top-0 -bottom-20 -left-40 -right-40">
+		<main className="absolute inset-0 overflow-hidden">
 			{visibleWindows.map((win) => (
 				<Window
 					key={win.id}
