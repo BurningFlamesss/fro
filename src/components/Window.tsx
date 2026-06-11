@@ -1,4 +1,7 @@
 import { memo, useCallback, useRef } from "react";
+import { FaWindowMinimize } from "react-icons/fa";
+import { FaRegWindowMinimize } from "react-icons/fa6";
+import { MdOutlineClose } from "react-icons/md";
 import { Rnd } from "react-rnd";
 import { cn } from "#/lib/utils.ts";
 import { useWindowStore } from "#/store/window.tsx";
@@ -151,45 +154,57 @@ const Window = memo(function Window({
 				bottomLeft: { cursor: "nesw-resize" },
 				bottomRight: { cursor: "nwse-resize" },
 			}}
-			className="pseudo-glassmorphism"
+			className={cn(
+				"overflow-hidden border backdrop-blur-xl",
+				"shadow-2xl shadow-black/30 transition-shadow duration-200",
+				"border-white/10 shadow-white/5",
+				maximized ? "rounded-none" : "rounded-xl "
+			)}
 		>
 			<div
 				onDoubleClick={maximizeWindow.bind(null, id)}
 				onClick={focusWindow.bind(null, id)}
 				onKeyUp={focusWindow.bind(null, id)}
 				className={cn(
-					"window-drag-handle flex flex-row items-center justify-end pl-2 text-background cursor-grab active:cursor-grabbing select-none group",
-					maximized ? "cursor-auto active:cursor-auto" : "",
+					"window-drag-handle flex items-center justify-between h-10 pl-3",
+					"bg-black/20 backdrop-blur-md border-b border-white/5",
+					"select-none cursor-grab active:cursor-grabbing",
+					maximized && "cursor-auto active:cursor-auto",
 				)}
 			>
-				{/* <div>
-					<img draggable={false} className="w-6 h-6" src={logo} alt="" />
-				</div>
-				<p>{title}</p> */}
-				<div className="menu flex flex-row items-center opacity-0 bg-transparent group-hover:opacity-100 group-hover:bg-black transition-all duration-200">
+				<div className="flex items-center gap-2 min-w-0">
 					<img
 						draggable={false}
+						src={logo}
+						alt=""
+						className="w-5 h-5 rounded opacity-80"
+					/>
+					<span className="text-sm font-medium text-white/90 truncate">
+						{title}
+					</span>
+				</div>
+
+				<div
+					className="menu flex flex-row items-center h-full pr-3 cursor-pointer"
+					onMouseDown={stopPropagation}
+				>
+					<img
 						onClick={minimizeWindow.bind(null, id)}
 						onKeyUp={minimizeWindow.bind(null, id)}
-						onMouseDown={stopPropagation}
 						className="w-8 h-8 p-2 transition-colors duration-150 hover:bg-green-400/10 cursor-pointer"
 						src="/public/general/Minimize.svg"
 						alt="Minimize"
 					/>
 					<img
-						draggable={false}
 						onClick={maximizeWindow.bind(null, id)}
 						onKeyUp={maximizeWindow.bind(null, id)}
-						onMouseDown={stopPropagation}
 						className="w-8 h-8 p-2 transition-colors duration-150 hover:bg-blue-400/10 cursor-pointer"
 						src="/public/general/Maximize.svg"
 						alt="Maximize"
 					/>
 					<img
-						draggable={false}
 						onClick={closeWindow.bind(null, id)}
 						onKeyUp={closeWindow.bind(null, id)}
-						onMouseDown={stopPropagation}
 						className="w-8 h-8 p-2 transition-colors duration-150 hover:bg-red-400/10 cursor-pointer"
 						src="/public/general/Close.svg"
 						alt="Close"
@@ -200,7 +215,7 @@ const Window = memo(function Window({
 			<div
 				onClick={focusWindow.bind(null, id)}
 				onKeyUp={focusWindow.bind(null, id)}
-				className="w-full h-[calc(100%-2.5rem)] overflow-auto "
+				className="w-full h-[calc(100%-2.5rem)] overflow-auto bg-black/10"
 			>
 				{component}
 			</div>
