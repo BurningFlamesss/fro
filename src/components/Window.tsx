@@ -1,5 +1,6 @@
 import { memo, useCallback, useRef } from "react";
 import { Rnd } from "react-rnd";
+import { cn } from "#/lib/utils.ts";
 import { useWindowStore } from "#/store/window.tsx";
 import type { AppId, AppInstance, WindowInstance } from "../constants";
 
@@ -62,7 +63,10 @@ const Window = memo(function Window({
 			const { x: newX, y: newY } = d;
 			const clamped = clampPosition(newX, newY, width, height);
 
-			if (clamped.x !== lastClampedPos.current.x || clamped.y !== lastClampedPos.current.y) {
+			if (
+				clamped.x !== lastClampedPos.current.x ||
+				clamped.y !== lastClampedPos.current.y
+			) {
 				lastClampedPos.current = clamped;
 				rndRef.current?.updatePosition(clamped);
 			}
@@ -129,9 +133,9 @@ const Window = memo(function Window({
 				width: maximized ? window.innerWidth : width,
 				height: maximized ? window.innerHeight : height,
 			}}
+			style={{ zIndex }}
 			disableDragging={maximized}
 			enableResizing={!maximized}
-			style={{ zIndex }}
 			onDrag={handleDrag}
 			onDragStop={handleDragStop}
 			onResizeStop={handleResizeStop}
@@ -147,18 +151,22 @@ const Window = memo(function Window({
 				bottomLeft: { cursor: "nesw-resize" },
 				bottomRight: { cursor: "nwse-resize" },
 			}}
+			className="pseudo-glassmorphism"
 		>
 			<div
 				onDoubleClick={maximizeWindow.bind(null, id)}
 				onClick={focusWindow.bind(null, id)}
 				onKeyUp={focusWindow.bind(null, id)}
-				className="window-drag-handle flex flex-row items-center justify-between pl-2 bg-foreground text-background cursor-grab active:cursor-grabbing select-none"
+				className={cn(
+					"window-drag-handle flex flex-row items-center justify-end pl-2 text-background cursor-grab active:cursor-grabbing select-none group",
+					maximized ? "cursor-auto active:cursor-auto" : "",
+				)}
 			>
-				<div>
+				{/* <div>
 					<img draggable={false} className="w-6 h-6" src={logo} alt="" />
 				</div>
-				<p>{title}</p>
-				<div className="menu flex flex-row items-center">
+				<p>{title}</p> */}
+				<div className="menu flex flex-row items-center opacity-0 bg-transparent group-hover:opacity-100 group-hover:bg-black transition-all duration-200">
 					<img
 						draggable={false}
 						onClick={minimizeWindow.bind(null, id)}
@@ -192,7 +200,7 @@ const Window = memo(function Window({
 			<div
 				onClick={focusWindow.bind(null, id)}
 				onKeyUp={focusWindow.bind(null, id)}
-				className="w-full h-[calc(100%-2.5rem)] overflow-auto pseudo-glassmorphism"
+				className="w-full h-[calc(100%-2.5rem)] overflow-auto "
 			>
 				{component}
 			</div>
