@@ -22,7 +22,7 @@ const clampPosition = (x: number, y: number, w: number, h: number) => {
 	};
 };
 
-const Window = memo(function Window({
+const Window = function Window({
 	win,
 	apps,
 }: {
@@ -58,8 +58,10 @@ const Window = memo(function Window({
 	if (minimized) return null;
 
 	const component = apps[appId].component;
-	const stopPropagation = (e: React.MouseEvent | React.TouchEvent) =>
+	const stopPropagation = (e: React.MouseEvent | React.TouchEvent) => {
+		e.preventDefault();
 		e.stopPropagation();
+	};
 
 	const handleDrag = useCallback(
 		(e: any, d: { x: number; y: number }) => {
@@ -158,15 +160,17 @@ const Window = memo(function Window({
 				"overflow-hidden border backdrop-blur-xl",
 				"shadow-2xl shadow-black/30 transition-shadow duration-200",
 				"border-white/10 shadow-white/5",
-				maximized ? "rounded-none" : "rounded-xl "
+				maximized ? "rounded-none" : "rounded-xl ",
+				minimized ? "hidden" : "",
 			)}
 		>
 			<div
+				type="button"
 				onDoubleClick={maximizeWindow.bind(null, id)}
 				onClick={focusWindow.bind(null, id)}
 				onKeyUp={focusWindow.bind(null, id)}
 				className={cn(
-					"window-drag-handle flex items-center justify-between h-10 pl-3",
+					"window-drag-handle flex items-center justify-between h-10 pl-3 w-full",
 					"bg-black/20 backdrop-blur-md border-b border-white/5",
 					"select-none cursor-grab active:cursor-grabbing",
 					maximized && "cursor-auto active:cursor-auto",
@@ -185,8 +189,10 @@ const Window = memo(function Window({
 				</div>
 
 				<div
-					className="menu flex flex-row items-center h-full pr-3 cursor-pointer"
+					type="button"
+					className="menu flex flex-row items-center h-full pr-3"
 					onMouseDown={stopPropagation}
+					onClick={stopPropagation}
 				>
 					<img
 						onClick={minimizeWindow.bind(null, id)}
@@ -194,6 +200,7 @@ const Window = memo(function Window({
 						className="w-8 h-8 p-2 transition-colors duration-150 hover:bg-green-400/10 cursor-pointer"
 						src="/public/general/Minimize.svg"
 						alt="Minimize"
+						draggable={false}
 					/>
 					<img
 						onClick={maximizeWindow.bind(null, id)}
@@ -201,6 +208,7 @@ const Window = memo(function Window({
 						className="w-8 h-8 p-2 transition-colors duration-150 hover:bg-blue-400/10 cursor-pointer"
 						src="/public/general/Maximize.svg"
 						alt="Maximize"
+						draggable={false}
 					/>
 					<img
 						onClick={closeWindow.bind(null, id)}
@@ -208,11 +216,13 @@ const Window = memo(function Window({
 						className="w-8 h-8 p-2 transition-colors duration-150 hover:bg-red-400/10 cursor-pointer"
 						src="/public/general/Close.svg"
 						alt="Close"
+						draggable={false}
 					/>
 				</div>
 			</div>
 
 			<div
+				type="button"
 				onClick={focusWindow.bind(null, id)}
 				onKeyUp={focusWindow.bind(null, id)}
 				className="w-full h-[calc(100%-2.5rem)] overflow-auto bg-black/10"
@@ -221,6 +231,6 @@ const Window = memo(function Window({
 			</div>
 		</Rnd>
 	);
-});
+};
 
 export default Window;
