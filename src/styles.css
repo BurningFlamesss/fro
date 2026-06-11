@@ -121,13 +121,18 @@
   }
 
   html, body {
-    height: 100dvh;
-    width: 100dvw;
     margin: 0;
     
     font-family: var(--font-sans);
     background-color: var(--background);
     color: var(--foreground);
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .os-container { 
+    height: 100dvh;
     overflow: hidden !important;
 
     background-image: url("/backgrounds/cyber-rain.gif");
@@ -135,9 +140,6 @@
     background-repeat: no-repeat;
     background-position: center;
     z-index: -1;
-
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
 
   .glassmorphism {
