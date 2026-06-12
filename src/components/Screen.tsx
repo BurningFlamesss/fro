@@ -14,7 +14,6 @@ function Screen() {
 	const { apps, openApp, windows, focusWindow, pinApp } = useWindowStore();
 
 	const toggleApp = (app: AppInstance) => {
-		console.log("Clicked", app.name);
 		const appWindows = findAppWindows(windows, app.id);
 
 		if (appWindows.length === 0) {
@@ -50,15 +49,15 @@ function Screen() {
 	};
 
 	return (
-		<div className="relative z-10 h-[calc(100dvh-76px)] w-dvw p-2">
+		<div className="relative z-10 h-[calc(100dvh-76px)] w-full p-2 flex flex-wrap content-start gap-3 overflow-y-auto">
 			{Object.entries(apps).map(([key, app]) => (
 				<ContextMenu key={`screen-app-${key}`}>
 					<ContextMenuTrigger>
 						<button
 							type="button"
-							onClick={() => toggleApp(app)}
+							onDoubleClick={() => toggleApp(app)}
 							className={cn(
-								"w-24 h-24 group p-2 rounded-xl transition-all duration-150 cursor-pointer flex flex-col items-center justify-center flex-1 grow shrink-0",
+								"w-24 h-24 group p-2 rounded-xl transition-all duration-150 cursor-pointer flex flex-col items-center justify-center shrink-0",
 							)}
 						>
 							<img
@@ -67,14 +66,17 @@ function Screen() {
 								alt={app.name}
 								draggable={false}
 							/>
-							<p className="text-background glassmorphism py-0.5 px-2 rounded-sm">{app.name}</p>
+							<p className="text-background glassmorphism py-0.5 px-2 rounded-sm text-xs truncate max-w-full">
+								{app.name}
+							</p>
 						</button>
 					</ContextMenuTrigger>
 
 					<ContextMenuContent className="z-100000002">
 						<ContextMenuGroup>
 							<ContextMenuItem onClick={() => toggleApp(app)}>
-								<img className="h-4 w-4" src={app.logo} alt="" /> Open {app.name}
+								<img className="h-4 w-4" src={app.logo} alt="" /> Open{" "}
+								{app.name}
 							</ContextMenuItem>
 							<ContextMenuItem onClick={() => openApp(app.id)}>
 								<img className="h-4 w-4" src={app.logo} alt="" /> New Window

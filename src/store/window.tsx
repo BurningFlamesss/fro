@@ -15,7 +15,7 @@ interface WindowStore {
 	apps: typeof Apps;
 	nextZIndex: number;
 
-	openApp: (appId: AppId) => void;
+	openApp: (appId: AppId, position?: { x: number; y: number; width: number; height: number }) => void;
 	unpinApp: (appId: AppId) => void;
 	pinApp: (appId: AppId) => void;
 	focusWindow: (windowId: WindowId) => void;
@@ -37,7 +37,10 @@ export const useWindowStore = create<WindowStore>()(
 		apps: Apps,
 		nextZIndex: INITIAL_Z_INDEX + 1,
 
-		openApp: (appId) =>
+		openApp: (
+			appId,
+			position?: { x: number; y: number; width: number; height: number },
+		) =>
 			set((state) => {
 				const app = state.apps[appId];
 
@@ -65,6 +68,10 @@ export const useWindowStore = create<WindowStore>()(
 					minimized: false,
 					zIndex: state.nextZIndex++,
 					component: app.component,
+					x: position?.x ?? 500,
+					y: position?.y ?? 80,
+					width: position?.width ?? 900,
+					height: position?.height ?? 400,
 				};
 			}),
 

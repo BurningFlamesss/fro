@@ -18,8 +18,15 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import WindowThumbnail from "./WindowThumbnail";
 
 function Taskbar() {
-	const { apps, windows, openApp, focusWindow, minimizeWindow, closeWindow, unpinApp } =
-		useWindowStore();
+	const {
+		apps,
+		windows,
+		openApp,
+		focusWindow,
+		minimizeWindow,
+		closeWindow,
+		unpinApp,
+	} = useWindowStore();
 	const [dateTimeData, setDateTimeData] = useState(() => getDateTime());
 	const [searchQuery, setSearchQuery] = useState("");
 
@@ -28,6 +35,17 @@ function Taskbar() {
 			setDateTimeData(getDateTime());
 		}, 60_000);
 		return () => clearInterval(timer);
+	}, []);
+
+	useEffect(() => {
+		const handleDragOver = (e: DragEvent) => {
+			e.preventDefault();
+			if (e.dataTransfer) {
+				e.dataTransfer.dropEffect = "move";
+			}
+		};
+		document.body.addEventListener("dragover", handleDragOver);
+		return () => document.body.removeEventListener("dragover", handleDragOver);
 	}, []);
 
 	const toggleApp = (app: AppInstance) => {
@@ -105,7 +123,7 @@ function Taskbar() {
 					const activeWin = win.filter((w) => !w?.minimized);
 
 					if (!win.length && !activeWin.length && !app.isPinned) {
-						return null
+						return null;
 					}
 
 					return (
@@ -120,14 +138,52 @@ function Taskbar() {
 											win.length ? "bg-background/5 " : "",
 										)}
 									>
+										{/* --- 2. Make the icon draggable --- */}
 										<img
 											className="w-7 h-7 object-contain opacity-90 group-hover:opacity-100"
 											src={app.logo}
 											alt={app.name}
+											draggable="true"
+											onDragStart={(e) => {
+												e.dataTransfer.setData("text/plain", app.id);
+												e.dataTransfer.effectAllowed = "move";
+												// optional: custom drag image
+												const dragImg = new Image();
+												dragImg.src = app.logo;
+												e.dataTransfer.setDragImage(dragImg, 12, 12);
+											}}
+											onDragEnd={(e) => {
+												// only open if the drop was successful (dropEffect = "move")
+												if (e.dataTransfer.dropEffect === "move") {
+													const winWidth = 600;
+													const winHeight = 400;
+													const x = Math.max(
+														0,
+														Math.min(
+															e.clientX - winWidth / 2,
+															window.innerWidth - winWidth,
+														),
+													);
+													const y = Math.max(
+														0,
+														Math.min(
+															e.clientY - winHeight / 2,
+															window.innerHeight - winHeight,
+														),
+													);
+													openApp(app.id, {
+														x,
+														y,
+														width: winWidth,
+														height: winHeight,
+													});
+												}
+											}}
 										/>
 									</TooltipTrigger>
 									<TooltipContent
-										className={cn("z-100000001", 
+										className={cn(
+											"z-100000001",
 											win.length
 												? "translate-y-[calc(-10%-2px)]"
 												: "px-3 py-1.5",
@@ -136,10 +192,7 @@ function Taskbar() {
 										{win.length ? (
 											<div className="flex gap-2 p-2 max-w-90 overflow-x-auto no-scrollbar">
 												{win.map(
-													(w) =>
-														w && (
-															<WindowThumbnail key={w.id} win={w} />
-														),
+													(w) => w && <WindowThumbnail key={w.id} win={w} />,
 												)}
 											</div>
 										) : (
@@ -148,22 +201,20 @@ function Taskbar() {
 									</TooltipContent>
 								</Tooltip>
 							</ContextMenuTrigger>
-							<ContextMenuContent className="z-100000002 -translate-x-1/2 -translate-y-[78%]">
+							<ContextMenuContent className="z-100000002 -translate-x-1/2 translate-y-[-78%]">
 								<ContextMenuGroup>
 									<ContextMenuItem onClick={() => openApp(app.id)}>
 										<img className="h-4 w-4" src={app.logo} alt="" /> New Window
 									</ContextMenuItem>
-									<ContextMenuItem onClick={() => {
-										unpinApp(app.id)
-									}}>
+									<ContextMenuItem onClick={() => unpinApp(app.id)}>
 										<RiUnpinLine className="text-background" />
 										Unpin from taskbar
 									</ContextMenuItem>
-									<ContextMenuItem onClick={() => {
-										win.map(w => w && closeWindow(w.id))
-									}}>
+									<ContextMenuItem
+										onClick={() => win.map((w) => w && closeWindow(w.id))}
+									>
 										<MdOutlineClose className="text-destructive" />
-										Close all window
+										Close all windows
 									</ContextMenuItem>
 								</ContextMenuGroup>
 							</ContextMenuContent>
