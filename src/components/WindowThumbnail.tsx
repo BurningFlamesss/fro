@@ -37,7 +37,7 @@ const WindowThumbnail = memo(function WindowThumbnail({ win, apps }: Props) {
 
 	return (
 		<div
-			className="shrink-0 rounded-lg overflow-hidden border border-background/10 shadow-lg bg-foreground/20 backdrop-blur-sm cursor-pointer hover:border-background/20 transition-all duration-150"
+			className="shrink-0 rounded-lg overflow-hidden border border-background/10 shadow-lg glassmorphism cursor-pointer hover:border-background/20 transition-all duration-150"
 			style={{ width: THUMB_WIDTH }}
 			onClick={handleThumbnailClick}
 			role="button"
@@ -87,7 +87,7 @@ const WindowThumbnail = memo(function WindowThumbnail({ win, apps }: Props) {
 						pointerEvents: "none",
 						userSelect: "none",
 					}}
-					className="bg-foreground/10 text-background"
+					className="text-background"
 				>
 					{Component}
 				</div>

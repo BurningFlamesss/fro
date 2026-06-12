@@ -112,9 +112,9 @@ function Taskbar() {
 									alt={app.name}
 								/>
 							</TooltipTrigger>
-							<TooltipContent className={cn(win.length ? "" : "px-3 py-1.5")}>
+							<TooltipContent className={cn(win.length ? "translate-y-[calc(-10%_-_2px)]" : "px-3 py-1.5")}>
 								{win.length ? (
-									<div className="flex gap-2 p-2 max-w-[360px] overflow-x-auto no-scrollbar">
+									<div className="flex gap-2 p-2 max-w-90 overflow-x-auto no-scrollbar">
 										{win.map(
 											(w) =>
 												w && <WindowThumbnail key={w.id} win={w} apps={apps} />,
@@ -135,19 +135,19 @@ function Taskbar() {
 						<TooltipTrigger className="cursor-default">
 							<FaWifi className="" />
 						</TooltipTrigger>
-						<TooltipContent>Wi-Fi</TooltipContent>
+						<TooltipContent className="px-3 py-1.5">Wi-Fi</TooltipContent>
 					</Tooltip>
 					<Tooltip>
 						<TooltipTrigger className="cursor-default">
 							<HiSpeakerWave className="" />
 						</TooltipTrigger>
-						<TooltipContent>Volume</TooltipContent>
+						<TooltipContent className="px-3 py-1.5">Volume</TooltipContent>
 					</Tooltip>
 					<Tooltip>
 						<TooltipTrigger className="cursor-default">
 							<FaBatteryThreeQuarters className="" />
 						</TooltipTrigger>
-						<TooltipContent>Battery</TooltipContent>
+						<TooltipContent className="px-3 py-1.5">Battery</TooltipContent>
 					</Tooltip>
 				</div>
 
