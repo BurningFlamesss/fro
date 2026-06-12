@@ -17,6 +17,7 @@ interface WindowStore {
 
 	openApp: (appId: AppId) => void;
 	unpinApp: (appId: AppId) => void;
+	pinApp: (appId: AppId) => void;
 	focusWindow: (windowId: WindowId) => void;
 	minimizeWindow: (windowId: WindowId) => void;
 	maximizeWindow: (windowId: WindowId) => void;
@@ -72,6 +73,14 @@ export const useWindowStore = create<WindowStore>()(
 				const app = state.apps[appId];
 				if (app) {
 					app.isPinned = false;
+				}
+			}),
+
+		pinApp: (appId) =>
+			set((state) => {
+				const app = state.apps[appId];
+				if (app) {
+					app.isPinned = true;
 				}
 			}),
 

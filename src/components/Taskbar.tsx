@@ -127,7 +127,7 @@ function Taskbar() {
 										/>
 									</TooltipTrigger>
 									<TooltipContent
-										className={cn(
+										className={cn("z-100000001", 
 											win.length
 												? "translate-y-[calc(-10%-2px)]"
 												: "px-3 py-1.5",
@@ -148,7 +148,7 @@ function Taskbar() {
 									</TooltipContent>
 								</Tooltip>
 							</ContextMenuTrigger>
-							<ContextMenuContent>
+							<ContextMenuContent className="z-100000002 -translate-x-1/2 -translate-y-[78%]">
 								<ContextMenuGroup>
 									<ContextMenuItem onClick={() => openApp(app.id)}>
 										<img className="h-4 w-4" src={app.logo} alt="" /> New Window
