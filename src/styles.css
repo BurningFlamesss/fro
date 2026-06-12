@@ -135,7 +135,6 @@
     height: 100dvh;
     overflow: hidden !important;
 
-    background-image: url("/backgrounds/cyber-rain.gif");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
