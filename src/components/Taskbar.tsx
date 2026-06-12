@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { FaBatteryThreeQuarters, FaWifi } from "react-icons/fa6";
 import { HiSpeakerWave } from "react-icons/hi2";
+import { MdOutlineClose } from "react-icons/md";
 import { PiMagnifyingGlassDuotone } from "react-icons/pi";
+import { RiUnpinLine } from "react-icons/ri";
 import { cn, getDateTime } from "#/lib/utils.ts";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
@@ -14,11 +16,9 @@ import {
 } from "./ui/context-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import WindowThumbnail from "./WindowThumbnail";
-import { RiUnpinLine } from "react-icons/ri";
-import { MdOutlineClose } from "react-icons/md";
 
 function Taskbar() {
-	const { apps, windows, openApp, focusWindow, minimizeWindow } =
+	const { apps, windows, openApp, focusWindow, minimizeWindow, closeWindow, unpinApp } =
 		useWindowStore();
 	const [dateTimeData, setDateTimeData] = useState(() => getDateTime());
 	const [searchQuery, setSearchQuery] = useState("");
@@ -105,6 +105,10 @@ function Taskbar() {
 					const win = findAppWindows(windows, app.id);
 					const activeWin = win.filter((w) => !w?.minimized);
 
+					if (!win.length && !activeWin.length && !app.isPinned) {
+						return null
+					}
+
 					return (
 						<ContextMenu key={key}>
 							<ContextMenuTrigger>
@@ -150,11 +154,15 @@ function Taskbar() {
 									<ContextMenuItem onClick={() => openApp(app.id)}>
 										<img className="h-4 w-4" src={app.logo} alt="" /> New Window
 									</ContextMenuItem>
-									<ContextMenuItem onClick={() => {}}>
+									<ContextMenuItem onClick={() => {
+										unpinApp(app.id)
+									}}>
 										<RiUnpinLine className="text-background" />
 										Unpin from taskbar
 									</ContextMenuItem>
-									<ContextMenuItem onClick={() => {}}>
+									<ContextMenuItem onClick={() => {
+										win.map(w => w && closeWindow(w.id))
+									}}>
 										<MdOutlineClose className="text-destructive" />
 										Close all window
 									</ContextMenuItem>
