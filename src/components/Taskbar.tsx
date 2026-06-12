@@ -14,6 +14,8 @@ import {
 } from "./ui/context-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import WindowThumbnail from "./WindowThumbnail";
+import { RiUnpinLine } from "react-icons/ri";
+import { MdOutlineClose } from "react-icons/md";
 
 function Taskbar() {
 	const { apps, windows, openApp, focusWindow, minimizeWindow } =
@@ -112,7 +114,7 @@ function Taskbar() {
 										onClick={() => toggleApp(app)}
 										className={cn(
 											"group p-2 rounded-xl transition-colors duration-150 hover:bg-background/5 cursor-pointer",
-											activeWin.length ? "bg-background/5 " : "",
+											win.length ? "bg-background/5 " : "",
 										)}
 									>
 										<img
@@ -145,7 +147,17 @@ function Taskbar() {
 							</ContextMenuTrigger>
 							<ContextMenuContent>
 								<ContextMenuGroup>
-									<ContextMenuItem onClick={() => openApp(app.id)}>New Window</ContextMenuItem>
+									<ContextMenuItem onClick={() => openApp(app.id)}>
+										<img className="h-4 w-4" src={app.logo} alt="" /> New Window
+									</ContextMenuItem>
+									<ContextMenuItem onClick={() => {}}>
+										<RiUnpinLine className="text-background" />
+										Unpin from taskbar
+									</ContextMenuItem>
+									<ContextMenuItem onClick={() => {}}>
+										<MdOutlineClose className="text-destructive" />
+										Close all window
+									</ContextMenuItem>
 								</ContextMenuGroup>
 							</ContextMenuContent>
 						</ContextMenu>
