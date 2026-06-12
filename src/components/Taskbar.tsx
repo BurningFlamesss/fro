@@ -138,7 +138,6 @@ function Taskbar() {
 											win.length ? "bg-background/5 " : "",
 										)}
 									>
-										{/* --- 2. Make the icon draggable --- */}
 										<img
 											className="w-7 h-7 object-contain opacity-90 group-hover:opacity-100"
 											src={app.logo}
@@ -147,13 +146,11 @@ function Taskbar() {
 											onDragStart={(e) => {
 												e.dataTransfer.setData("text/plain", app.id);
 												e.dataTransfer.effectAllowed = "move";
-												// optional: custom drag image
 												const dragImg = new Image();
 												dragImg.src = app.logo;
 												e.dataTransfer.setDragImage(dragImg, 12, 12);
 											}}
 											onDragEnd={(e) => {
-												// only open if the drop was successful (dropEffect = "move")
 												if (e.dataTransfer.dropEffect === "move") {
 													const winWidth = 600;
 													const winHeight = 400;

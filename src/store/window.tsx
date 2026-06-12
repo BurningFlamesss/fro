@@ -70,7 +70,7 @@ export const useWindowStore = create<WindowStore>()(
 					component: app.component,
 					x: position?.x ?? 500,
 					y: position?.y ?? 80,
-					width: position?.width ?? 900,
+					width: position?.width ?? 600,
 					height: position?.height ?? 400,
 				};
 			}),

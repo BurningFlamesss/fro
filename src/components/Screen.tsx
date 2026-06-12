@@ -49,7 +49,8 @@ function Screen() {
 	};
 
 	return (
-		<div className="relative z-10 h-[calc(100dvh-76px)] w-full p-2 flex flex-wrap content-start gap-3 overflow-y-auto">
+		<div className="relative z-10 h-[calc(100dvh-76px)] w-full p-2 flex flex-col flex-wrap content-start overflow-y-auto">
+			
 			{Object.entries(apps).map(([key, app]) => (
 				<ContextMenu key={`screen-app-${key}`}>
 					<ContextMenuTrigger>

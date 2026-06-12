@@ -139,7 +139,7 @@ export const DEFAULT_WINDOW_INSTANCE_CONFIG: Omit<
 	x: 500,
 	y: 80,
 	height: 400,
-	width: 900,
+	width: 600,
 	maximized: false,
 	minimized: false,
 	theme: "",
