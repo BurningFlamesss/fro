@@ -2,13 +2,9 @@ import { useEffect, useState } from "react";
 import { FaBatteryThreeQuarters, FaWifi } from "react-icons/fa6";
 import { HiSpeakerWave } from "react-icons/hi2";
 import { PiMagnifyingGlassDuotone } from "react-icons/pi";
-import { getDateTime } from "#/lib/utils.ts";
+import { cn, getDateTime } from "#/lib/utils.ts";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
-import {
-	type AppInstance,
-	INITIAL_Z_INDEX,
-	type WindowInstance,
-} from "../constants";
+import type { AppInstance, WindowInstance } from "../constants";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 function Taskbar() {
@@ -25,7 +21,7 @@ function Taskbar() {
 	}, []);
 
 	const toggleApp = (app: AppInstance) => {
-		console.table(windows)
+		// console.table(windows);
 		const appWindows = findAppWindows(windows, app.id);
 
 		if (appWindows.length === 0) {
@@ -57,7 +53,6 @@ function Taskbar() {
 			}
 		} else {
 			// Handle operation to show multiple options to open a window
-
 			// const visible = appWindows.filter(
 			// 	(win): win is WindowInstance => win !== undefined && !win.minimized,
 			// );
@@ -96,24 +91,32 @@ function Taskbar() {
 			</section>
 
 			<section className="flex items-center gap-1">
-				{Object.entries(apps).map(([key, app]) => (
-					<Tooltip key={key}>
-						<TooltipTrigger
-							type="button"
-							onClick={() => toggleApp(app)}
-							className="group p-2 rounded-xl transition-colors duration-150 hover:bg-background/5 cursor-pointer"
-						>
-							<img
-								className="w-7 h-7 object-contain opacity-90 group-hover:opacity-100"
-								src={app.logo}
-								alt={app.name}
-							/>
-						</TooltipTrigger>
-						<TooltipContent className="">
-							<p>{app.name}</p>
-						</TooltipContent>
-					</Tooltip>
-				))}
+				{Object.entries(apps).map(([key, app]) => {
+					const win = findAppWindows(windows, app.id);
+					const activeWin = win.filter(w => !w?.minimized)
+
+					return (
+						<Tooltip key={key}>
+							<TooltipTrigger
+								type="button"
+								onClick={() => toggleApp(app)}
+								className={cn(
+									"group p-2 rounded-xl transition-colors duration-150 hover:bg-background/5 cursor-pointer",
+									activeWin.length ? "bg-background/5 " : "",
+								)}
+							>
+								<img
+									className="w-7 h-7 object-contain opacity-90 group-hover:opacity-100"
+									src={app.logo}
+									alt={app.name}
+								/>
+							</TooltipTrigger>
+							<TooltipContent className="">
+								<p>{app.name}</p>
+							</TooltipContent>
+						</Tooltip>
+					);
+				})}
 			</section>
 
 			<section className="flex items-center gap-5 h-full">
