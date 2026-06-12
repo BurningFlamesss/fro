@@ -87,6 +87,7 @@ const WindowThumbnail = memo(function WindowThumbnail({ win, apps }: Props) {
 						pointerEvents: "none",
 						userSelect: "none",
 					}}
+					className="bg-foreground/10 text-background"
 				>
 					{Component}
 				</div>

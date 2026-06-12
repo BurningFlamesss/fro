@@ -225,7 +225,7 @@ const Window = function Window({
 				type="button"
 				onClick={focusWindow.bind(null, id)}
 				onKeyUp={focusWindow.bind(null, id)}
-				className="w-full h-[calc(100%-2.5rem)] overflow-auto bg-black/10"
+				className="w-full h-[calc(100%-2.5rem)] overflow-auto bg-foreground/10 text-background"
 			>
 				{component}
 			</div>
