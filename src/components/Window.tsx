@@ -1,4 +1,5 @@
-import { useCallback, useRef } from "react";
+import { toPng } from "html-to-image";
+import { useCallback, useEffect, useRef } from "react";
 import { Rnd } from "react-rnd";
 import { cn } from "#/lib/utils.ts";
 import { useWindowStore } from "#/store/window.tsx";
@@ -6,6 +7,8 @@ import type { WindowInstance } from "../constants";
 
 const MIN_VISIBLE_W = 128;
 const MIN_VISIBLE_H = 128;
+const CAPTURE_DELAY = 500;
+const PIXEL_RATIO = 0.4;
 
 const clampPosition = (x: number, y: number, w: number, h: number) => {
 	const maxX = window.innerWidth - MIN_VISIBLE_W;
@@ -27,8 +30,11 @@ const Window = function Window({ win }: { win: WindowInstance }) {
 		focusWindow,
 		closeWindow,
 		updateWindowRect,
+		setPreview,
 	} = useWindowStore();
 
+	const contentRef = useRef<HTMLDivElement>(null);
+	const debounceTimer = useRef<ReturnType<typeof setTimeout>>();
 	const rndRef = useRef<Rnd>(null);
 	const lastClampedPos = useRef({ x: win.x, y: win.y });
 
@@ -46,7 +52,42 @@ const Window = function Window({ win }: { win: WindowInstance }) {
 		zIndex,
 	} = win;
 
-	const contentId = `window-content-${id}`;
+	useEffect(() => {
+		const element = contentRef.current;
+		if (!element) return;
+
+		const capture = async () => {
+			try {
+				const dataUrl = await toPng(element, {
+					width: element.scrollWidth,
+					height: element.scrollHeight,
+					pixelRatio: PIXEL_RATIO,
+					cacheBust: true,
+				});
+				setPreview(id, dataUrl);
+			} catch (err) {
+				// ignore
+			}
+		};
+
+		const observer = new MutationObserver(() => {
+			clearTimeout(debounceTimer.current);
+			debounceTimer.current = setTimeout(capture, CAPTURE_DELAY);
+		});
+
+		observer.observe(element, {
+			childList: true,
+			subtree: true,
+			characterData: true,
+		});
+
+		capture();
+
+		return () => {
+			observer.disconnect();
+			clearTimeout(debounceTimer.current);
+		};
+	}, [id, setPreview]);
 
 	if (minimized) return null;
 
@@ -219,7 +260,7 @@ const Window = function Window({ win }: { win: WindowInstance }) {
 				onClick={focusWindow.bind(null, id)}
 				onKeyUp={focusWindow.bind(null, id)}
 				className="w-full h-[calc(100%-2.5rem)] overflow-auto text-background"
-				id={contentId}
+				ref={contentRef}
 			>
 				{component}
 			</div>

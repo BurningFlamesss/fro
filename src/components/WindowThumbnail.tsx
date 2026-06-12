@@ -1,5 +1,4 @@
-import { toPng } from "html-to-image";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo } from "react";
 import { useWindowStore } from "#/store/window.tsx";
 import type { WindowInstance } from "../constants";
 
@@ -9,67 +8,15 @@ interface Props {
 
 const THUMB_WIDTH = 160;
 const THUMB_HEIGHT = 100;
-const CAPTURE_DELAY = 5000;
-const PIXEL_RATIO = 0.1;
 
 const WindowThumbnail = memo(function WindowThumbnail({ win }: Props) {
+	const { closeWindow, focusWindow, previewCache } = useWindowStore();
+	if (!win) return null;
 
-	const { closeWindow, focusWindow } = useWindowStore();
-	const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-	const { id, title, logo, component } = win;
-
-	const contentRef = useRef<HTMLElement | null>(null);
-	const observerRef = useRef<MutationObserver | null>(null);
-	const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-	const capturePreview = useCallback(async () => {
-		const element = contentRef.current;
-		if (!element) return;
-		try {
-			const dataUrl = await toPng(element, {
-				width: element.scrollWidth,
-				height: element.scrollHeight,
-				pixelRatio: PIXEL_RATIO,
-				cacheBust: true,
-			});
-			setPreviewUrl(dataUrl);
-		} catch (error) {
-			console.error("Thumbnail capture failed", error);
-		}
-	}, []);
-
-	useEffect(() => {
-		const target = document.getElementById(`window-content-${id}`);
-		if (!target) return;
-
-		contentRef.current = target;
-
-		const observer = new MutationObserver(() => {
-			if (debounceTimer.current) clearTimeout(debounceTimer.current);
-			debounceTimer.current = setTimeout(() => {
-				capturePreview();
-			}, CAPTURE_DELAY);
-		});
-
-		observer.observe(target, {
-			childList: true,
-			subtree: true,
-			characterData: true,
-			attributes: false,
-		});
-
-		capturePreview();
-
-		observerRef.current = observer;
-
-		return () => {
-			observer.disconnect();
-			if (debounceTimer.current) clearTimeout(debounceTimer.current);
-		};
-	}, [id, capturePreview]);
+	const { id, title, logo } = win;
+	const previewUrl = previewCache[id] ?? null;
 
 	const handleThumbnailClick = () => focusWindow(id);
-
 	const handleClose = (e: React.MouseEvent) => {
 		e.stopPropagation();
 		closeWindow(id);
@@ -82,9 +29,6 @@ const WindowThumbnail = memo(function WindowThumbnail({ win }: Props) {
 			onClick={handleThumbnailClick}
 			role="button"
 			tabIndex={0}
-			onKeyDown={(e) => {
-				if (e.key === "Enter") handleThumbnailClick();
-			}}
 		>
 			<div className="flex items-center justify-between px-2 h-7 bg-foreground/30 backdrop-blur-md">
 				<div className="flex items-center gap-1.5 min-w-0">
@@ -100,7 +44,6 @@ const WindowThumbnail = memo(function WindowThumbnail({ win }: Props) {
 				<button
 					className="text-background/50 hover:text-red-400 hover:bg-red-400/10 rounded p-1 flex items-center justify-center transition-colors cursor-pointer"
 					onClick={handleClose}
-					aria-label="Close window"
 				>
 					<img
 						src="/public/general/Close.svg"
@@ -122,8 +65,8 @@ const WindowThumbnail = memo(function WindowThumbnail({ win }: Props) {
 						draggable={false}
 					/>
 				) : (
-					<div className="w-full h-full overflow-auto text-background">
-						{component}
+					<div className="flex items-center justify-center h-full text-background/40 text-xs">
+						{title}
 					</div>
 				)}
 			</div>

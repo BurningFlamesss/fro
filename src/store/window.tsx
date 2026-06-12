@@ -26,6 +26,8 @@ interface WindowStore {
 		windowId: WindowId,
 		rect: { x: number; y: number; width: number; height: number },
 	) => void;
+	previewCache: Record<WindowId, string | null>;
+	setPreview: (windowId: WindowId, url: string | null) => void;
 }
 
 export const useWindowStore = create<WindowStore>()(
@@ -127,6 +129,13 @@ export const useWindowStore = create<WindowStore>()(
 					win.width = rect.width;
 					win.height = rect.height;
 				}
+			}),
+
+		previewCache: {},
+
+		setPreview: (windowId, url) =>
+			set((state) => {
+				state.previewCache[windowId] = url;
 			}),
 	})),
 );
