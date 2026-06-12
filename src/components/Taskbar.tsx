@@ -11,7 +11,7 @@ import {
 } from "../constants";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
-function BottomBar() {
+function Taskbar() {
 	const { apps, windows, openApp, focusWindow, minimizeWindow } =
 		useWindowStore();
 	const [dateTimeData, setDateTimeData] = useState(() => getDateTime());
@@ -153,4 +153,4 @@ function BottomBar() {
 	);
 }
 
-export default BottomBar;
+export default Taskbar;

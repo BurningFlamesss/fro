@@ -190,7 +190,7 @@ const Window = function Window({
 
 				<div
 					type="button"
-					className="menu flex flex-row items-center h-full pr-3"
+					className="menu flex flex-row items-center h-full pr-3 cursor-auto"
 					onMouseDown={stopPropagation}
 					onClick={stopPropagation}
 				>
