@@ -6,6 +6,7 @@ import { cn, getDateTime } from "#/lib/utils.ts";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import WindowThumbnail from "./WindowThumbnail";
 
 function Taskbar() {
 	const { apps, windows, openApp, focusWindow, minimizeWindow } =
@@ -93,7 +94,7 @@ function Taskbar() {
 			<section className="flex items-center gap-1">
 				{Object.entries(apps).map(([key, app]) => {
 					const win = findAppWindows(windows, app.id);
-					const activeWin = win.filter(w => !w?.minimized)
+					const activeWin = win.filter((w) => !w?.minimized);
 
 					return (
 						<Tooltip key={key}>
@@ -111,8 +112,17 @@ function Taskbar() {
 									alt={app.name}
 								/>
 							</TooltipTrigger>
-							<TooltipContent className="">
-								<p>{app.name}</p>
+							<TooltipContent className={cn(win.length ? "" : "px-3 py-1.5")}>
+								{win.length ? (
+									<div className="flex gap-2 p-2 max-w-[360px] overflow-x-auto no-scrollbar">
+										{win.map(
+											(w) =>
+												w && <WindowThumbnail key={w.id} win={w} apps={apps} />,
+										)}
+									</div>
+								) : (
+									<p>{app.name}</p>
+								)}
 							</TooltipContent>
 						</Tooltip>
 					);
