@@ -5,6 +5,13 @@ import { PiMagnifyingGlassDuotone } from "react-icons/pi";
 import { cn, getDateTime } from "#/lib/utils.ts";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
+import {
+	ContextMenu,
+	ContextMenuContent,
+	ContextMenuGroup,
+	ContextMenuItem,
+	ContextMenuTrigger,
+} from "./ui/context-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import WindowThumbnail from "./WindowThumbnail";
 
@@ -97,34 +104,51 @@ function Taskbar() {
 					const activeWin = win.filter((w) => !w?.minimized);
 
 					return (
-						<Tooltip key={key}>
-							<TooltipTrigger
-								type="button"
-								onClick={() => toggleApp(app)}
-								className={cn(
-									"group p-2 rounded-xl transition-colors duration-150 hover:bg-background/5 cursor-pointer",
-									activeWin.length ? "bg-background/5 " : "",
-								)}
-							>
-								<img
-									className="w-7 h-7 object-contain opacity-90 group-hover:opacity-100"
-									src={app.logo}
-									alt={app.name}
-								/>
-							</TooltipTrigger>
-							<TooltipContent className={cn(win.length ? "translate-y-[calc(-10%_-_2px)]" : "px-3 py-1.5")}>
-								{win.length ? (
-									<div className="flex gap-2 p-2 max-w-90 overflow-x-auto no-scrollbar">
-										{win.map(
-											(w) =>
-												w && <WindowThumbnail key={w.id} win={w} apps={apps} />,
+						<ContextMenu key={key}>
+							<ContextMenuTrigger>
+								<Tooltip>
+									<TooltipTrigger
+										type="button"
+										onClick={() => toggleApp(app)}
+										className={cn(
+											"group p-2 rounded-xl transition-colors duration-150 hover:bg-background/5 cursor-pointer",
+											activeWin.length ? "bg-background/5 " : "",
 										)}
-									</div>
-								) : (
-									<p>{app.name}</p>
-								)}
-							</TooltipContent>
-						</Tooltip>
+									>
+										<img
+											className="w-7 h-7 object-contain opacity-90 group-hover:opacity-100"
+											src={app.logo}
+											alt={app.name}
+										/>
+									</TooltipTrigger>
+									<TooltipContent
+										className={cn(
+											win.length
+												? "translate-y-[calc(-10%-2px)]"
+												: "px-3 py-1.5",
+										)}
+									>
+										{win.length ? (
+											<div className="flex gap-2 p-2 max-w-90 overflow-x-auto no-scrollbar">
+												{win.map(
+													(w) =>
+														w && (
+															<WindowThumbnail key={w.id} win={w} apps={apps} />
+														),
+												)}
+											</div>
+										) : (
+											<p>{app.name}</p>
+										)}
+									</TooltipContent>
+								</Tooltip>
+							</ContextMenuTrigger>
+							<ContextMenuContent>
+								<ContextMenuGroup>
+									<ContextMenuItem onClick={() => openApp(app.id)}>New Window</ContextMenuItem>
+								</ContextMenuGroup>
+							</ContextMenuContent>
+						</ContextMenu>
 					);
 				})}
 			</section>
