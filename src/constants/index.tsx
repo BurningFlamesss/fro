@@ -1,5 +1,6 @@
 import type React from "react";
 import Frotes from "#/apps/Frotes.tsx";
+import Frottings from "#/apps/Frottings.tsx";
 
 export const INITIAL_Z_INDEX = 1000;
 export const BACK_Z_INDEX = 0;
@@ -63,7 +64,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		logo: "/apps/Settings.svg",
 		isPinned: true,
 		theme: DEFAULT_THEME,
-		component: <></>,
+		component: <Frottings />,
 	},
 	browser: {
 		id: "browser",
