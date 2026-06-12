@@ -61,6 +61,7 @@ export const useWindowStore = create<WindowStore>()(
 					logo: app.logo,
 					minimized: false,
 					zIndex: state.nextZIndex++,
+					component: app.component,
 				};
 			}),
 

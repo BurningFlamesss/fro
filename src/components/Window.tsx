@@ -1,11 +1,8 @@
-import { memo, useCallback, useRef } from "react";
-import { FaWindowMinimize } from "react-icons/fa";
-import { FaRegWindowMinimize } from "react-icons/fa6";
-import { MdOutlineClose } from "react-icons/md";
+import { useCallback, useRef } from "react";
 import { Rnd } from "react-rnd";
 import { cn } from "#/lib/utils.ts";
 import { useWindowStore } from "#/store/window.tsx";
-import type { AppId, AppInstance, WindowInstance } from "../constants";
+import type { WindowInstance } from "../constants";
 
 const MIN_VISIBLE_W = 128;
 const MIN_VISIBLE_H = 128;
@@ -22,13 +19,7 @@ const clampPosition = (x: number, y: number, w: number, h: number) => {
 	};
 };
 
-const Window = function Window({
-	win,
-	apps,
-}: {
-	win: WindowInstance;
-	apps: Record<AppId, AppInstance>;
-}) {
+const Window = function Window({ win }: { win: WindowInstance }) {
 	const {
 		minimizeWindow,
 		maximizeWindow,
@@ -55,9 +46,11 @@ const Window = function Window({
 		zIndex,
 	} = win;
 
+	const contentId = `window-content-${id}`;
+
 	if (minimized) return null;
 
-	const component = apps[appId].component;
+	const component = win.component;
 	const stopPropagation = (e: React.MouseEvent | React.TouchEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -157,7 +150,7 @@ const Window = function Window({
 				bottomRight: { cursor: "nwse-resize" },
 			}}
 			className={cn(
-				"overflow-hidden border backdrop-blur-xl",
+				"overflow-hidden border backdrop-blur-3xl",
 				"shadow-2xl shadow-black/30 transition-shadow duration-200",
 				"border-white/10 shadow-white/5",
 				maximized ? "rounded-none" : "rounded-xl ",
@@ -225,7 +218,8 @@ const Window = function Window({
 				type="button"
 				onClick={focusWindow.bind(null, id)}
 				onKeyUp={focusWindow.bind(null, id)}
-				className="w-full h-[calc(100%-2.5rem)] overflow-auto bg-foreground/10 text-background"
+				className="w-full h-[calc(100%-2.5rem)] overflow-auto text-background"
+				id={contentId}
 			>
 				{component}
 			</div>

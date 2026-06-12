@@ -1,4 +1,5 @@
 import type React from "react";
+import Frotes from "#/apps/Frotes.tsx";
 
 export const INITIAL_Z_INDEX = 1000;
 export const BACK_Z_INDEX = 0;
@@ -28,6 +29,7 @@ export interface WindowInstance {
 	minimized: boolean;
 	maximized: boolean;
 	theme?: string;
+	component: React.ReactNode;
 }
 
 export type AppId =
@@ -52,7 +54,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		logo: "/apps/Notepad.svg",
 		isPinned: true,
 		theme: DEFAULT_THEME,
-		component: <></>,
+		component: <Frotes />,
 	},
 	settings: {
 		id: "settings",
@@ -70,9 +72,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		logo: "/apps/Browser.svg",
 		isPinned: true,
 		theme: DEFAULT_THEME,
-		component: <>
-			Hello World!!!
-		</>,
+		component: <>Hello World!!!</>,
 	},
 	terminal: {
 		id: "terminal",
@@ -144,4 +144,5 @@ export const DEFAULT_WINDOW_INSTANCE_CONFIG: Omit<
 	minimized: false,
 	theme: "",
 	zIndex: INITIAL_Z_INDEX,
+	component: <></>,
 };

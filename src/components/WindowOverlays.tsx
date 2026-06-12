@@ -3,7 +3,7 @@ import type { WindowInstance } from "../constants";
 import Window from "./Window";
 
 function WindowOverlays() {
-	const { windows, apps } = useWindowStore();
+	const { windows } = useWindowStore();
 
 	const visibleWindows = Object.values(windows).filter(
 		(win): win is WindowInstance => win !== undefined,
@@ -15,7 +15,6 @@ function WindowOverlays() {
 				<Window
 					key={win.id}
 					win={win}
-					apps={apps}
 				/>
 			))}
 		</main>

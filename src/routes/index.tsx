@@ -7,6 +7,7 @@ export const Route = createFileRoute("/")({ component: Home });
 function Home() {
 	return (
 		<div className="os-container">
+			
 			<WindowOverlays />
 			<Taskbar />
 		</div>

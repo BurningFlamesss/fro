@@ -31,7 +31,6 @@ function Taskbar() {
 	}, []);
 
 	const toggleApp = (app: AppInstance) => {
-		// console.table(windows);
 		const appWindows = findAppWindows(windows, app.id);
 
 		if (appWindows.length === 0) {
@@ -139,7 +138,7 @@ function Taskbar() {
 												{win.map(
 													(w) =>
 														w && (
-															<WindowThumbnail key={w.id} win={w} apps={apps} />
+															<WindowThumbnail key={w.id} win={w} />
 														),
 												)}
 											</div>
