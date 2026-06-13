@@ -1,5 +1,5 @@
 import { toPng } from "html-to-image";
-import { useCallback, useEffect, useRef } from "react";
+import { Activity, useCallback, useEffect, useRef } from "react";
 import { Rnd } from "react-rnd";
 import { cn } from "#/lib/utils.ts";
 import { useWindowStore } from "#/store/window.tsx";
@@ -89,8 +89,6 @@ const Window = function Window({ win }: { win: WindowInstance }) {
 		};
 	}, [id, setPreview]);
 
-	if (minimized) return null;
-
 	const component = win.component;
 	const stopPropagation = (e: React.MouseEvent | React.TouchEvent) => {
 		e.preventDefault();
@@ -164,107 +162,109 @@ const Window = function Window({ win }: { win: WindowInstance }) {
 	);
 
 	return (
-		<Rnd
-			ref={rndRef}
-			dragHandleClassName="window-drag-handle"
-			position={{ x: maximized ? 0 : x, y: maximized ? 0 : y }}
-			size={{
-				width: maximized ? window.innerWidth : width,
-				height: maximized ? window.innerHeight : height,
-			}}
-			style={{ zIndex }}
-			disableDragging={maximized}
-			enableResizing={!maximized}
-			onDrag={handleDrag}
-			onDragStop={handleDragStop}
-			onResizeStop={handleResizeStop}
-			minWidth={300}
-			minHeight={200}
-			resizeHandleStyles={{
-				top: { cursor: "ns-resize" },
-				bottom: { cursor: "ns-resize" },
-				left: { cursor: "ew-resize" },
-				right: { cursor: "ew-resize" },
-				topLeft: { cursor: "nwse-resize" },
-				topRight: { cursor: "nesw-resize" },
-				bottomLeft: { cursor: "nesw-resize" },
-				bottomRight: { cursor: "nwse-resize" },
-			}}
-			className={cn(
-				"overflow-hidden border backdrop-blur-3xl",
-				"shadow-2xl shadow-black/30 transition-shadow duration-200",
-				"border-white/10 shadow-white/5",
-				maximized ? "rounded-none" : "rounded-xl ",
-				minimized ? "hidden" : "",
-			)}
-		>
-			<div
-				type="button"
-				onDoubleClick={maximizeWindow.bind(null, id)}
-				onClick={focusWindow.bind(null, id)}
-				onKeyUp={focusWindow.bind(null, id)}
+		<Activity mode={minimized ? "hidden" : "visible"}>
+			<Rnd
+				ref={rndRef}
+				dragHandleClassName="window-drag-handle"
+				position={{ x: maximized ? 0 : x, y: maximized ? 0 : y }}
+				size={{
+					width: maximized ? window.innerWidth : width,
+					height: maximized ? window.innerHeight : height,
+				}}
+				style={{ zIndex }}
+				disableDragging={maximized}
+				enableResizing={!maximized}
+				onDrag={handleDrag}
+				onDragStop={handleDragStop}
+				onResizeStop={handleResizeStop}
+				minWidth={300}
+				minHeight={200}
+				resizeHandleStyles={{
+					top: { cursor: "ns-resize" },
+					bottom: { cursor: "ns-resize" },
+					left: { cursor: "ew-resize" },
+					right: { cursor: "ew-resize" },
+					topLeft: { cursor: "nwse-resize" },
+					topRight: { cursor: "nesw-resize" },
+					bottomLeft: { cursor: "nesw-resize" },
+					bottomRight: { cursor: "nwse-resize" },
+				}}
 				className={cn(
-					"window-drag-handle flex items-center justify-between h-10 pl-3 w-full",
-					"bg-black/20 backdrop-blur-md border-b border-white/5",
-					"select-none cursor-grab active:cursor-grabbing",
-					maximized && "cursor-auto active:cursor-auto",
+					"overflow-hidden border backdrop-blur-3xl",
+					"shadow-2xl shadow-black/30 transition-shadow duration-200",
+					"border-white/10 shadow-white/5",
+					maximized ? "rounded-none" : "rounded-xl ",
+					minimized ? "hidden" : "",
 				)}
 			>
-				<div className="flex items-center gap-2 min-w-0">
-					<img
-						draggable={false}
-						src={logo}
-						alt=""
-						className="w-5 h-5 rounded opacity-80"
-					/>
-					<span className="text-sm font-medium text-white/90 truncate">
-						{title}
-					</span>
+				<div
+					type="button"
+					onDoubleClick={maximizeWindow.bind(null, id)}
+					onClick={focusWindow.bind(null, id)}
+					onKeyUp={focusWindow.bind(null, id)}
+					className={cn(
+						"window-drag-handle flex items-center justify-between h-10 pl-3 w-full",
+						"bg-black/20 backdrop-blur-md border-b border-white/5",
+						"select-none cursor-grab active:cursor-grabbing",
+						maximized && "cursor-auto active:cursor-auto",
+					)}
+				>
+					<div className="flex items-center gap-2 min-w-0">
+						<img
+							draggable={false}
+							src={logo}
+							alt=""
+							className="w-5 h-5 rounded opacity-80"
+						/>
+						<span className="text-sm font-medium text-white/90 truncate">
+							{title}
+						</span>
+					</div>
+
+					<div
+						type="button"
+						className="menu flex flex-row items-center h-full pr-3 cursor-auto"
+						onMouseDown={stopPropagation}
+						onClick={stopPropagation}
+					>
+						<img
+							onClick={minimizeWindow.bind(null, id)}
+							onKeyUp={minimizeWindow.bind(null, id)}
+							className="w-8 h-8 p-2 transition-colors duration-150 hover:bg-green-400/10 cursor-pointer"
+							src="/public/general/Minimize.svg"
+							alt="Minimize"
+							draggable={false}
+						/>
+						<img
+							onClick={maximizeWindow.bind(null, id)}
+							onKeyUp={maximizeWindow.bind(null, id)}
+							className="w-8 h-8 p-2 transition-colors duration-150 hover:bg-blue-400/10 cursor-pointer"
+							src="/public/general/Maximize.svg"
+							alt="Maximize"
+							draggable={false}
+						/>
+						<img
+							onClick={closeWindow.bind(null, id)}
+							onKeyUp={closeWindow.bind(null, id)}
+							className="w-8 h-8 p-2 transition-colors duration-150 hover:bg-red-400/10 cursor-pointer"
+							src="/public/general/Close.svg"
+							alt="Close"
+							draggable={false}
+						/>
+					</div>
 				</div>
 
 				<div
 					type="button"
-					className="menu flex flex-row items-center h-full pr-3 cursor-auto"
-					onMouseDown={stopPropagation}
-					onClick={stopPropagation}
+					onClick={focusWindow.bind(null, id)}
+					onKeyUp={focusWindow.bind(null, id)}
+					className="w-full h-[calc(100%-2.5rem)] overflow-auto text-background"
+					ref={contentRef}
 				>
-					<img
-						onClick={minimizeWindow.bind(null, id)}
-						onKeyUp={minimizeWindow.bind(null, id)}
-						className="w-8 h-8 p-2 transition-colors duration-150 hover:bg-green-400/10 cursor-pointer"
-						src="/public/general/Minimize.svg"
-						alt="Minimize"
-						draggable={false}
-					/>
-					<img
-						onClick={maximizeWindow.bind(null, id)}
-						onKeyUp={maximizeWindow.bind(null, id)}
-						className="w-8 h-8 p-2 transition-colors duration-150 hover:bg-blue-400/10 cursor-pointer"
-						src="/public/general/Maximize.svg"
-						alt="Maximize"
-						draggable={false}
-					/>
-					<img
-						onClick={closeWindow.bind(null, id)}
-						onKeyUp={closeWindow.bind(null, id)}
-						className="w-8 h-8 p-2 transition-colors duration-150 hover:bg-red-400/10 cursor-pointer"
-						src="/public/general/Close.svg"
-						alt="Close"
-						draggable={false}
-					/>
+					{component}
 				</div>
-			</div>
-
-			<div
-				type="button"
-				onClick={focusWindow.bind(null, id)}
-				onKeyUp={focusWindow.bind(null, id)}
-				className="w-full h-[calc(100%-2.5rem)] overflow-auto text-background"
-				ref={contentRef}
-			>
-				{component}
-			</div>
-		</Rnd>
+			</Rnd>
+		</Activity>
 	);
 };
 
