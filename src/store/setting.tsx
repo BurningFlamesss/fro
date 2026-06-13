@@ -9,8 +9,8 @@ interface SettingStore {
 export const useSettingStore = create<SettingStore>()(
 	immer((set) => ({
 		backgroundImage: {
-			url: "/backgrounds/cyber-rain.gif",
-			position: "center"
+			url: localStorage.getItem("backgroundImage:url") ?? "/backgrounds/cyber-rain.gif",
+			position: localStorage.getItem("backgroundImage:position") ?? "center"
 		},
 		
 
@@ -18,6 +18,8 @@ export const useSettingStore = create<SettingStore>()(
 			set((state) => {
 				state.backgroundImage.url = imageUrl;
 				state.backgroundImage.position = position;
+				localStorage.setItem("backgroundImage:url", imageUrl)
+				localStorage.setItem("backgroundImage:position", position)
 			}),
 	})),
 );
