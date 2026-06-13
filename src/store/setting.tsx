@@ -2,17 +2,22 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
 interface SettingStore {
-	backgroundImage: string;
-	setBackgroundImage: (imageUrl: string) => void;
+	backgroundImage: Record<"url" | "position", string>;
+	setBackgroundImage: (imageUrl: string, position: string) => void;
 }
 
 export const useSettingStore = create<SettingStore>()(
 	immer((set) => ({
-		backgroundImage: "/backgrounds/cyber-rain.gif",
+		backgroundImage: {
+			url: "/backgrounds/cyber-rain.gif",
+			position: "center"
+		},
+		
 
-		setBackgroundImage: (imageUrl) =>
+		setBackgroundImage: (imageUrl, position) =>
 			set((state) => {
-				state.backgroundImage = imageUrl;
+				state.backgroundImage.url = imageUrl;
+				state.backgroundImage.position = position;
 			}),
 	})),
 );

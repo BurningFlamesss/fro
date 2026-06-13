@@ -10,7 +10,8 @@ function Home() {
 	const { backgroundImage }  = useSettingStore()
 	return (
 		<div className="os-container" style={{
-			backgroundImage: `url(${backgroundImage})`
+			backgroundImage: `url(${backgroundImage.url})`,
+			backgroundPosition: backgroundImage.position
 		}}>
 			<Screen />
 			<WindowOverlays />
