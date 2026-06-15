@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { IconType } from "react-icons";
+import { FaCircleCheck, FaPenFancy, FaWikipediaW } from "react-icons/fa6";
 import {
 	PiArrowUpRight,
-	PiClockCounterClockwise,
 	PiCompassDuotone,
 	PiGlobeDuotone,
-	PiMagnifyingGlass,
 	PiMagnifyingGlassDuotone,
 	PiMicrophone,
 	PiPlus,
@@ -14,11 +13,10 @@ import {
 	PiWarningOctagonDuotone,
 	PiX,
 } from "react-icons/pi";
-import { cn } from "#/lib/utils.ts";
-import { getSearchResults } from "#/server/getSearchResults.tsx";
-import { FaCircleCheck, FaPenFancy, FaWikipediaW } from "react-icons/fa6";
 import { SiExcalidraw } from "react-icons/si";
 import { TbMathMaxMin } from "react-icons/tb";
+import { cn } from "#/lib/utils.ts";
+import { getSearchResults } from "#/server/getSearchResults.tsx";
 
 type TabState =
 	| "search"
@@ -98,9 +96,8 @@ const PINNED_SITES: PinnedSite[] = [
 ];
 
 const SUGGESTIONS: Suggestion[] = [
-	{ icon: PiClockCounterClockwise, text: "react server components explained" },
-	{ icon: PiMagnifyingGlass, text: "tanstack start data loaders" },
-	{ icon: PiGlobeDuotone, text: "github.com" },
+	{ icon: PiGlobeDuotone, text: "frocus.tech" },
+	{ icon: PiGlobeDuotone, text: "time.is" },
 ];
 
 const STATE_META: Record<
