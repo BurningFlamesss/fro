@@ -1,5 +1,6 @@
-import { Link } from "@tanstack/react-router";
-import { useCallback, useRef, useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Tabs } from "radix-ui";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { IconType } from "react-icons";
 import {
 	PiArrowUpRight,
@@ -70,7 +71,7 @@ interface Suggestion {
 const PINNED_SITES: PinnedSite[] = [
 	{
 		name: "Google",
-		url: "https://google.com",
+		url: "https://spread.neploom.com",
 		icon: PiGoogleLogo,
 		color: "#4285f4",
 	},
@@ -352,14 +353,82 @@ function ResultsView({ tab }: { tab: Tab }) {
 }
 
 function SurfingView({ tab }: { tab: Tab }) {
-	return tab.url && tab.title ? (
-		<iframe
-			className="h-[calc(100%+72px)] w-full"
-			src={tab.url}
-			title={tab.title}
-			frameBorder="0"
-		></iframe>
-	) : null;
+	const [canEmbed, setCanEmbed] = useState<boolean>(true);
+
+	useEffect(() => {
+		const check = async (url: string) => {
+			try {
+				const response = await fetch(url, {
+					method: "HEAD",
+				});
+
+				const xFrame = response.headers.get("x-frame-options");
+				const csp = response.headers.get("content-security-policy");
+
+				if (xFrame) {
+					const value = xFrame.toUpperCase();
+
+					if (value.includes("DENY") || value.includes("SAMEORIGIN")) {
+						setCanEmbed(false);
+						return false;
+					}
+				}
+
+				if (csp) {
+					const lower = csp.toLowerCase();
+
+					if (
+						lower.includes("frame-ancestors 'none'") ||
+						lower.includes("frame-ancestors 'self'")
+					) {
+						setCanEmbed(false);
+						return false;
+					}
+				}
+
+				setCanEmbed(true);
+				return true;
+			} catch (error) {
+				setCanEmbed(false);
+			}
+		};
+
+		if (tab.url) {
+			check(tab.url);
+		} else {
+			setCanEmbed(false);
+		}
+	}, [tab.url]);
+
+	if (!tab.url || !tab.title) {
+		return null;
+	}
+
+	if (!canEmbed) {
+		window.open(tab.url, "_blank", "noopener,noreferrer");
+	}
+
+	return (
+		<>
+			{canEmbed ? (
+				<iframe
+					className="h-[calc(100%+72px)] w-full"
+					src={tab.url}
+					title={tab.title}
+					frameBorder="0"
+					onError={() => setCanEmbed(false)}
+				></iframe>
+			) : (
+				<div className="h-full w-full flex flex-col items-center justify-center gap-y-4">
+					<p>This site cannot be reached.</p>
+
+					<a className="px-3 py-2 glassmorphism rounded-xl" href={tab.url} target="_blank">
+						Open Site in New Tab
+					</a>
+				</div>
+			)}
+		</>
+	);
 }
 
 function PlaceholderView({
