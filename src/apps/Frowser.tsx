@@ -1,28 +1,24 @@
-import { Link, useNavigate } from "@tanstack/react-router";
-import { Tabs } from "radix-ui";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { IconType } from "react-icons";
 import {
 	PiArrowUpRight,
 	PiClockCounterClockwise,
 	PiCompassDuotone,
-	PiDiscordLogo,
-	PiGithubLogo,
 	PiGlobeDuotone,
-	PiGoogleLogo,
 	PiMagnifyingGlass,
 	PiMagnifyingGlassDuotone,
 	PiMicrophone,
 	PiPlus,
-	PiRedditLogo,
 	PiShieldWarningDuotone,
 	PiSpinnerGap,
 	PiWarningOctagonDuotone,
 	PiX,
-	PiYoutubeLogo,
 } from "react-icons/pi";
 import { cn } from "#/lib/utils.ts";
 import { getSearchResults } from "#/server/getSearchResults.tsx";
+import { FaCircleCheck, FaPenFancy, FaWikipediaW } from "react-icons/fa6";
+import { SiExcalidraw } from "react-icons/si";
+import { TbMathMaxMin } from "react-icons/tb";
 
 type TabState =
 	| "search"
@@ -70,34 +66,34 @@ interface Suggestion {
 
 const PINNED_SITES: PinnedSite[] = [
 	{
-		name: "Google",
-		url: "https://spread.neploom.com",
-		icon: PiGoogleLogo,
-		color: "#4285f4",
+		name: "Wikipedia",
+		url: "https://www.wikipedia.org/",
+		icon: FaWikipediaW,
+		color: "#ffffff",
 	},
 	{
-		name: "YouTube",
-		url: "https://youtube.com",
-		icon: PiYoutubeLogo,
-		color: "#ff0000",
-	},
-	{
-		name: "GitHub",
-		url: "https://github.com",
-		icon: PiGithubLogo,
-		color: "#6e5494",
-	},
-	{
-		name: "Reddit",
-		url: "https://reddit.com",
-		icon: PiRedditLogo,
-		color: "#ff4500",
-	},
-	{
-		name: "Discord",
-		url: "https://discord.com",
-		icon: PiDiscordLogo,
+		name: "Excalidraw",
+		url: "https://excalidraw.com/",
+		icon: SiExcalidraw,
 		color: "#5865f2",
+	},
+	{
+		name: "Desmos",
+		url: "https://www.desmos.com/calculator",
+		icon: TbMathMaxMin,
+		color: "#00ff00",
+	},
+	{
+		name: "Zenpen",
+		url: "https://zenpen.io/",
+		icon: FaPenFancy,
+		color: "#00ffff",
+	},
+	{
+		name: "Pomofocus",
+		url: "https://pomofocus.io/",
+		icon: FaCircleCheck,
+		color: "ff0000",
 	},
 ];
 
@@ -394,7 +390,7 @@ function SurfingView({ tab }: { tab: Tab }) {
 		};
 
 		if (tab.url) {
-			check(tab.url);
+			// check(tab.url);
 		} else {
 			setCanEmbed(false);
 		}
