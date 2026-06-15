@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { tavily } from "@tavily/core";
 
 export const getSearchResults = createServerFn({ method: "POST" })
 	.validator((data: { query: string }) => data)
@@ -10,27 +11,26 @@ export const getSearchResults = createServerFn({ method: "POST" })
 				throw new Error("WEB_SEARCH_API_KEY missing");
 			}
 
-            const searchQuery = encodeURIComponent(data.query)
-            console.log("Search query: ", searchQuery)
+			const client = tavily({
+				apiKey,
+			});
 
-			const response = await fetch(
-				`https://search.hackclub.com/res/v1/web/search?q=${searchQuery}`,
-				{
-					headers: {
-						Authorization: `Bearer ${apiKey}`,
-                        'x-subscription-token': apiKey
-					},
-				},
-			);
+			const response = await client.search(data.query, {
+				searchDepth: "ultra-fast",
+                includeAnswer: "basic",
+                includeImages: true
+			});
 
-			if (!response.ok) {
-				throw new Error(`Search API returned ${response.status}`);
+			if (!response) {
+				throw new Error(`Search API returned: ${response}`);
 			}
 
-			const searchResults = await response.json();
-
 			return {
-				data: searchResults,
+				data: {
+                    answer: response.answer,
+                    results: response.results,
+                    images: response.images
+                },
 				status: {
 					success: true,
 					code: 200,
@@ -38,7 +38,7 @@ export const getSearchResults = createServerFn({ method: "POST" })
 				error: null,
 			};
 		} catch (error) {
-            console.error("Error: ", error)
+			console.error("Error: ", error);
 			return {
 				data: null,
 				status: {

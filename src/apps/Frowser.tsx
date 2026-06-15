@@ -21,6 +21,7 @@ import {
 } from "react-icons/pi";
 import { cn } from "#/lib/utils.ts";
 import { getSearchResults } from "#/server/getSearchResults.tsx";
+import { Link } from "@tanstack/react-router";
 
 type TabState =
 	| "search"
@@ -36,6 +37,22 @@ interface Tab {
 	state: TabState;
 	url?: string;
 	query?: string;
+	searchResponse?: {
+		results?: Array<{
+			title: string;
+			url: string;
+			content: string;
+			rawContent?: string;
+			score: number;
+			publishedDate: string;
+			favicon?: string;
+		}>;
+		images?: Array<{
+			url: string;
+			description?: string;
+		}>;
+		answer?: string;
+	};
 }
 
 interface PinnedSite {
@@ -517,6 +534,11 @@ function Frowser() {
 
 					updateTab(id, {
 						state: "results",
+						searchResponse: {
+							answer: data?.answer,
+							images: data?.images,
+							results: data?.results,
+						},
 					});
 
 					console.log("Search Responses:", data);
@@ -568,6 +590,18 @@ function Frowser() {
 						onSearch={handleSearch}
 						onNavigate={handleNavigate}
 					/>
+				) : currentTab.state === "results" ? (
+					<>
+						AI answer: {currentTab.searchResponse?.answer}
+						<br />
+						{currentTab.searchResponse?.results?.map((result) => {
+							return (
+								<a key={`result-${result.title}`} href={result.url}>
+									{result.title}
+								</a>
+							);
+						})}
+					</>
 				) : (
 					<PlaceholderView
 						key={currentTab.id}
