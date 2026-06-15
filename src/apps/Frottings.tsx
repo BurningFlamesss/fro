@@ -1,4 +1,6 @@
+import { cn } from "#/lib/utils.ts";
 import { useSettingStore } from "#/store/setting.tsx";
+import { IoMdCheckmark } from "react-icons/io";
 
 const backgrounds = [
 	{
@@ -74,7 +76,11 @@ const backgrounds = [
 		position: "center",
 	},
 	{ name: "pixel-dog", url: "/backgrounds/pixel-dog.gif", position: "center" },
-	{ name: "rain-mode", url: "/backgrounds/rain-mode.gif", position: "center 70%" },
+	{
+		name: "rain-mode",
+		url: "/backgrounds/rain-mode.gif",
+		position: "center 70%",
+	},
 	{ name: "rain", url: "/backgrounds/rain.gif", position: "center" },
 	{
 		name: "relaxing-tea",
@@ -95,21 +101,54 @@ const backgrounds = [
 ];
 
 function Frottings() {
-	const { setBackgroundImage } = useSettingStore();
+	const { backgroundImage, setBackgroundImage } = useSettingStore();
 	return (
-		<div className="relative z-10 min-h-full w-full p-2 flex flex-col content-start overflow-x-hidden overflow-y-auto">
-			{backgrounds.map((background) => {
-				return (
-					<button
-						type="button"
-						onClick={() => setBackgroundImage(background.url, background.position)}
-						key={`background-image-${background.name}`}
-					>
-						<img src={background.url} alt="" />
-						{background.name}
-					</button>
-				);
-			})}
+		<div className="p-4">
+			<h2 className="mb-4 text-lg font-semibold">Backgrounds</h2>
+			<div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+				{backgrounds.map((background) => {
+					const selected = backgroundImage.url === background.url;
+
+					return (
+						<button
+							key={background.name}
+							type="button"
+							onClick={() =>
+								setBackgroundImage(background.url, background.position)
+							}
+							className={cn(
+								"group relative overflow-hidden rounded-xl border transition-all cursor-pointer",
+								"hover:border-background/30",
+								selected
+									? "border-primary ring-2 ring-primary/40"
+									: "border-background/10",
+							)}
+						>
+							<img
+								src={`${background.url.replace("/backgrounds", "/backgrounds/previews").replace(".gif", ".webp")}`}
+								alt={background.name}
+								loading="lazy"
+								className="aspect-video w-full object-cover transition-transform duration-300 group-hover:scale-105"
+							/>
+
+							<div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-foreground/80 via-foreground/40 to-transparent p-2">
+								<p className="truncate text-xs font-medium text-background">
+									{background.name
+										.split("-")
+										.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+										.join(" ")}
+								</p>
+							</div>
+
+							{selected && (
+								<div className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-background">
+									<IoMdCheckmark />
+								</div>
+							)}
+						</button>
+					);
+				})}
+			</div>
 		</div>
 	);
 }

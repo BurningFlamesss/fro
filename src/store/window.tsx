@@ -34,7 +34,7 @@ interface WindowStore {
 export const useWindowStore = create<WindowStore>()(
 	immer((set) => ({
 		windows: Windows,
-		apps: localStorage.getItem("apps") ? JSON.parse(localStorage.getItem("apps")!) as typeof Apps : Apps,
+		apps: Apps,
 		nextZIndex: INITIAL_Z_INDEX + 1,
 
 		openApp: (
@@ -80,7 +80,6 @@ export const useWindowStore = create<WindowStore>()(
 				const app = state.apps[appId];
 				if (app) {
 					app.isPinned = false;
-					localStorage.setItem("apps", JSON.stringify(state.apps))
 				}
 			}),
 
@@ -89,7 +88,6 @@ export const useWindowStore = create<WindowStore>()(
 				const app = state.apps[appId];
 				if (app) {
 					app.isPinned = true;
-					localStorage.setItem("apps", JSON.stringify(state.apps))
 				}
 			}),
 
