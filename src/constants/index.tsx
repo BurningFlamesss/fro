@@ -1,6 +1,7 @@
 import type React from "react";
 import Frotes from "#/apps/Frotes.tsx";
 import Frottings from "#/apps/Frottings.tsx";
+import Frowser from "#/apps/Frowser.tsx";
 
 export const INITIAL_Z_INDEX = 1000;
 export const BACK_Z_INDEX = 0;
@@ -73,7 +74,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		logo: "/apps/Browser.svg",
 		isPinned: true,
 		theme: DEFAULT_THEME,
-		component: <>Hello World!!!</>,
+		component: <Frowser />,
 	},
 	terminal: {
 		id: "terminal",

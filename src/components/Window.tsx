@@ -231,7 +231,7 @@ const Window = function Window({ win }: { win: WindowInstance }) {
 							onClick={minimizeWindow.bind(null, id)}
 							onKeyUp={minimizeWindow.bind(null, id)}
 							className="w-8 h-8 p-2 transition-colors duration-150 hover:bg-green-400/10 cursor-pointer"
-							src="/public/general/Minimize.svg"
+							src="/general/Minimize.svg"
 							alt="Minimize"
 							draggable={false}
 						/>
@@ -239,7 +239,7 @@ const Window = function Window({ win }: { win: WindowInstance }) {
 							onClick={maximizeWindow.bind(null, id)}
 							onKeyUp={maximizeWindow.bind(null, id)}
 							className="w-8 h-8 p-2 transition-colors duration-150 hover:bg-blue-400/10 cursor-pointer"
-							src="/public/general/Maximize.svg"
+							src="/general/Maximize.svg"
 							alt="Maximize"
 							draggable={false}
 						/>
@@ -247,7 +247,7 @@ const Window = function Window({ win }: { win: WindowInstance }) {
 							onClick={closeWindow.bind(null, id)}
 							onKeyUp={closeWindow.bind(null, id)}
 							className="w-8 h-8 p-2 transition-colors duration-150 hover:bg-red-400/10 cursor-pointer"
-							src="/public/general/Close.svg"
+							src="/general/Close.svg"
 							alt="Close"
 							draggable={false}
 						/>

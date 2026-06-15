@@ -9,17 +9,21 @@ interface SettingStore {
 export const useSettingStore = create<SettingStore>()(
 	immer((set) => ({
 		backgroundImage: {
-			url: localStorage.getItem("backgroundImage:url") ?? "/backgrounds/cyber-rain.gif",
-			position: localStorage.getItem("backgroundImage:position") ?? "center"
+			url: window
+				? (localStorage?.getItem("backgroundImage:url") ??
+					"/backgrounds/cyber-rain.gif")
+				: "/backgrounds/cyber-rain.gif",
+			position: window
+				? (localStorage?.getItem("backgroundImage:position") ?? "center")
+				: "center",
 		},
-		
 
 		setBackgroundImage: (imageUrl, position) =>
 			set((state) => {
 				state.backgroundImage.url = imageUrl;
 				state.backgroundImage.position = position;
-				localStorage.setItem("backgroundImage:url", imageUrl)
-				localStorage.setItem("backgroundImage:position", position)
+				localStorage?.setItem("backgroundImage:url", imageUrl);
+				localStorage?.setItem("backgroundImage:position", position);
 			}),
 	})),
 );

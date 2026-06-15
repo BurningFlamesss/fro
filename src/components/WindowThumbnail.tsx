@@ -46,7 +46,7 @@ const WindowThumbnail = memo(function WindowThumbnail({ win }: Props) {
 					onClick={handleClose}
 				>
 					<img
-						src="/public/general/Close.svg"
+						src="/general/Close.svg"
 						alt="Close"
 						className="w-3 h-3"
 					/>

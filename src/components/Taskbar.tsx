@@ -100,7 +100,7 @@ function Taskbar() {
 				<div className="relative flex items-center justify-center w-11 h-11 rounded-xl transition-colors duration-150 hover:bg-background/5 cursor-pointer">
 					<img
 						className="w-8 h-8 object-contain"
-						src="/public/logo.png"
+						src="/logo.png"
 						alt="Logo"
 					/>
 				</div>
