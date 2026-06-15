@@ -20,6 +20,7 @@ import {
 	PiYoutubeLogo,
 } from "react-icons/pi";
 import { cn } from "#/lib/utils.ts";
+import { getSearchResults } from "#/server/getSearchResults.tsx";
 
 type TabState =
 	| "search"
@@ -227,7 +228,10 @@ function SearchBar({
 									onClick={() => submit(suggestion.text)}
 									className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-background/60 transition-colors hover:bg-background/5 hover:text-background"
 								>
-									<suggestion.icon className="shrink-0 text-background/40" size={16} />
+									<suggestion.icon
+										className="shrink-0 text-background/40"
+										size={16}
+									/>
 									<span className="truncate">{suggestion.text}</span>
 									<PiArrowUpRight
 										className="ml-auto shrink-0 text-background/20"
@@ -357,7 +361,8 @@ function getTabIcon(state: TabState): {
 	tone: string;
 	spin?: boolean;
 } {
-	if (state === "search") return { icon: PiCompassDuotone, tone: "text-background/35" };
+	if (state === "search")
+		return { icon: PiCompassDuotone, tone: "text-background/35" };
 
 	const meta = STATE_META[state];
 
@@ -388,7 +393,9 @@ function TabBar({
 						onClick={() => onSelect(tab.id)}
 						className={cn(
 							"group relative flex min-w-0 max-w-[180px] cursor-pointer items-center gap-2 rounded-t-xl px-3 py-2 text-xs font-medium transition-colors",
-							isActive ? "bg-background/10 text-background" : "text-background/40 hover:bg-background/5 hover:text-background/80",
+							isActive
+								? "bg-background/10 text-background"
+								: "text-background/40 hover:bg-background/5 hover:text-background/80",
 						)}
 					>
 						<Icon
@@ -433,13 +440,17 @@ function TabBar({
 }
 
 function Frowser() {
-	const [tabs, setTabs] = useState<Tab[]>([{ id: "1", title: "New Tab", state: "search" }]);
+	const [tabs, setTabs] = useState<Tab[]>([
+		{ id: "1", title: "New Tab", state: "search" },
+	]);
 	const [currentTabId, setCurrentTabId] = useState("1");
 
 	const currentTab = tabs.find((tab) => tab.id === currentTabId) ?? tabs[0];
 
 	const updateTab = useCallback((id: string, patch: Partial<Tab>) => {
-		setTabs((prev) => prev.map((tab) => (tab.id === id ? { ...tab, ...patch } : tab)));
+		setTabs((prev) =>
+			prev.map((tab) => (tab.id === id ? { ...tab, ...patch } : tab)),
+		);
 	}, []);
 
 	const addTab = useCallback(() => {
@@ -472,26 +483,47 @@ function Frowser() {
 	);
 
 	const handleSearch = useCallback(
-		(query: string) => {
+		async (query: string) => {
 			const id = currentTabId;
 			const navigating = isUrlLike(query);
 
 			updateTab(id, {
 				title: query,
 				query: navigating ? undefined : query,
-				url: navigating ? query.startsWith("http") ? query : `https://${query}` : undefined,
+				url: navigating
+					? query.startsWith("http")
+						? query
+						: `https://${query}`
+					: undefined,
 				state: "loading",
 			});
 
-			setTimeout(() => {
-				const roll = Math.random();
+			if (!navigating) {
+				try {
+					console.log("Invoked: ");
 
-				if (roll < 0.08) updateTab(id, { state: "error" });
+					const { data, status, error } = await getSearchResults({
+						data: {
+							query,
+						},
+					});
 
-				else if (roll < 0.18) updateTab(id, { state: "warning" });
+					if (!status.success) {
+						updateTab(id, {
+							state: "error",
+						});
+						return;
+					}
 
-				else updateTab(id, { state: navigating ? "surfing" : "results" });
-			}, 1100);
+					updateTab(id, {
+						state: "results",
+					});
+
+					console.log("Search Responses:", data);
+				} catch (error) {
+					console.error("Error: ", error);
+				}
+			}
 		},
 		[currentTabId, updateTab],
 	);
