@@ -169,7 +169,7 @@ const Window = function Window({ win }: { win: WindowInstance }) {
 				position={{ x: maximized ? 0 : x, y: maximized ? 0 : y }}
 				size={{
 					width: maximized ? window.innerWidth : width,
-					height: maximized ? window.innerHeight : height,
+					height: maximized ? window.innerHeight - 76 : height,
 				}}
 				style={{ zIndex }}
 				disableDragging={maximized}

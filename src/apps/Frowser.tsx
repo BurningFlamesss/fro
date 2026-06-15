@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useCallback, useRef, useState } from "react";
 import type { IconType } from "react-icons";
 import {
@@ -21,7 +22,6 @@ import {
 } from "react-icons/pi";
 import { cn } from "#/lib/utils.ts";
 import { getSearchResults } from "#/server/getSearchResults.tsx";
-import { Link } from "@tanstack/react-router";
 
 type TabState =
 	| "search"
@@ -335,6 +335,33 @@ function NewTabView({
 	);
 }
 
+function ResultsView({ tab }: { tab: Tab }) {
+	return (
+		<>
+			AI answer: {tab.searchResponse?.answer}
+			<br />
+			{tab.searchResponse?.results?.map((result) => {
+				return (
+					<a key={`result-${result.title}`} href={result.url}>
+						{result.title}
+					</a>
+				);
+			})}
+		</>
+	);
+}
+
+function SurfingView({ tab }: { tab: Tab }) {
+	return tab.url && tab.title ? (
+		<iframe
+			className="h-[calc(100%+72px)] w-full"
+			src={tab.url}
+			title={tab.title}
+			frameBorder="0"
+		></iframe>
+	) : null;
+}
+
 function PlaceholderView({
 	state,
 	tab,
@@ -591,17 +618,9 @@ function Frowser() {
 						onNavigate={handleNavigate}
 					/>
 				) : currentTab.state === "results" ? (
-					<>
-						AI answer: {currentTab.searchResponse?.answer}
-						<br />
-						{currentTab.searchResponse?.results?.map((result) => {
-							return (
-								<a key={`result-${result.title}`} href={result.url}>
-									{result.title}
-								</a>
-							);
-						})}
-					</>
+					<ResultsView key={currentTab.id} tab={currentTab} />
+				) : currentTab.state === "surfing" ? (
+					<SurfingView key={currentTab.id} tab={currentTab} />
 				) : (
 					<PlaceholderView
 						key={currentTab.id}
