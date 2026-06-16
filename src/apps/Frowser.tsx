@@ -330,16 +330,35 @@ function NewTabView({
 	);
 }
 
-function ResultsView({ tab }: { tab: Tab }) {
+function ResultsView({
+	tab,
+	addAndUpdateTab,
+	updateTab,
+}: {
+	tab: Tab;
+	addAndUpdateTab: (patch: Partial<Tab>) => void;
+	updateTab: (id: string, patch: Partial<Tab>) => void;
+}) {
 	return (
 		<>
 			AI answer: {tab.searchResponse?.answer}
 			<br />
 			{tab.searchResponse?.results?.map((result) => {
 				return (
-					<a key={`result-${result.title}`} href={result.url}>
+					<button
+						type="button"
+						onClick={(e) => {
+							e.preventDefault();
+							addAndUpdateTab({
+								url: result.url,
+								state: "surfing",
+								title: result.title,
+							});
+						}}
+						key={`result-${result.title}`}
+					>
 						{result.title}
-					</a>
+					</button>
 				);
 			})}
 		</>
@@ -536,6 +555,12 @@ function Frowser() {
 		);
 	}, []);
 
+	const addAndUpdateTab = useCallback((patch: Partial<Tab>) => {
+		const id = crypto.randomUUID();
+		setTabs((prev) => [...prev, { id, title: "", state: "surfing",  ...patch }]); // defaults will eventually get override
+		setCurrentTabId(id);
+	}, []);
+
 	const addTab = useCallback(() => {
 		const id = crypto.randomUUID();
 		setTabs((prev) => [...prev, { id, title: "New Tab", state: "search" }]);
@@ -583,8 +608,6 @@ function Frowser() {
 
 			if (!navigating) {
 				try {
-					console.log("Invoked: ");
-
 					const { data, status, error } = await getSearchResults({
 						data: {
 							query,
@@ -611,8 +634,13 @@ function Frowser() {
 				} catch (error) {
 					console.error("Error: ", error);
 				}
+			} else {
+				updateTab(id, {
+					state: "surfing",
+				});
 			}
 		},
+
 		[currentTabId, updateTab],
 	);
 
@@ -657,7 +685,12 @@ function Frowser() {
 						onNavigate={handleNavigate}
 					/>
 				) : currentTab.state === "results" ? (
-					<ResultsView key={currentTab.id} tab={currentTab} />
+					<ResultsView
+						key={currentTab.id}
+						tab={currentTab}
+						addAndUpdateTab={addAndUpdateTab}
+						updateTab={updateTab}
+					/>
 				) : currentTab.state === "surfing" ? (
 					<SurfingView key={currentTab.id} tab={currentTab} />
 				) : (
