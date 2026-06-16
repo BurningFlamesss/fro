@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { IconType } from "react-icons";
-import { FaCircleCheck, FaPenFancy, FaWikipediaW } from "react-icons/fa6";
+import { FaPenFancy, FaWikipediaW } from "react-icons/fa6";
 import {
 	PiArrowUpRight,
 	PiCompassDuotone,
@@ -13,7 +13,7 @@ import {
 	PiWarningOctagonDuotone,
 	PiX,
 } from "react-icons/pi";
-import { SiExcalidraw } from "react-icons/si";
+import { SiExcalidraw, SiGutenberg } from "react-icons/si";
 import { TbMathMaxMin } from "react-icons/tb";
 import { cn } from "#/lib/utils.ts";
 import { checkEmbeddable } from "#/server/checkEmbeddable.tsx";
@@ -89,9 +89,9 @@ const PINNED_SITES: PinnedSite[] = [
 		color: "#00ffff",
 	},
 	{
-		name: "Pomofocus",
-		url: "https://pomofocus.io/",
-		icon: FaCircleCheck,
+		name: "Gutenberg",
+		url: "https://www.gutenberg.org/",
+		icon: SiGutenberg,
 		color: "ff0000",
 	},
 ];
@@ -339,11 +339,12 @@ function ResultsView({
 	addAndUpdateTab: (patch: Partial<Tab>) => void;
 	updateTab: (id: string, patch: Partial<Tab>) => void;
 }) {
+
 	return (
-		<>
+		<div className="h-full w-full overflow-y-auto">
 			AI answer: {tab.searchResponse?.answer}
 			<br />
-			<main className="h-full w-full overflow-y-auto flex flex-col justify-start items-start">
+			<main className="h-auto w-full flex flex-col justify-start items-start">
 				{tab.searchResponse?.results?.map((result) => {
 					return (
 						<button
@@ -364,7 +365,14 @@ function ResultsView({
 					);
 				})}
 			</main>
-		</>
+			<main>
+				{tab.searchResponse?.images?.map(image => {
+					return (
+						<img key={`image-${image.description}`} src={image.url} alt={image.description ?? ""} />
+					)
+				})}
+			</main>
+		</div>
 	);
 }
 
@@ -400,7 +408,7 @@ function SurfingView({ tab }: { tab: Tab }) {
 		<>
 			{canEmbed ? (
 				<iframe
-					className="h-[calc(100%+72px)] w-full"
+					className="h-full w-full"
 					src={tab.url}
 					title={tab.title}
 					frameBorder="0"
