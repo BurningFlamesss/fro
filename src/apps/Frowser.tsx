@@ -16,6 +16,7 @@ import {
 import { SiExcalidraw } from "react-icons/si";
 import { TbMathMaxMin } from "react-icons/tb";
 import { cn } from "#/lib/utils.ts";
+import { checkEmbeddable } from "#/server/checkEmbeddable.tsx";
 import { getSearchResults } from "#/server/getSearchResults.tsx";
 
 type TabState =
@@ -350,44 +351,16 @@ function SurfingView({ tab }: { tab: Tab }) {
 
 	useEffect(() => {
 		const check = async (url: string) => {
-			try {
-				const response = await fetch(url, {
-					method: "HEAD",
-				});
-
-				const xFrame = response.headers.get("x-frame-options");
-				const csp = response.headers.get("content-security-policy");
-
-				if (xFrame) {
-					const value = xFrame.toUpperCase();
-
-					if (value.includes("DENY") || value.includes("SAMEORIGIN")) {
-						setCanEmbed(false);
-						return false;
-					}
-				}
-
-				if (csp) {
-					const lower = csp.toLowerCase();
-
-					if (
-						lower.includes("frame-ancestors 'none'") ||
-						lower.includes("frame-ancestors 'self'")
-					) {
-						setCanEmbed(false);
-						return false;
-					}
-				}
-
-				setCanEmbed(true);
-				return true;
-			} catch (error) {
-				setCanEmbed(false);
-			}
+			const embeddable = await checkEmbeddable({
+				data: {
+					url,
+				},
+			});
+			setCanEmbed(embeddable);
 		};
 
 		if (tab.url) {
-			// check(tab.url);
+			check(tab.url);
 		} else {
 			setCanEmbed(false);
 		}
@@ -415,7 +388,11 @@ function SurfingView({ tab }: { tab: Tab }) {
 				<div className="h-full w-full flex flex-col items-center justify-center gap-y-4">
 					<p>This site cannot be reached.</p>
 
-					<a className="px-3 py-2 glassmorphism rounded-xl" href={tab.url} target="_blank">
+					<a
+						className="px-3 py-2 glassmorphism rounded-xl"
+						href={tab.url}
+						target="_blank"
+					>
 						Open Site in New Tab
 					</a>
 				</div>
