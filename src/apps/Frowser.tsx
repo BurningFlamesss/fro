@@ -343,24 +343,27 @@ function ResultsView({
 		<>
 			AI answer: {tab.searchResponse?.answer}
 			<br />
-			{tab.searchResponse?.results?.map((result) => {
-				return (
-					<button
-						type="button"
-						onClick={(e) => {
-							e.preventDefault();
-							addAndUpdateTab({
-								url: result.url,
-								state: "surfing",
-								title: result.title,
-							});
-						}}
-						key={`result-${result.title}`}
-					>
-						{result.title}
-					</button>
-				);
-			})}
+			<main className="h-full w-full overflow-y-auto flex flex-col justify-start items-start">
+				{tab.searchResponse?.results?.map((result) => {
+					return (
+						<button
+							type="button"
+							onClick={(e) => {
+								e.preventDefault();
+								addAndUpdateTab({
+									url: result.url,
+									state: "surfing",
+									title: result.title,
+								});
+							}}
+							className="cursor-pointer text-primary underline"
+							key={`result-${result.title}`}
+						>
+							{result.title}
+						</button>
+					);
+				})}
+			</main>
 		</>
 	);
 }
@@ -557,7 +560,7 @@ function Frowser() {
 
 	const addAndUpdateTab = useCallback((patch: Partial<Tab>) => {
 		const id = crypto.randomUUID();
-		setTabs((prev) => [...prev, { id, title: "", state: "surfing",  ...patch }]); // defaults will eventually get override
+		setTabs((prev) => [...prev, { id, title: "", state: "surfing", ...patch }]); // defaults will eventually get override
 		setCurrentTabId(id);
 	}, []);
 
