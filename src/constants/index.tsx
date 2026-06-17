@@ -1,4 +1,5 @@
 import type React from "react";
+import Frosic from "#/apps/Frosic.tsx";
 import Frotes from "#/apps/Frotes.tsx";
 import Frottings from "#/apps/Frottings.tsx";
 import Frowser from "#/apps/Frowser.tsx";
@@ -110,7 +111,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		logo: "/apps/Music.svg",
 		isPinned: true,
 		theme: DEFAULT_THEME,
-		component: <></>,
+		component: <Frosic />,
 	},
 	store: {
 		id: "store",
