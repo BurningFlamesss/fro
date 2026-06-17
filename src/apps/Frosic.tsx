@@ -14,13 +14,18 @@ function Frosic() {
 	const [open, setOpen] = useState<boolean>(false);
 
 	return (
-		<div className="w-74 flex flex-row items-center justify-between">
-			<FaRepeat />
-			<FaBackwardFast />
-			{state === "play" ? <FaPlay /> : <FaPause />}
-			<FaForwardFast />
-			<FaMusic />
-		</div>
+		<main className="min-h-full w-full flex flex-col items-center justify-between p-4">
+            <div className="h-full w-full rounded-xl">
+                <img src="/public/backgrounds/previews/calm-and-peaceful.webp" alt="" />
+            </div>
+			<div className="w-70 flex flex-row items-center justify-between">
+				<FaRepeat />
+				<FaBackwardFast />
+				{state === "play" ? <FaPlay /> : <FaPause />}
+				<FaForwardFast />
+				<FaMusic />
+			</div>
+		</main>
 	);
 }
 
