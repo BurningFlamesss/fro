@@ -339,7 +339,6 @@ function ResultsView({
 	addAndUpdateTab: (patch: Partial<Tab>) => void;
 	updateTab: (id: string, patch: Partial<Tab>) => void;
 }) {
-
 	return (
 		<div className="h-full w-full overflow-y-auto">
 			AI answer: {tab.searchResponse?.answer}
@@ -366,10 +365,14 @@ function ResultsView({
 				})}
 			</main>
 			<main>
-				{tab.searchResponse?.images?.map(image => {
+				{tab.searchResponse?.images?.map((image) => {
 					return (
-						<img key={`image-${image.description}`} src={image.url} alt={image.description ?? ""} />
-					)
+						<img
+							key={`image-${image.description}`}
+							src={image.url}
+							alt={image.description ?? ""}
+						/>
+					);
 				})}
 			</main>
 		</div>
@@ -412,6 +415,7 @@ function SurfingView({ tab }: { tab: Tab }) {
 					src={tab.url}
 					title={tab.title}
 					frameBorder="0"
+					sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
 					onError={() => setCanEmbed(false)}
 				></iframe>
 			) : (
