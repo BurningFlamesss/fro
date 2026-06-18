@@ -1,6 +1,11 @@
 import type React from "react";
+import Froame from "#/apps/Froame.tsx";
+import Froculator from "#/apps/Froculator.tsx";
+import Frolendar from "#/apps/Frolendar.tsx";
+import Frominal from "#/apps/Frominal.tsx";
 import Frosic from "#/apps/Frosic.tsx";
 import Frotes from "#/apps/Frotes.tsx";
+import Frotore from "#/apps/Frotore.tsx";
 import Frottings from "#/apps/Frottings.tsx";
 import Frowser from "#/apps/Frowser.tsx";
 
@@ -84,7 +89,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		logo: "/apps/Terminal.svg",
 		isPinned: true,
 		theme: DEFAULT_THEME,
-		component: <></>,
+		component: <Frominal />,
 	},
 	calculator: {
 		id: "calculator",
@@ -93,7 +98,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		logo: "/apps/Calculator.svg",
 		isPinned: true,
 		theme: DEFAULT_THEME,
-		component: <></>,
+		component: <Froculator />,
 	},
 	calendar: {
 		id: "calendar",
@@ -102,7 +107,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		logo: "/apps/Calendar.svg",
 		isPinned: true,
 		theme: DEFAULT_THEME,
-		component: <></>,
+		component: <Frolendar />,
 	},
 	music: {
 		id: "music",
@@ -120,7 +125,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		logo: "/apps/Store.svg",
 		isPinned: true,
 		theme: DEFAULT_THEME,
-		component: <></>,
+		component: <Frotore />,
 	},
 	game: {
 		id: "game",
@@ -129,7 +134,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		logo: "/apps/Game.svg",
 		isPinned: true,
 		theme: DEFAULT_THEME,
-		component: <></>,
+		component: <Froame />,
 	},
 };
 

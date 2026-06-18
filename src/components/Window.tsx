@@ -1,9 +1,11 @@
 import { toPng } from "html-to-image";
-import { Activity, useCallback, useEffect, useRef } from "react";
+import { Activity, createContext, useCallback, useEffect, useRef } from "react";
 import { Rnd } from "react-rnd";
 import { cn } from "#/lib/utils.ts";
 import { useWindowStore } from "#/store/window.tsx";
 import type { WindowInstance } from "../constants";
+
+export const WindowIdContext = createContext<string>("");
 
 const MIN_VISIBLE_W = 128;
 const MIN_VISIBLE_H = 128;
@@ -259,15 +261,17 @@ const Window = function Window({ win }: { win: WindowInstance }) {
 						</div>
 					</div>
 
-					<div
-						type="button"
-						onClick={focusWindow.bind(null, id)}
-						onKeyUp={focusWindow.bind(null, id)}
-						className="w-full h-[calc(100%-2.5rem)] overflow-auto text-background"
-						ref={contentRef}
-					>
-						{component}
-					</div>
+					<WindowIdContext.Provider value={id}>
+						<div
+							type="button"
+							onClick={focusWindow.bind(null, id)}
+							onKeyUp={focusWindow.bind(null, id)}
+							className="w-full h-[calc(100%-2.5rem)] overflow-auto text-background"
+							ref={contentRef}
+						>
+							{component}
+						</div>
+					</WindowIdContext.Provider>
 				</div>
 			</Rnd>
 		</Activity>
