@@ -1,5 +1,5 @@
 import { toPng } from "html-to-image";
-import { Activity, createContext, useCallback, useEffect, useRef } from "react";
+import React, { Activity, createContext, useCallback, useEffect, useRef } from "react";
 import { Rnd } from "react-rnd";
 import { cn } from "#/lib/utils.ts";
 import { useWindowStore } from "#/store/window.tsx";
@@ -269,7 +269,7 @@ const Window = function Window({ win }: { win: WindowInstance }) {
 							className="w-full h-[calc(100%-2.5rem)] overflow-auto text-background"
 							ref={contentRef}
 						>
-							{component}
+							{React.cloneElement(component as React.ReactElement<any>, { windowId: id })}
 						</div>
 					</WindowIdContext.Provider>
 				</div>

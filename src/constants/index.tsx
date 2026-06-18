@@ -114,6 +114,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		name: "Frosic",
 		title: "Frosic",
 		logo: "/apps/Music.svg",
+		singleInstance: true,
 		isPinned: true,
 		theme: DEFAULT_THEME,
 		component: <Frosic />,

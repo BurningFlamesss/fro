@@ -98,11 +98,7 @@ function Taskbar() {
 		<footer className="glassmorphism h-16 w-[80dvw] flex items-center justify-between px-4 absolute bottom-3 left-1/2 -translate-x-1/2 rounded-2xl z-100000000">
 			<section className="flex items-center gap-4 h-full">
 				<div className="relative flex items-center justify-center w-11 h-11 rounded-xl transition-colors duration-150 hover:bg-background/5 cursor-pointer">
-					<img
-						className="w-8 h-8 object-contain"
-						src="/logo.png"
-						alt="Logo"
-					/>
+					<img className="w-8 h-8 object-contain" src="/logo.png" alt="Logo" />
 				</div>
 
 				<div className="relative flex items-center">
@@ -200,9 +196,12 @@ function Taskbar() {
 							</ContextMenuTrigger>
 							<ContextMenuContent className="z-100000002 -translate-x-1/2 translate-y-[-78%]">
 								<ContextMenuGroup>
-									<ContextMenuItem onClick={() => openApp(app.id)}>
-										<img className="h-4 w-4" src={app.logo} alt="" /> New Window
-									</ContextMenuItem>
+									{app.singleInstance ? null : (
+										<ContextMenuItem onClick={() => openApp(app.id)}>
+											<img className="h-4 w-4" src={app.logo} alt="" /> New
+											Window
+										</ContextMenuItem>
+									)}
 									<ContextMenuItem onClick={() => unpinApp(app.id)}>
 										<RiUnpinLine className="text-background" />
 										Unpin from taskbar
