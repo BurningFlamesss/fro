@@ -165,7 +165,7 @@ function Frominal() {
 			visibleWindows.map((win) => closeWindow(win.id));
 		},
 
-		"!!": () => {
+		"!!": async () => {
 			if (!terminalLines.length) {
 				return;
 			}
@@ -175,7 +175,7 @@ function Frominal() {
 				return (
 					<>
 						<p>&gt; {lastLine.input}</p>
-						{executeCommand(lastLine.input)}
+						{await executeCommand(lastLine.input)}
 					</>
 				);
 			}
@@ -233,16 +233,26 @@ function Frominal() {
 				return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
 			}
 
+			function normalizeUrl(url: string) {
+				if (!/^https?:\/\//i.test(url)) {
+					return `https://${url}`;
+				}
+
+				return url;
+			}
+
 			try {
 				const results = await Promise.all(
 					params.map(async (url) => {
 						const start = performance.now();
 
-						const response = await fetch(url);
+						const normalizedUrl = normalizeUrl(url)
+						const response = await fetch(normalizedUrl);
 
 						const duration = performance.now() - start;
 
-						const contentType = response.headers.get("content-type") ?? "unknown";
+						const contentType =
+							response.headers.get("content-type") ?? "unknown";
 
 						const text = await response.clone().text();
 
@@ -273,7 +283,7 @@ function Frominal() {
 								<p>Time: {result.time}</p>
 
 								<pre className="overflow-auto whitespace-pre-wrap wrap-break-word">
-									{result.data.slice(0, 500)}
+									{result.data}
 								</pre>
 							</div>
 						))}
