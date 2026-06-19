@@ -162,14 +162,37 @@ function Frominal() {
 			visibleWindows.map((win) => closeWindow(win.id));
 		},
 
+		"!!": () => {
+			if (!terminalLines.length) {
+				return
+			}
+			const lastLine = terminalLines[terminalLines.length - 1]
+
+			if (!lastLine.input.startsWith("!!")) {
+				return (
+					<>
+						<p>&gt; {lastLine.input}</p>
+						{executeCommand(lastLine.input)}
+					</>
+				)
+			}
+		},
+
 		calc: (params) => {
 			const equation = params.join(" ");
 			if (!equation) {
-				return;
+				openApp("calculator");
+				return <p>Opening Calculator...</p>;
 			}
 
 			if (!/^[0-9+\-*/().%\s]+$/.test(equation)) {
-				return <p className="text-red-500">Invalid characters</p>;
+				openApp("calculator");
+				return (
+					<>
+						<p className="text-red-500">Invalid characters</p>
+						<p>Opening Calculator...</p>
+					</>
+				);
 			}
 			try {
 				const answer = Function(`"use strict"; return (${equation})`)();
@@ -178,6 +201,21 @@ function Frominal() {
 			} catch (error) {
 				return <p className="text-red-500">Not a valid equation</p>;
 			}
+		},
+
+		random: (params) => {
+			if (!params.length) {
+				return Math.random();
+			}
+
+			if (params.length === 1) {
+				return Math.floor(Math.random() * Number(params[0]));
+			}
+
+			const min = Number(params[0]);
+			const max = Number(params[1]);
+
+			return Math.floor(Math.random() * (max - min + 1)) + min;
 		},
 	};
 
@@ -238,6 +276,7 @@ function Frominal() {
 	useEffect(() => {
 		if (terminalRef.current) {
 			terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+			setTerminalLines(prev => prev.filter(line => !line.input.startsWith("clear")))
 		}
 	}, [terminalLines]);
 
