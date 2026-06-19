@@ -11,8 +11,8 @@ export const useSettingStore = create<SettingStore>()(
 		backgroundImage: {
 			url: window
 				? (localStorage?.getItem("backgroundImage:url") ??
-					"/backgrounds/cyber-rain.gif")
-				: "/backgrounds/cyber-rain.gif",
+					"/backgrounds/forest.gif")
+				: "/backgrounds/forest.gif",
 			position: window
 				? (localStorage?.getItem("backgroundImage:position") ?? "center")
 				: "center",
