@@ -1,12 +1,14 @@
 import React, { type Ref, useEffect, useRef, useState } from "react";
+import { useWindowStore } from "#/store/window.tsx";
+import type { AppInstance, WindowInstance } from "../constants";
 
 type TerminalResponse = React.ReactNode | string;
 
 type CommandHandler = (params: string[]) => TerminalResponse;
 
 type TerminalLine = {
-  input: string;
-  output: TerminalResponse;
+	input: string;
+	output: TerminalResponse;
 };
 
 function parseCommand(input: string) {
@@ -18,8 +20,8 @@ function parseCommand(input: string) {
 	};
 }
 
-
 function Frominal() {
+	const { apps, openApp, windows, closeWindow, pinApp, unpinApp } = useWindowStore();
 	const terminalRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [terminalLines, setTerminalLines] = useState<Array<TerminalLine>>([]);
@@ -35,7 +37,9 @@ function Frominal() {
 		const handler = commands[primaryCommand];
 
 		if (!handler) {
-			return `Command not found: ${primaryCommand}`;
+			return (
+				<p className="text-red-500">Command not found: {primaryCommand}</p>
+			);
 		}
 
 		return handler(params);
@@ -49,6 +53,113 @@ function Frominal() {
 		clear: () => {
 			setTerminalLines([]);
 		},
+
+		open: (params) => {
+			const response: Array<AppInstance["name"]> = [];
+
+			params.forEach((param) => {
+				const search = param.toLowerCase();
+
+				const app = Object.values(apps).find(
+					(app) =>
+						app.id.toLowerCase() === search ||
+						app.name.toLowerCase() === search ||
+						app.title.toLowerCase() === search,
+				);
+
+				if (app) {
+					openApp(app.id);
+					response.push(app.name);
+				}
+			});
+
+			if (!response.length) {
+				return <p className="text-red-500">No valid app found</p>;
+			}
+
+			return (
+				<ul>
+					Opened:
+					{response.map((app, index) => (
+						<li key={`opened-app-${index}-${app}`}>{app}</li>
+					))}
+				</ul>
+			);
+		},
+
+		pin: (params) => {
+			const response: Array<AppInstance["name"]> = [];
+
+			params.forEach((param) => {
+				const search = param.toLowerCase();
+
+				const app = Object.values(apps).find(
+					(app) =>
+						app.id.toLowerCase() === search ||
+						app.name.toLowerCase() === search ||
+						app.title.toLowerCase() === search,
+				);
+
+				if (app) {
+					pinApp(app.id);
+					response.push(app.name);
+				}
+			});
+
+			if (!response.length) {
+				return <p className="text-red-500">No valid app found</p>;
+			}
+
+			return (
+				<ul>
+					Pinned:
+					{response.map((app, index) => (
+						<li key={`pinned-app-${index}-${app}`}>{app}</li>
+					))}
+				</ul>
+			);
+		},
+		
+		unpin: (params) => {
+			const response: Array<AppInstance["name"]> = [];
+
+			params.forEach((param) => {
+				const search = param.toLowerCase();
+
+				const app = Object.values(apps).find(
+					(app) =>
+						app.id.toLowerCase() === search ||
+						app.name.toLowerCase() === search ||
+						app.title.toLowerCase() === search,
+				);
+
+				if (app) {
+					unpinApp(app.id);
+					response.push(app.name);
+				}
+			});
+
+			if (!response.length) {
+				return <p className="text-red-500">No valid app found</p>;
+			}
+
+			return (
+				<ul>
+					Unpinned:
+					{response.map((app, index) => (
+						<li key={`unpinned-app-${index}-${app}`}>{app}</li>
+					))}
+				</ul>
+			);
+		},
+
+		"process.terminate.all": () => {
+			const visibleWindows = Object.values(windows).filter(
+				(win): win is WindowInstance => win !== undefined,
+			);
+
+			visibleWindows.map(win => closeWindow(win.id))
+		},
 	};
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -58,11 +169,13 @@ function Frominal() {
 			setIsProcessing(true);
 
 			if (command.trim()) {
+				const output = executeCommand(command);
+
 				setTerminalLines((lines) => [
 					...lines,
 					{
 						input: command,
-						output: executeCommand(command),
+						output,
 					},
 				]);
 			}
@@ -82,8 +195,7 @@ function Frominal() {
 			<div className="text-background">
 				Welcome to FRO OS TERMINAL!!!
 				<pre className="text-primary">
-					╔══════════════════════════════╗ <br />
-          ║ Interactive Frominal         ║ <br />
+					╔══════════════════════════════╗ <br />║ Interactive Frominal ║ <br />
 					╚══════════════════════════════╝ <br />
 				</pre>
 				Essential Commands:
@@ -132,7 +244,7 @@ function Frominal() {
 								readonly={true}
 							/>
 
-							<div className="m-0 p-0">{lines.output}</div>
+							<div className="m-0 p-0 text-background">{lines.output}</div>
 						</div>
 					);
 				})}
