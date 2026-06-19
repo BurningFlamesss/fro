@@ -1,4 +1,6 @@
 import React, { type Ref, useEffect, useRef, useState } from "react";
+import { formatBytes, normalizeUrl } from "#/lib/utils.ts";
+import { fetchResponse, pingUrl } from "#/server/fetchResponses.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
 
@@ -52,6 +54,30 @@ function Frominal() {
 		help: () => "Please read the docs",
 
 		echo: (params) => params.join(" "),
+
+		ping: async (params) => {
+			if (!params.length) {
+				return <p className="text-yellow-500">Please provide one URL</p>;
+			}
+
+			const url = normalizeUrl(params[0]);
+
+			try {
+				const response = await pingUrl({
+					data: url,
+				});
+
+				return (
+					<div>
+						<p>PONG {url}</p>
+						<p>Status: {response.status}</p>
+						<p>Time: {response.time.toFixed(2)} ms</p>
+					</div>
+				);
+			} catch {
+				return <p className="text-red-500">Request failed</p>;
+			}
+		},
 
 		clear: () => {
 			setTerminalLines([]);
@@ -227,47 +253,11 @@ function Frominal() {
 					<p className="text-yellow-500">Please provide at least one URL</p>
 				);
 			}
-			function formatBytes(bytes: number) {
-				if (bytes < 1024) return `${bytes} B`;
-				if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
-				return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
-			}
-
-			function normalizeUrl(url: string) {
-				if (!/^https?:\/\//i.test(url)) {
-					return `https://${url}`;
-				}
-
-				return url;
-			}
 
 			try {
-				const results = await Promise.all(
-					params.map(async (url) => {
-						const start = performance.now();
-
-						const normalizedUrl = normalizeUrl(url)
-						const response = await fetch(normalizedUrl);
-
-						const duration = performance.now() - start;
-
-						const contentType =
-							response.headers.get("content-type") ?? "unknown";
-
-						const text = await response.clone().text();
-
-						const size = new Blob([text]).size;
-
-						return {
-							url,
-							status: response.status,
-							type: contentType,
-							size: formatBytes(size),
-							time: `${duration.toFixed(2)} ms`,
-							data: text,
-						};
-					}),
-				);
+				const results = await fetchResponse({
+					data: params,
+				});
 
 				return (
 					<div>
@@ -282,8 +272,10 @@ function Frominal() {
 								<p>Size: {result.size}</p>
 								<p>Time: {result.time}</p>
 
-								<pre className="overflow-auto whitespace-pre-wrap wrap-break-word">
-									{result.data}
+								<pre className="overflow-auto whitespace-pre-wrap wrap-break-word mt-2">
+									{result.type === "text/html; charset=utf-8"
+										? `${result.data.trim().slice(0, 500)}...`
+										: result.data.trim()}
 								</pre>
 							</div>
 						))}
