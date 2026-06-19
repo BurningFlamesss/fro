@@ -4,7 +4,9 @@ import type { AppInstance, WindowInstance } from "../constants";
 
 type TerminalResponse = React.ReactNode | string;
 
-type CommandHandler = (params: string[]) => TerminalResponse | Promise<TerminalResponse>;
+type CommandHandler = (
+	params: string[],
+) => TerminalResponse | Promise<TerminalResponse>;
 
 type TerminalLine = {
 	input: string;
@@ -53,7 +55,7 @@ function Frominal() {
 
 		clear: () => {
 			setTerminalLines([]);
-			return null
+			return null;
 		},
 
 		open: (params) => {
@@ -165,9 +167,9 @@ function Frominal() {
 
 		"!!": () => {
 			if (!terminalLines.length) {
-				return
+				return;
 			}
-			const lastLine = terminalLines[terminalLines.length - 1]
+			const lastLine = terminalLines[terminalLines.length - 1];
 
 			if (!lastLine.input.startsWith("!!")) {
 				return (
@@ -175,7 +177,7 @@ function Frominal() {
 						<p>&gt; {lastLine.input}</p>
 						{executeCommand(lastLine.input)}
 					</>
-				)
+				);
 			}
 		},
 
@@ -221,23 +223,66 @@ function Frominal() {
 
 		fetch: async (params) => {
 			if (!params.length) {
-				return <p className="text-yellow-500">Please provide atleast one url</p>
+				return (
+					<p className="text-yellow-500">Please provide at least one URL</p>
+				);
+			}
+			function formatBytes(bytes: number) {
+				if (bytes < 1024) return `${bytes} B`;
+				if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+				return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
 			}
 
 			try {
-				const responses = await Promise.all(params.map(url => fetch(url)))
+				const results = await Promise.all(
+					params.map(async (url) => {
+						const start = performance.now();
 
-				const data = Promise.all(responses.map(response => response.json()))
+						const response = await fetch(url);
+
+						const duration = performance.now() - start;
+
+						const contentType = response.headers.get("content-type") ?? "unknown";
+
+						const text = await response.clone().text();
+
+						const size = new Blob([text]).size;
+
+						return {
+							url,
+							status: response.status,
+							type: contentType,
+							size: formatBytes(size),
+							time: `${duration.toFixed(2)} ms`,
+							data: text,
+						};
+					}),
+				);
 
 				return (
-					<pre>
-						{JSON.stringify(data, null, 2)}
-					</pre>
-				)
-			} catch (error) {
-				return <p className="text-red-500">Failed to fetch resources</p>
+					<div>
+						{results.map((result) => (
+							<div
+								key={result.url}
+								className="mb-6 overflow-auto whitespace-pre-wrap wrap-break-word"
+							>
+								<p>URL: {result.url}</p>
+								<p>Status: {result.status}</p>
+								<p>Type: {result.type}</p>
+								<p>Size: {result.size}</p>
+								<p>Time: {result.time}</p>
+
+								<pre className="overflow-auto whitespace-pre-wrap wrap-break-word">
+									{result.data.slice(0, 500)}
+								</pre>
+							</div>
+						))}
+					</div>
+				);
+			} catch {
+				return <p className="text-red-500">Failed to fetch resources</p>;
 			}
-		}
+		},
 	};
 
 	const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
