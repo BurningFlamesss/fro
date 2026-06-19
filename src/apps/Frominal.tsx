@@ -4,7 +4,7 @@ import type { AppInstance, WindowInstance } from "../constants";
 
 type TerminalResponse = React.ReactNode | string;
 
-type CommandHandler = (params: string[]) => TerminalResponse;
+type CommandHandler = (params: string[]) => TerminalResponse | Promise<TerminalResponse>;
 
 type TerminalLine = {
 	input: string;
@@ -32,7 +32,7 @@ function Frominal() {
 	const username = "FRO";
 	const hostname = "CUS";
 
-	function executeCommand(input: string): TerminalResponse {
+	async function executeCommand(input: string): Promise<TerminalResponse> {
 		const { primaryCommand, params } = parseCommand(input);
 
 		const handler = commands[primaryCommand];
@@ -43,7 +43,7 @@ function Frominal() {
 			);
 		}
 
-		return handler(params);
+		return await handler(params);
 	}
 
 	const commands: Record<string, CommandHandler> = {
@@ -53,6 +53,7 @@ function Frominal() {
 
 		clear: () => {
 			setTerminalLines([]);
+			return null
 		},
 
 		open: (params) => {
@@ -217,16 +218,36 @@ function Frominal() {
 
 			return Math.floor(Math.random() * (max - min + 1)) + min;
 		},
+
+		fetch: async (params) => {
+			if (!params.length) {
+				return <p className="text-yellow-500">Please provide atleast one url</p>
+			}
+
+			try {
+				const responses = await Promise.all(params.map(url => fetch(url)))
+
+				const data = Promise.all(responses.map(response => response.json()))
+
+				return (
+					<pre>
+						{JSON.stringify(data, null, 2)}
+					</pre>
+				)
+			} catch (error) {
+				return <p className="text-red-500">Failed to fetch resources</p>
+			}
+		}
 	};
 
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+	const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === "Enter") {
 			e.preventDefault();
 
 			setIsProcessing(true);
 
 			if (command.trim()) {
-				const output = executeCommand(command);
+				const output = await executeCommand(command);
 
 				setTerminalLines((lines) => [
 					...lines,
@@ -256,7 +277,7 @@ function Frominal() {
 					╚══════════════════════════════╝ <br />
 				</pre>
 				Essential Commands:
-				<ul className="text-blue-500">
+				<ul className="text-blue-400">
 					<li>help - Usage guide</li>
 				</ul>
 			</div>
@@ -276,7 +297,6 @@ function Frominal() {
 	useEffect(() => {
 		if (terminalRef.current) {
 			terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-			setTerminalLines(prev => prev.filter(line => !line.input.startsWith("clear")))
 		}
 	}, [terminalLines]);
 
@@ -347,11 +367,11 @@ function FrominalInputSection({
 		<div className="my-4 p-0 wrap-break-word leading-none block w-full">
 			<div className="flex items-baseline flex-nowrap my-4 p-0 w-full">
 				<span className="shrink-0 mr-0">
-					<span className="text-primary font-bold">{username}</span>
+					<span className="text-green-400 font-bold">{username}</span>
 					<span className="text-background">@</span>
-					<span className="text-primary font-bold">{hostname}</span>
+					<span className="text-blue-400 font-bold">{hostname}</span>
 					<span className="text-background">:</span>
-					<span className="text-blue-500">~</span>
+					<span className="text-yellow-400">~</span>
 				</span>
 				<input
 					ref={inputRef}
