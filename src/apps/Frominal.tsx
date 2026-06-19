@@ -21,7 +21,8 @@ function parseCommand(input: string) {
 }
 
 function Frominal() {
-	const { apps, openApp, windows, closeWindow, pinApp, unpinApp } = useWindowStore();
+	const { apps, openApp, windows, closeWindow, pinApp, unpinApp } =
+		useWindowStore();
 	const terminalRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [terminalLines, setTerminalLines] = useState<Array<TerminalLine>>([]);
@@ -119,7 +120,7 @@ function Frominal() {
 				</ul>
 			);
 		},
-		
+
 		unpin: (params) => {
 			const response: Array<AppInstance["name"]> = [];
 
@@ -158,7 +159,25 @@ function Frominal() {
 				(win): win is WindowInstance => win !== undefined,
 			);
 
-			visibleWindows.map(win => closeWindow(win.id))
+			visibleWindows.map((win) => closeWindow(win.id));
+		},
+
+		calc: (params) => {
+			const equation = params.join(" ");
+			if (!equation) {
+				return;
+			}
+
+			if (!/^[0-9+\-*/().%\s]+$/.test(equation)) {
+				return <p className="text-red-500">Invalid characters</p>;
+			}
+			try {
+				const answer = Function(`"use strict"; return (${equation})`)();
+
+				return answer;
+			} catch (error) {
+				return <p className="text-red-500">Not a valid equation</p>;
+			}
 		},
 	};
 
