@@ -3,6 +3,7 @@ import { formatBytes, normalizeUrl } from "#/lib/utils.ts";
 import { fetchResponse, pingUrl } from "#/server/fetchResponses.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
+import { useNoteStore } from "#/store/note.tsx";
 
 type TerminalResponse = React.ReactNode | string;
 
@@ -27,6 +28,7 @@ function parseCommand(input: string) {
 function Frominal() {
 	const { apps, openApp, windows, closeWindow, pinApp, unpinApp } =
 		useWindowStore();
+	const { addTab, renameTab, activeTabId, updateContent } = useNoteStore();
 	const terminalRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [terminalLines, setTerminalLines] = useState<Array<TerminalLine>>([]);
@@ -285,6 +287,28 @@ function Frominal() {
 				return <p className="text-red-500">Failed to fetch resources</p>;
 			}
 		},
+
+		note: (params) => {
+			if (!params.length) {
+				return;
+			}
+			addTab(`Frominal Note #${params[0]}`, params.join(" "));
+
+			return <p>Added note!</p>;
+		},
+
+		do: (params) => {
+			if (!params.length) {
+				return;
+			}
+
+			// TODO: Process via AI
+			
+			addTab(`TODO #${params[0]}`, params.join(" "));
+
+			return <p>Added TODO!</p>;
+		},
+		
 	};
 
 	const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {

@@ -1,7 +1,7 @@
-import { createDebouncedStorage } from "#/lib/debounced-storage.ts";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import { createDebouncedStorage } from "#/lib/debounced-storage.ts";
 
 interface NoteTab {
 	id: string;
@@ -13,7 +13,7 @@ interface NoteStore {
 	tabs: Array<NoteTab>;
 	activeTabId: string;
 
-	addTab: () => void;
+	addTab: (title?: string, content?: string) => NoteTab;
 	closeTab: (id: string) => void;
 	selectTab: (id: string) => void;
 	updateContent: (id: string, content: string) => void;
@@ -40,17 +40,19 @@ export const useNoteStore = create<NoteStore>()(
 				],
 				activeTabId: firstTabId,
 
-				addTab: () => {
+				addTab: (title="Untitled", content="") => {
 					const newTab: NoteTab = {
 						id: crypto.randomUUID(),
-						title: "Untitled",
-						content: "",
+						title: title,
+						content: content,
 					};
 
 					set((state) => {
 						state.tabs.push(newTab);
 						state.activeTabId = newTab.id;
 					});
+
+					return newTab;
 				},
 
 				closeTab: (id) =>

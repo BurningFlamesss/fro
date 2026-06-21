@@ -64,7 +64,7 @@ function Frotes() {
 				<button
 					type="button"
 					aria-label="New tab"
-					onClick={addTab}
+					onClick={() => addTab()}
 					className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-background/35 transition-colors hover:bg-background/5 hover:text-background/70"
 				>
 					<PiPlus size={15} />
