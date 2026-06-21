@@ -6,7 +6,7 @@ import { cn } from "#/lib/utils.ts";
 import { useNoteStore } from "#/store/note.tsx";
 
 function Frotes() {
-	const { tabs, activeTabId, addTab } = useNoteStore();
+	const { tabs, activeTabId, addTab, closeTab, selectTab } = useNoteStore();
 	const [preview, setPreview] = useState<boolean>(false);
 	const activeTab = tabs.find((tab) => tab.id === activeTabId);
 
@@ -22,6 +22,7 @@ function Frotes() {
 									? "bg-background/10 text-background"
 									: "text-background/40 hover:bg-background/5",
 							)}
+							onClick={() => selectTab(tab.id)}
 							key={`tab-${tab.id}`}
 						>
 							<span className="truncate">{tab.title}</span>
@@ -31,6 +32,7 @@ function Frotes() {
 									aria-label="Close tab"
 									onClick={(e) => {
 										e.stopPropagation();
+										closeTab(tab.id)
 									}}
 									className={cn(
 										"shrink-0 opacity-0 group-hover:opacity-100 text-background/50 hover:text-background cursor-pointer",

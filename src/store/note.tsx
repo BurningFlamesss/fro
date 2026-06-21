@@ -14,6 +14,7 @@ interface NoteStore {
 
 	addTab: () => void;
 	closeTab: (id: string) => void;
+	selectTab: (id: string) => void;
 }
 
 export const useNoteStore = create<NoteStore>()(
@@ -56,7 +57,7 @@ export const useNoteStore = create<NoteStore>()(
 						state.tabs.splice(index, 1);
 
 						if (state.tabs.length === 0) {
-							const tabId = crypto.randomUUID()
+							const tabId = crypto.randomUUID();
 
 							state.tabs.push({
 								id: tabId,
@@ -66,9 +67,14 @@ export const useNoteStore = create<NoteStore>()(
 						}
 
 						if (state.activeTabId === id) {
-							const newActiveTabIndex = Math.min(index, state.tabs.length - 1)
-							state.activeTabId = state.tabs[newActiveTabIndex].id
+							const newActiveTabIndex = Math.min(index, state.tabs.length - 1);
+							state.activeTabId = state.tabs[newActiveTabIndex].id;
 						}
+					}),
+
+				selectTab: (id) =>
+					set((state) => {
+						state.activeTabId = id;
 					}),
 			};
 		}),
