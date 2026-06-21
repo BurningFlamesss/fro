@@ -15,6 +15,7 @@ interface NoteStore {
 	addTab: () => void;
 	closeTab: (id: string) => void;
 	selectTab: (id: string) => void;
+	updateContent: (id: string, content: string) => void;
 }
 
 export const useNoteStore = create<NoteStore>()(
@@ -75,6 +76,15 @@ export const useNoteStore = create<NoteStore>()(
 				selectTab: (id) =>
 					set((state) => {
 						state.activeTabId = id;
+					}),
+
+				updateContent: (id, content) =>
+					set((state) => {
+						const tab = state.tabs.find((tab) => tab.id === id);
+
+						if (tab) {
+							tab.content = content;
+						}
 					}),
 			};
 		}),

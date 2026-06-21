@@ -6,7 +6,7 @@ import { cn } from "#/lib/utils.ts";
 import { useNoteStore } from "#/store/note.tsx";
 
 function Frotes() {
-	const { tabs, activeTabId, addTab, closeTab, selectTab } = useNoteStore();
+	const { tabs, activeTabId, addTab, closeTab, selectTab, updateContent } = useNoteStore();
 	const [preview, setPreview] = useState<boolean>(false);
 	const activeTab = tabs.find((tab) => tab.id === activeTabId);
 
@@ -72,7 +72,7 @@ function Frotes() {
 				) : (
 					<textarea
 						value={activeTab?.content}
-						onChange={(e) => {}}
+						onChange={(e) => {updateContent(activeTabId, e.target.value)}}
 						placeholder="Start writing..."
 						className="w-full h-full resize-none bg-transparent p-4 outline-none text-sm"
 						name="note"
