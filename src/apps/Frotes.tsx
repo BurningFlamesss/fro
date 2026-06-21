@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PiX } from "react-icons/pi";
+import { PiEye, PiPencil, PiPlus, PiX } from "react-icons/pi";
 import { cn } from "#/lib/utils.ts";
 import { useNoteStore } from "#/store/note.tsx";
 
@@ -40,6 +40,21 @@ function Frotes() {
 						</div>
 					);
 				})}
+				<button
+					type="button"
+					aria-label="New tab"
+					className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-background/35 transition-colors hover:bg-background/5 hover:text-background/70"
+				>
+					<PiPlus size={15} />
+				</button>
+				<button
+					type="button"
+                    aria-label="Toggle preview"
+					onClick={() => setPreview(!preview)}
+					className="ml-auto flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-background/35 transition-colors hover:bg-background/5 hover:text-background/70"
+				>
+					{preview ? <PiPencil size={14} /> : <PiEye size={14} />}
+				</button>
 			</div>
 		</div>
 	);
