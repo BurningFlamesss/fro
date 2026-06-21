@@ -2,6 +2,8 @@ import { useState } from "react";
 import { PiEye, PiPencil, PiPlus, PiX } from "react-icons/pi";
 import { cn } from "#/lib/utils.ts";
 import { useNoteStore } from "#/store/note.tsx";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 function Frotes() {
 	const { tabs, activeTabId } = useNoteStore();
@@ -49,12 +51,31 @@ function Frotes() {
 				</button>
 				<button
 					type="button"
-                    aria-label="Toggle preview"
+					aria-label="Toggle preview"
 					onClick={() => setPreview(!preview)}
 					className="ml-auto flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-background/35 transition-colors hover:bg-background/5 hover:text-background/70"
 				>
 					{preview ? <PiPencil size={14} /> : <PiEye size={14} />}
 				</button>
+			</div>
+
+			<div className="flex-1 overflow-auto">
+				{preview ? (
+					<div className="p-4 prose prose-invert max-w-none">
+						<ReactMarkdown remarkPlugins={[remarkGfm]}>
+							{activeTab?.content}
+						</ReactMarkdown>
+					</div>
+				) : (
+					<textarea
+						value={activeTab?.content}
+						onChange={(e) => {}}
+						placeholder="Start writing..."
+						className="w-full h-full resize-none bg-transparent p-4 outline-none text-sm"
+						name="note"
+						id="note"
+					/>
+				)}
 			</div>
 		</div>
 	);

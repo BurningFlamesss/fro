@@ -15,21 +15,25 @@ interface NoteStore {
 
 export const useNoteStore = create<NoteStore>()(
 	persist(
-		immer((set, get) => ({
-			tabs: [
-				{
-					id: crypto.randomUUID(),
-					title: "Untitled",
-					content: "",
-				},
-				{
-					id: crypto.randomUUID(),
-					title: "Untitled",
-					content: "",
-				},
-			],
-			activeTabId: "",
-		})),
+		immer((set, get) => {
+			const firstTabId = crypto.randomUUID();
+
+			return {
+				tabs: [
+					{
+						id: firstTabId,
+						title: "Untitled",
+						content: "",
+					},
+					{
+						id: crypto.randomUUID(),
+						title: "Untitled",
+						content: "",
+					},
+				],
+				activeTabId: firstTabId,
+			};
+		}),
 		{
 			name: "frotes-storage",
 		},
