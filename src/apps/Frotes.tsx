@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { PiEye, PiPencil, PiPlus, PiX } from "react-icons/pi";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -6,9 +6,47 @@ import { cn } from "#/lib/utils.ts";
 import { useNoteStore } from "#/store/note.tsx";
 
 function Frotes() {
-	const { tabs, activeTabId, addTab, closeTab, selectTab, updateContent } = useNoteStore();
+	const {
+		tabs,
+		activeTabId,
+		addTab,
+		closeTab,
+		selectTab,
+		updateContent,
+		renameTab,
+	} = useNoteStore();
 	const [preview, setPreview] = useState<boolean>(false);
 	const activeTab = tabs.find((tab) => tab.id === activeTabId);
+	const [content, setContent] = useState<string>("");
+	const [isSaving, setIsSaving] = useState<boolean>(false);
+	const saveTimer = useRef<ReturnType<typeof setTimeout>>(null);
+
+	
+	useEffect(() => {
+		setContent(activeTab?.content ?? "");
+	}, [activeTab]);
+
+	useEffect(() => {
+		if (activeTab && activeTab.title === "Untitled" && content.trim()) {
+			const firstLine = content.trim().split("\n")[0]?.trim();
+
+			if (firstLine) renameTab(activeTab.id, firstLine.slice(0, 30));
+		}
+	}, [activeTab, content, renameTab]);
+
+	const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		const newValue = e.target.value;
+		setContent(newValue);
+
+		setIsSaving(true);
+
+		clearTimeout(saveTimer.current);
+
+		saveTimer.current = setTimeout(() => {
+			setIsSaving(false)
+			updateContent(activeTabId, newValue);
+		}, 1000);
+	};
 
 	return (
 		<div className="flex flex-col bg-foreground text-background w-full h-full">
@@ -32,8 +70,9 @@ function Frotes() {
 									aria-label="Close tab"
 									onClick={(e) => {
 										e.stopPropagation();
-										closeTab(tab.id)
+										closeTab(tab.id);
 									}}
+									disabled={isSaving}
 									className={cn(
 										"shrink-0 opacity-0 group-hover:opacity-100 text-background/50 hover:text-background cursor-pointer",
 									)}
@@ -47,7 +86,7 @@ function Frotes() {
 				<button
 					type="button"
 					aria-label="New tab"
-                    onClick={addTab}
+					onClick={addTab}
 					className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-background/35 transition-colors hover:bg-background/5 hover:text-background/70"
 				>
 					<PiPlus size={15} />
@@ -71,8 +110,8 @@ function Frotes() {
 					</div>
 				) : (
 					<textarea
-						value={activeTab?.content}
-						onChange={(e) => {updateContent(activeTabId, e.target.value)}}
+						value={content}
+						onChange={handleContentChange}
 						placeholder="Start writing..."
 						className="w-full h-full resize-none bg-transparent p-4 outline-none text-sm"
 						name="note"
