@@ -1,9 +1,9 @@
 import React, { type Ref, useEffect, useRef, useState } from "react";
 import { formatBytes, normalizeUrl } from "#/lib/utils.ts";
 import { fetchResponse, pingUrl } from "#/server/fetchResponses.tsx";
+import { useNoteStore } from "#/store/note.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
-import { useNoteStore } from "#/store/note.tsx";
 
 type TerminalResponse = React.ReactNode | string;
 
@@ -397,7 +397,8 @@ function Frominal() {
 			<div className="text-background">
 				Welcome to FRO OS TERMINAL!!!
 				<pre className="text-primary">
-					╔══════════════════════════════╗ <br />║ Interactive Frominal ║ <br />
+					╔══════════════════════════════╗ <br />
+					║-----Interactive Frominal-----║ <br />
 					╚══════════════════════════════╝ <br />
 				</pre>
 				Essential Commands:
