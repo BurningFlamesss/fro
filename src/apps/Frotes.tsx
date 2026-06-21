@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { PiEye, PiPencil, PiPlus, PiX } from "react-icons/pi";
-import { cn } from "#/lib/utils.ts";
-import { useNoteStore } from "#/store/note.tsx";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { cn } from "#/lib/utils.ts";
+import { useNoteStore } from "#/store/note.tsx";
 
 function Frotes() {
-	const { tabs, activeTabId } = useNoteStore();
+	const { tabs, activeTabId, addTab } = useNoteStore();
 	const [preview, setPreview] = useState<boolean>(false);
 	const activeTab = tabs.find((tab) => tab.id === activeTabId);
 
@@ -45,6 +45,7 @@ function Frotes() {
 				<button
 					type="button"
 					aria-label="New tab"
+                    onClick={addTab}
 					className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-background/35 transition-colors hover:bg-background/5 hover:text-background/70"
 				>
 					<PiPlus size={15} />

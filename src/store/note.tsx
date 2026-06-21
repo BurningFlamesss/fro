@@ -11,6 +11,8 @@ interface NoteTab {
 interface NoteStore {
 	tabs: Array<NoteTab>;
 	activeTabId: string;
+
+	addTab: () => void;
 }
 
 export const useNoteStore = create<NoteStore>()(
@@ -32,6 +34,19 @@ export const useNoteStore = create<NoteStore>()(
 					},
 				],
 				activeTabId: firstTabId,
+
+				addTab: () => {
+					const newTab: NoteTab = {
+						id: crypto.randomUUID(),
+						title: "Untitled",
+						content: ""
+					}
+
+					set((state) => {
+						state.tabs.push(newTab)
+						state.activeTabId = newTab.id
+					})
+				}
 			};
 		}),
 		{
