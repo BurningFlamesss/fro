@@ -1,3 +1,4 @@
+import { createDebouncedStorage } from "#/lib/debounced-storage.ts";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
@@ -100,6 +101,7 @@ export const useNoteStore = create<NoteStore>()(
 		}),
 		{
 			name: "frotes-storage",
+			storage: createDebouncedStorage(1000),
 		},
 	),
 );

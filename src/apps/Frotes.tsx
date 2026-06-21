@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { PiEye, PiPencil, PiPlus, PiX } from "react-icons/pi";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -13,40 +13,19 @@ function Frotes() {
 		closeTab,
 		selectTab,
 		updateContent,
-		renameTab,
+		// renameTab,
 	} = useNoteStore();
 	const [preview, setPreview] = useState<boolean>(false);
 	const activeTab = tabs.find((tab) => tab.id === activeTabId);
-	const [content, setContent] = useState<string>("");
-	const [isSaving, setIsSaving] = useState<boolean>(false);
-	const saveTimer = useRef<ReturnType<typeof setTimeout>>(null);
 
-	
-	useEffect(() => {
-		setContent(activeTab?.content ?? "");
-	}, [activeTab]);
-
-	useEffect(() => {
-		if (activeTab && activeTab.title === "Untitled" && content.trim()) {
-			const firstLine = content.trim().split("\n")[0]?.trim();
-
-			if (firstLine) renameTab(activeTab.id, firstLine.slice(0, 30));
-		}
-	}, [activeTab, content, renameTab]);
-
-	const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		const newValue = e.target.value;
-		setContent(newValue);
-
-		setIsSaving(true);
-
-		clearTimeout(saveTimer.current);
-
-		saveTimer.current = setTimeout(() => {
-			setIsSaving(false)
-			updateContent(activeTabId, newValue);
-		}, 1000);
-	};
+	// useEffect(() => {
+	// 	if (
+	// 		(activeTab?.title === "Untitled" || !activeTab?.title?.trim()) &&
+	// 		activeTab?.content?.trim()
+	// 	) {
+	// 		renameTab(activeTabId, activeTab.content.trim().slice(0, 20));
+	// 	}
+	// }, [activeTabId]);
 
 	return (
 		<div className="flex flex-col bg-foreground text-background w-full h-full">
@@ -72,7 +51,6 @@ function Frotes() {
 										e.stopPropagation();
 										closeTab(tab.id);
 									}}
-									disabled={isSaving}
 									className={cn(
 										"shrink-0 opacity-0 group-hover:opacity-100 text-background/50 hover:text-background cursor-pointer",
 									)}
@@ -110,8 +88,10 @@ function Frotes() {
 					</div>
 				) : (
 					<textarea
-						value={content}
-						onChange={handleContentChange}
+						value={activeTab?.content}
+						onChange={(e) => {
+							updateContent(activeTabId, e.target.value);
+						}}
 						placeholder="Start writing..."
 						className="w-full h-full resize-none bg-transparent p-4 outline-none text-sm"
 						name="note"
