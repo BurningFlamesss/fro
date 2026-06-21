@@ -28,7 +28,7 @@ function parseCommand(input: string) {
 function Frominal() {
 	const { apps, openApp, windows, closeWindow, pinApp, unpinApp } =
 		useWindowStore();
-	const { addTab, renameTab, activeTabId, updateContent } = useNoteStore();
+	const { addTab, tabs, closeTab } = useNoteStore();
 	const terminalRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [terminalLines, setTerminalLines] = useState<Array<TerminalLine>>([]);
@@ -297,18 +297,71 @@ function Frominal() {
 			return <p>Added note!</p>;
 		},
 
-		do: (params) => {
+		"create.do": async (params) => {
 			if (!params.length) {
-				return;
+				return (
+					<div>
+						Please provide the content to create note.
+						<p>Here's the currents do's</p>
+						<div>{await executeCommand("read.do")}</div>
+					</div>
+				);
 			}
 
 			// TODO: Process via AI
-			
+
 			addTab(`TODO #${params[0]}`, params.join(" "));
 
 			return <p>Added TODO!</p>;
 		},
-		
+
+		"read.do": () => {
+			const todoTabs = tabs.filter((tab) => tab.title.startsWith("TODO"));
+
+			return (
+				<ul>
+					{todoTabs.map((tab, index) => (
+						<li key={`read-do-${tab.id}`}>
+							{index + 1}. {tab.content}
+						</li>
+					))}
+				</ul>
+			);
+		},
+
+		"done.do": (params) => {
+			if (!params.length) {
+				return;
+			}
+
+			const doneIndex = params.map((param) => +param);
+			const doneTodos: Array<{ title: string; content: string }> = [];
+
+			doneIndex.forEach((index) => {
+				const tab = tabs[index - 1];
+
+				if (tab) {
+					doneTodos.push({
+						title: tab.title,
+						content: tab.content,
+					});
+					closeTab(tab.id);
+				}
+			});
+
+			return (
+				<ul className="flex flex-col gap-2">
+					{doneTodos.map((tab, index) => (
+						<li key={`Done-do-${tab.title}`}>
+							<p>
+								{index + 1}. {tab.title}
+							</p>
+							<p>{tab.content}</p>
+						</li>
+					))}
+				</ul>
+			);
+		},
 	};
 
 	const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
