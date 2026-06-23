@@ -53,32 +53,44 @@ function Frominal() {
 	}
 
 	const helpRegistry: Record<string, string> = {
-		help: "Get the help related",
-		echo: "",
+		help: "Display all available command with their usage.",
+		echo: "Print text to the terminal. Usage: `echo <TEXT>`",
+		ping: "Measure response time of the URL. Usage: `ping <URL>`",
+		clear: "Clear terminal history",
+		open: "Open one or more apps. Usage `open <*APPS>`",
+		pin: "Pin one or more apps to dock. Usage `pin <*APPS>`",
+		unpin: "Unpin one or more apps from dock. Usage `unpin <*APPS>`",
 	};
 
 	const commands: Record<string, CommandHandler> = {
 		help: () => {
 			return (
-				<table>
-					<thead>
-						<tr>
-							<td>Commands</td>
-							<td>Instructions</td>
-						</tr>
-					</thead>
+				<>
+					<p className="text-red-500 pb-4">
+						Any &lt;*Param&gt; are meant to be separate by `space ( )` for
+						multiple inputs.
+					</p>
+					<table className="border-collapse">
+						<thead>
+							<tr>
+								<th className="text-left pr-8 pb-2 text-yellow-500">Command</th>
+								<th className="text-left pb-2 text-yellow-500">Description</th>
+							</tr>
+						</thead>
 
-					<tbody>
-						{Object.entries(commands).map(([command]) => {
-							return (
-								<tr key={`help-command-row-${command}`}>
-									<td className="pr-4 text-blue-400">{command}</td>
-									<td>{helpRegistry[command] ?? "'Usage not found'"}</td>
+						<tbody>
+							{Object.entries(commands).map(([command]) => (
+								<tr key={command}>
+									<td className="pr-8 py-1 text-blue-400">{command}</td>
+
+									<td className="py-1">
+										{helpRegistry[command] ?? "No help available"}
+									</td>
 								</tr>
-							);
-						})}
-					</tbody>
-				</table>
+							))}
+						</tbody>
+					</table>
+				</>
 			);
 		},
 
