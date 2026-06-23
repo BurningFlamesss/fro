@@ -52,8 +52,31 @@ function Frominal() {
 		return await handler(params);
 	}
 
+	const helpRegistry: Record<string, string> = {
+		help: "Get the help related",
+		echo: "",
+	};
+
 	const commands: Record<string, CommandHandler> = {
-		help: () => "Please read the docs",
+		help: () => {
+			return (
+				<table>
+					<tr>
+						<td>Commands</td>
+						<td>Instructions</td>
+					</tr>
+
+					{Object.entries(commands).map(([command]) => {
+						return (
+							<tr key={`help-command-row-${command}`}>
+								<td>{command}</td>
+								<tr>{helpRegistry[command] ?? "'Usage not found'"}</tr>
+							</tr>
+						);
+					})}
+				</table>
+			);
+		},
 
 		echo: (params) => params.join(" "),
 
