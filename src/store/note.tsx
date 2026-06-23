@@ -32,15 +32,10 @@ export const useNoteStore = create<NoteStore>()(
 						title: "Untitled",
 						content: "",
 					},
-					{
-						id: crypto.randomUUID(),
-						title: "Untitled",
-						content: "",
-					},
 				],
 				activeTabId: firstTabId,
 
-				addTab: (title="Untitled", content="") => {
+				addTab: (title = "Untitled", content = "") => {
 					const newTab: NoteTab = {
 						id: crypto.randomUUID(),
 						title: title,
@@ -94,7 +89,6 @@ export const useNoteStore = create<NoteStore>()(
 				renameTab: (id, title) =>
 					set((state) => {
 						const tab = state.tabs.find((tab) => tab.id === id);
-
 						if (tab) {
 							tab.title = title;
 						}

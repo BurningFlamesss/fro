@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PiEye, PiPencil, PiPlus, PiX } from "react-icons/pi";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -13,10 +13,12 @@ function Frotes() {
 		closeTab,
 		selectTab,
 		updateContent,
-		// renameTab,
+		renameTab,
 	} = useNoteStore();
 	const [preview, setPreview] = useState<boolean>(false);
 	const activeTab = tabs.find((tab) => tab.id === activeTabId);
+	const [editingTabId, setEditingTabId] = useState<string | null>(null);
+	const [editingTitle, setEditingTitle] = useState("");
 
 	// useEffect(() => {
 	// 	if (
@@ -42,7 +44,39 @@ function Frotes() {
 							onClick={() => selectTab(tab.id)}
 							key={`tab-${tab.id}`}
 						>
-							<span className="truncate">{tab.title}</span>
+							{editingTabId === tab.id ? (
+								<input
+									value={editingTitle}
+									onChange={(e) => setEditingTitle(e.target.value)}
+									onBlur={() => {
+										renameTab(tab.id, editingTitle.trim() || "Untitled");
+										setEditingTabId(null);
+									}}
+									onKeyDown={(e) => {
+										if (e.key === "Enter") {
+											renameTab(tab.id, editingTitle.trim() || "Untitled");
+											setEditingTabId(null);
+										}
+
+										if (e.key === "Escape") {
+											setEditingTabId(null);
+										}
+									}}
+									className="bg-transparent outline-none w-full"
+								/>
+							) : (
+								<span
+									className="truncate"
+									onDoubleClick={(e) => {
+										e.stopPropagation();
+
+										setEditingTabId(tab.id);
+										setEditingTitle(tab.title);
+									}}
+								>
+									{tab.title}
+								</span>
+							)}
 							{tabs.length > 1 && (
 								<button
 									type="button"
@@ -79,7 +113,7 @@ function Frotes() {
 				</button>
 			</div>
 
-			<div className="flex-1 overflow-auto">
+			<div className="flex-1 overflow-hidden">
 				{preview ? (
 					<div className="p-4 prose prose-invert max-w-none">
 						<ReactMarkdown remarkPlugins={[remarkGfm]}>
