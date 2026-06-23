@@ -206,6 +206,19 @@ function Frominal() {
 			);
 		},
 
+		ps: () => {
+			const visibleWindows = Object.values(windows).filter(
+				(win): win is WindowInstance => win !== undefined,
+			);
+
+			return (
+				<ul>
+					<li>PID APPS</li>
+					{visibleWindows.map((win, index) => <li key={`PID-apps-${win.id}`}>{index + 1}. {apps?.[win.appId]?.name}</li>)}
+				</ul>
+			);
+		},
+
 		"process.terminate.all": () => {
 			const visibleWindows = Object.values(windows).filter(
 				(win): win is WindowInstance => win !== undefined,
@@ -229,6 +242,12 @@ function Frominal() {
 				);
 			}
 		},
+
+		base64: (params) => {
+			return btoa(params.join(" "))
+		},
+
+		
 
 		calc: (params) => {
 			const equation = params.join(" ");
