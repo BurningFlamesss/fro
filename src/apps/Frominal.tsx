@@ -61,7 +61,20 @@ function Frominal() {
 		pin: "Pin one or more apps to dock. Usage `pin <*APPS>`",
 		unpin: "Unpin one or more apps from dock. Usage `unpin <*APPS>`",
 		mem: "Show application statistics",
-		ps: "List running window and processes"
+		ps: "List running window and processes",
+		"process.terminate.all": "Terminates all the running processes",
+		"!!": "Re-run the previous command",
+		base64: "Encode text as Base64. Usage: `base64 <TEXT>`",
+		decode64: "Decode Base64 text. Usage: `decode64 <BASE64>`",
+		hash: "Generate a hash. Usage: `hash [--sha1 | --sha256 | --sha384 | --sha512] [--lenN, e.g. --len32] <TEXT>`",
+		calc: "Evaluate a mathematical expression. Usage `calc <MATHEXP>`",
+		random:
+			"Generate random number. Usage `random` | `random <END>` | `random <START> <END>`",
+		fetch: "Fetch URL contents and metadata. Usage: `fetch <*URLS>`",
+		note: "Create quick note. Usage: `note <TEXT>`",
+		"create.do": "Create a TODO. Usage: `create.do <TODO>`",
+		"read.do": "List all the TODO items",
+		"done.do": "Mark TODO as completed. Usage: `done.do <*INDICES>`",
 	};
 
 	const commands: Record<string, CommandHandler> = {
@@ -583,7 +596,7 @@ function Frominal() {
 
 	return (
 		<div
-			className="w-full min-h-full overflow-y-auto bg-foreground text-primary font-mono p-5 box-border m-0 selection:bg-green-800 selection:text-white" 
+			className="w-full min-h-full overflow-y-auto bg-foreground text-primary font-mono p-5 box-border m-0 selection:bg-green-800 selection:text-white"
 			ref={terminalRef}
 		>
 			{generateWelcomeMessage()}
