@@ -214,7 +214,11 @@ function Frominal() {
 			return (
 				<ul>
 					<li>PID APPS</li>
-					{visibleWindows.map((win, index) => <li key={`PID-apps-${win.id}`}>{index + 1}. {apps?.[win.appId]?.name}</li>)}
+					{visibleWindows.map((win, index) => (
+						<li key={`PID-apps-${win.id}`}>
+							{index + 1}. {apps?.[win.appId]?.name}
+						</li>
+					))}
 				</ul>
 			);
 		},
@@ -244,10 +248,81 @@ function Frominal() {
 		},
 
 		base64: (params) => {
-			return btoa(params.join(" "))
+			return btoa(unescape(encodeURIComponent(params.join(" "))));
 		},
 
-		
+		decode64: (params) => {
+			return atob(escape(encodeURIComponent(params.join(" "))));
+		},
+
+		hash: async (params) => {
+			if (!params.length) {
+				return <p className="text-yellow-500">Please provide text to hash</p>;
+			}
+
+			const algorithmMap: Record<string, AlgorithmIdentifier> = {
+				"--sha1": "SHA-1",
+				"--sha256": "SHA-256",
+				"--sha384": "SHA-384",
+				"--sha512": "SHA-512",
+			};
+
+			let algorithm: AlgorithmIdentifier = "SHA-256";
+			let length: number = Infinity;
+
+			const content: Array<string> = [];
+
+			for (const param of params) {
+				const lower = param.toLowerCase();
+
+				if (lower.startsWith("--len")) {
+					length = +lower.replace("--len", "");
+					continue;
+				}
+
+				if (lower in algorithmMap) {
+					algorithm = algorithmMap[lower];
+					continue;
+				}
+
+				content.push(param);
+			}
+
+			if (!content.length) {
+				return <p className="text-yellow-500">No text provided to hash</p>;
+			}
+
+			const text = content.join(" ");
+
+			const buffer = await crypto.subtle.digest(
+				algorithm,
+				new TextEncoder().encode(text),
+			);
+
+			const hashHex = Array.from(new Uint8Array(buffer))
+				.map((byte) => byte.toString(16).padStart(2, "0"))
+				.join("");
+
+			const result = hashHex.slice(0, length);
+
+			return (
+				<div>
+					<p>
+						Algorithm:{" "}
+						<span className="text-blue-400">{String(algorithm)}</span>
+					</p>
+
+					<p>
+						Length:{" "}
+						<span className="text-blue-400">{hashHex.length * 4} bits</span>
+					</p>
+
+					<pre className="whitespace-pre-wrap break-all text-green-400">
+						{result}
+					</pre>
+				</div>
+			);
+		},
 
 		calc: (params) => {
 			const equation = params.join(" ");
