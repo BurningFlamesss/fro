@@ -185,6 +185,27 @@ function Frominal() {
 			);
 		},
 
+		mem: () => {
+			const visibleWindows = Object.values(windows).filter(
+				(win): win is WindowInstance => win !== undefined,
+			);
+
+			const openedApps = new Set(visibleWindows.map((win) => win.appId));
+
+			const pinnedApps = Object.entries(apps).filter(
+				([key, value]) => value.isPinned,
+			);
+
+			return (
+				<div>
+					<p>Apps: {Object.values(apps).length}</p>
+					<p>Opened Windows: {visibleWindows.length}</p>
+					<p>Opened Apps: {openedApps.size}</p>
+					<p>Pinned Apps: {pinnedApps.length}</p>
+				</div>
+			);
+		},
+
 		"process.terminate.all": () => {
 			const visibleWindows = Object.values(windows).filter(
 				(win): win is WindowInstance => win !== undefined,
