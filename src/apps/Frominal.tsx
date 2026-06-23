@@ -72,6 +72,9 @@ function Frominal() {
 			"Generate random number. Usage `random` | `random <END>` | `random <START> <END>`",
 		fetch: "Fetch URL contents and metadata. Usage: `fetch <*URLS>`",
 		note: "Create quick note. Usage: `note <TEXT>`",
+		refresh: "Refresh the OS",
+		geo: "Get latitude & longitude. Usage: `geo [--copy | --map]`",
+		clipboard: "Read and display the content in the clipboard",
 		"create.do": "Create a TODO. Usage: `create.do <TODO>`",
 		"read.do": "List all the TODO items",
 		"done.do": "Mark TODO as completed. Usage: `done.do <*INDICES>`",
@@ -464,6 +467,71 @@ function Frominal() {
 			addTab(`Frominal Note #${params[0]}`, params.join(" "));
 
 			return <p>Added note!</p>;
+		},
+
+		refresh: () => {
+			setTimeout(() => {
+				window.location.reload();
+			}, 200);
+
+			return <p>Refreshing the page...</p>;
+		},
+
+		geo: async (params) => {
+			try {
+				const position = await new Promise<GeolocationPosition>(
+					(resolve, reject) =>
+						navigator.geolocation.getCurrentPosition(resolve, reject),
+				);
+
+				const flags = {
+					"--copy": async () =>
+						await navigator.clipboard.writeText(
+							`lat: ${position.coords.latitude}, lng: ${position.coords.longitude}`,
+						),
+					"--map": () =>
+						window.open(
+							`https://maps.google.com/?q=${position.coords.latitude},${position.coords.longitude}`,
+							"_blank",
+							"noopener,noreferrer",
+						),
+				};
+
+				for (const param of params) {
+					if (param === "--copy") {
+						await flags["--copy"]();
+					}
+
+					if (param === "--map") {
+						await flags["--map"]();
+					}
+				}
+
+				return (
+					<div>
+						<p>Latitude: {position.coords.latitude}</p>
+						<p>Longitude: {position.coords.longitude}</p>
+						<p>Accuracy: {position.coords.accuracy}m</p>
+					</div>
+				);
+			} catch {
+				return <p className="text-red-500">Location permission denied</p>;
+			}
+		},
+
+		clipboard: async () => {
+			try {
+				const text = await navigator.clipboard.readText();
+
+				return (
+					<div>
+						<p>Clipboard Content:</p>
+						<pre>{text || "(empty)"}</pre>
+					</div>
+				);
+			} catch {
+				return <p className="text-red-500">Could not access clipboard</p>;
+			}
 		},
 
 		"create.do": async (params) => {
