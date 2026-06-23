@@ -198,7 +198,7 @@ function Taskbar() {
 								<ContextMenuGroup>
 									{app.singleInstance ? null : (
 										<ContextMenuItem onClick={() => openApp(app.id)}>
-											<img className="h-4 w-4" src={app.logo} alt="" /> New
+											<img draggable={false} className="h-4 w-4" src={app.logo} alt="" /> New
 											Window
 										</ContextMenuItem>
 									)}

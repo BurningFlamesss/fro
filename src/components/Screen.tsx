@@ -62,12 +62,12 @@ function Screen() {
 							)}
 						>
 							<img
-								className="w-12 h-12 object-contain opacity-90 group-hover:opacity-100"
+								className="w-12 h-12 object-contain opacity-90 group-hover:opacity-100 select-none"
 								src={app.logo}
 								alt={app.name}
 								draggable={false}
 							/>
-							<p className="text-background glassmorphism py-0.5 px-2 rounded-sm text-xs truncate max-w-full">
+							<p className="text-background glassmorphism py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
 								{app.name}
 							</p>
 						</button>
@@ -76,11 +76,11 @@ function Screen() {
 					<ContextMenuContent className="z-100000002">
 						<ContextMenuGroup>
 							<ContextMenuItem onClick={() => toggleApp(app)}>
-								<img className="h-4 w-4" src={app.logo} alt="" /> Open{" "}
+								<img draggable={false} className="h-4 w-4" src={app.logo} alt="" /> Open{" "}
 								{app.name}
 							</ContextMenuItem>
 							<ContextMenuItem onClick={() => openApp(app.id)}>
-								<img className="h-4 w-4" src={app.logo} alt="" /> New Window
+								<img draggable={false} className="h-4 w-4" src={app.logo} alt="" /> New Window
 							</ContextMenuItem>
 							<ContextMenuItem onClick={() => pinApp(app.id)}>
 								<RiPushpinLine className="text-background" />
