@@ -61,19 +61,23 @@ function Frominal() {
 		help: () => {
 			return (
 				<table>
-					<tr>
-						<td>Commands</td>
-						<td>Instructions</td>
-					</tr>
+					<thead>
+						<tr>
+							<td>Commands</td>
+							<td>Instructions</td>
+						</tr>
+					</thead>
 
-					{Object.entries(commands).map(([command]) => {
-						return (
-							<tr key={`help-command-row-${command}`}>
-								<td>{command}</td>
-								<tr>{helpRegistry[command] ?? "'Usage not found'"}</tr>
-							</tr>
-						);
-					})}
+					<tbody>
+						{Object.entries(commands).map(([command]) => {
+							return (
+								<tr key={`help-command-row-${command}`}>
+									<td className="pr-4 text-blue-400">{command}</td>
+									<td>{helpRegistry[command] ?? "'Usage not found'"}</td>
+								</tr>
+							);
+						})}
+					</tbody>
 				</table>
 			);
 		},
