@@ -60,13 +60,15 @@ function Frominal() {
 		open: "Open one or more apps. Usage `open <*APPS>`",
 		pin: "Pin one or more apps to dock. Usage `pin <*APPS>`",
 		unpin: "Unpin one or more apps from dock. Usage `unpin <*APPS>`",
+		mem: "Show application statistics",
+		ps: "List running window and processes"
 	};
 
 	const commands: Record<string, CommandHandler> = {
 		help: () => {
 			return (
 				<>
-					<p className="text-red-500 pb-4">
+					<p className="text-yellow-500 pb-4">
 						Any &lt;*Param&gt; are meant to be separate by `space ( )` for
 						multiple inputs.
 					</p>
@@ -255,7 +257,7 @@ function Frominal() {
 					<li>PID APPS</li>
 					{visibleWindows.map((win, index) => (
 						<li key={`PID-apps-${win.id}`}>
-							{index + 1}. {apps?.[win.appId]?.name}
+							{index + 1}. {apps?.[win.appId]?.name} - ({win.id})
 						</li>
 					))}
 				</ul>
@@ -581,7 +583,7 @@ function Frominal() {
 
 	return (
 		<div
-			className="w-full min-h-full overflow-y-auto bg-foreground text-primary font-mono p-5 box-border m-0"
+			className="w-full min-h-full overflow-y-auto bg-foreground text-primary font-mono p-5 box-border m-0 selection:bg-green-800 selection:text-white" 
 			ref={terminalRef}
 		>
 			{generateWelcomeMessage()}
