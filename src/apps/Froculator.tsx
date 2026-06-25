@@ -9,6 +9,31 @@ interface CalculatorButton {
 
 const buttons: Array<CalculatorButton> = [
 	{
+		label: "-",
+		value: "-",
+		type: "operator",
+	},
+	{
+		label: "+",
+		value: "+",
+		type: "operator",
+	},
+	{
+		label: "/",
+		value: "/",
+		type: "operator",
+	},
+	{
+		label: "*",
+		value: "*",
+		type: "operator",
+	},
+	{
+		label: "%",
+		value: "%",
+		type: "operator",
+	},
+	{
 		label: "1",
 		value: "1",
 		type: "number",
@@ -57,6 +82,21 @@ const buttons: Array<CalculatorButton> = [
 		label: "0",
 		value: "0",
 		type: "number",
+	},
+	{
+		label: ".",
+		value: ".",
+		type: "number",
+	},
+	{
+		label: "(",
+		value: "(",
+		type: "operator",
+	},
+	{
+		label: ")",
+		value: ")",
+		type: "operator",
 	},
 	{
 		label: "=",
