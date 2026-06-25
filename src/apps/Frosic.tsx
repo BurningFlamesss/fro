@@ -218,7 +218,7 @@ function Frosic({ windowId }: { windowId: string }) {
 							</button>
 						</PopoverTrigger>
 						<PopoverContent
-							align="end"
+							align="center"
 							className="w-48 p-2 bg-foreground border border-background/10 text-background text-xs"
 						>
 							<div className="max-h-[10.5rem] overflow-y-auto">
