@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { cn } from "#/lib/utils.ts";
+import { evaluate } from "mathjs";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type ButtonType =
 	| "number"
@@ -228,6 +230,41 @@ function Froculator() {
 	const [error, setError] = useState<string>("");
 	const [memory, setMemory] = useState(0);
 	const [angleMode, setAngleMode] = useState<"Deg" | "Rad">("Rad");
+	const skipEvalRef = useRef(false);
+
+	const evaluateExpression = useCallback(
+		(expression: string) => {
+			if (!expression) {
+				setResult("");
+				setError("");
+				return;
+			}
+
+			try {
+				const scope = angleMode === "Deg" ? {} : {};
+				const response = evaluate(expression, scope);
+
+				if (typeof response === "number" && Number.isFinite(response)) {
+					setResult((+response.toFixed(10)).toString());
+				} else {
+					setResult("");
+					setError("Invalid Result");
+				}
+			} catch (error) {
+				setResult("");
+				setError("Error");
+			}
+		},
+		[angleMode],
+	);
+
+	useEffect(() => {
+		if (skipEvalRef.current) {
+			skipEvalRef.current = false;
+			return;
+		}
+		evaluateExpression(expression);
+	}, [expression, evaluateExpression]);
 
 	const handleButtonClick = (value: string) => {
 		setError("");
@@ -246,6 +283,7 @@ function Froculator() {
 				if (result && !error) {
 					setExpression(result);
 					setResult("");
+					skipEvalRef.current = true;
 				}
 				break;
 
@@ -301,9 +339,16 @@ function Froculator() {
 
 	return (
 		<div className="flex flex-col p-4 gap-2 select-none">
-			<div className="display bg-foreground p-3 rounded-xl text-right flex flex-col justify-end gap-y-1 min-h-18">
-				<p className="text-sm break-all">{expression}</p>
-				<p className="text-2xl font-semibold break-all">{result}</p>
+			<div className="display bg-foreground p-3 rounded-xl text-right flex flex-col justify-end gap-y-1 min-h-24">
+				<p
+					className={cn(
+						"text-2xl break-all transition-all ease-in-out duration-75",
+						skipEvalRef.current ? "font-semibold text-5xl text-green-400" : "",
+					)}
+				>
+					{expression}
+				</p>
+				<p className="text-sm font-semibold break-all text-green-400">{result}</p>
 			</div>
 
 			<div className="grid grid-cols-8 gap-1.5 flex-1">
