@@ -277,6 +277,22 @@ function Froculator() {
 				setAngleMode("Rad");
 				break;
 
+			case "!":
+				setExpression((exp) => {
+					if (!exp) {
+						return "factorial(0)";
+					}
+
+					const match = exp.match(/(\d+\.?\d*|\))$/); // From google
+					if (match) {
+						const before = exp.slice(0, -match[0].length);
+						return `${before}factorial(${match[0]})`;
+					}
+
+					return exp;
+				});
+				break;
+
 			default:
 				setExpression((exp) => exp + value);
 				break;
