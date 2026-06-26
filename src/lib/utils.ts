@@ -32,3 +32,5 @@ export function normalizeUrl(url: string) {
 
 	return url;
 }
+
+export const degree2radian = (degree: number) => (degree * Math.PI) / 180;

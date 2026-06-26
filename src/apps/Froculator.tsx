@@ -226,10 +226,35 @@ function Froculator() {
 	const [expression, setExpression] = useState<string>("");
 	const [result, setResult] = useState<string>("");
 	const [error, setError] = useState<string>("");
+	const [memory, setMemory] = useState(0);
+	const [angleMode, setAngleMode] = useState<"Deg" | "Rad">("Rad");
 
 	const handleButtonClick = (value: string) => {
+		setError("");
+
 		switch (value) {
+			case "C":
+				setExpression("");
+				setResult("");
+				break;
+
+			case "⌫":
+				setExpression((exp) => exp.slice(0, -1));
+				break;
+
 			case "=":
+				if (result && !error) {
+					setExpression(result);
+					setResult("");
+				}
+				break;
+
+			case "Deg":
+				setAngleMode("Deg");
+				break;
+
+			case "Rad":
+				setAngleMode("Rad");
 				break;
 
 			default:
