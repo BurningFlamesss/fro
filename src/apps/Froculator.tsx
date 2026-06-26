@@ -1,4 +1,4 @@
-import { cn } from "#/lib/utils.ts";
+import { cn, degree2radian } from "#/lib/utils.ts";
 import { evaluate } from "mathjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -241,7 +241,17 @@ function Froculator() {
 			}
 
 			try {
-				const scope = angleMode === "Deg" ? {} : {};
+				const scope =
+					angleMode === "Deg"
+						? {
+								sin: (x: number) => Math.sin(degree2radian(x)),
+								cos: (x: number) => Math.cos(degree2radian(x)),
+								tan: (x: number) => Math.tan(degree2radian(x)),
+								sinh: (x: number) => Math.sinh(degree2radian(x)),
+								cosh: (x: number) => Math.cosh(degree2radian(x)),
+								tanh: (x: number) => Math.tanh(degree2radian(x)),
+							}
+						: {};
 				const response = evaluate(expression, scope);
 
 				if (typeof response === "number" && Number.isFinite(response)) {
@@ -348,7 +358,9 @@ function Froculator() {
 				>
 					{expression}
 				</p>
-				<p className="text-sm font-semibold break-all text-green-400">{result}</p>
+				<p className="text-sm font-semibold break-all text-green-400">
+					{result}
+				</p>
 			</div>
 
 			<div className="grid grid-cols-8 gap-1.5 flex-1">
@@ -357,7 +369,15 @@ function Froculator() {
 						key={`calculator-button-${element}-${index}`}
 						type="button"
 						onClick={() => handleButtonClick(element.value)}
-						className="rounded-md font-medium text-sm flex justify-center items-center p-1"
+						className={cn(
+							"rounded-md font-medium text-sm flex justify-center items-center p-1",
+							element.label === "Deg" && angleMode === "Deg"
+								? "text-green-400"
+								: "",
+							element.label === "Rad" && angleMode === "Rad"
+								? "text-green-400"
+								: "",
+						)}
 					>
 						{element.label}
 					</button>
