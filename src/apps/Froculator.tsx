@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 type ButtonType = "number" | "operator" | "equals" | "function" | "clear";
 
 interface CalculatorButton {
@@ -9,13 +11,23 @@ interface CalculatorButton {
 
 const buttons: Array<CalculatorButton> = [
 	{
-		label: "-",
-		value: "-",
+		label: "!",
+		value: "!",
 		type: "operator",
 	},
 	{
-		label: "+",
-		value: "+",
+		label: "%",
+		value: "%",
+		type: "operator",
+	},
+	{
+		label: "(",
+		value: "(",
+		type: "operator",
+	},
+	{
+		label: ")",
+		value: ")",
 		type: "operator",
 	},
 	{
@@ -29,10 +41,36 @@ const buttons: Array<CalculatorButton> = [
 		type: "operator",
 	},
 	{
-		label: "%",
-		value: "%",
+		label: "-",
+		value: "-",
 		type: "operator",
 	},
+	{
+		label: "+",
+		value: "+",
+		type: "operator",
+	},
+	{
+		label: "log",
+		value: "log(",
+		type: "function",
+	},
+	{
+		label: "sin",
+		value: "sin(",
+		type: "function",
+	},
+	{
+		label: "cos",
+		value: "cos(",
+		type: "function",
+	},
+	{
+		label: "tan",
+		value: "tan(",
+		type: "function",
+	},
+
 	{
 		label: "1",
 		value: "1",
@@ -54,6 +92,27 @@ const buttons: Array<CalculatorButton> = [
 		type: "number",
 	},
 	{
+		label: "e",
+		value: "e",
+		type: "number",
+	},
+	{
+		label: "π",
+		value: "pi",
+		type: "number",
+	},
+	{
+		label: "x²",
+		value: "^2",
+		type: "function",
+	},
+	{
+		label: "xʸ",
+		value: "^",
+		type: "function",
+	},
+
+	{
 		label: "5",
 		value: "5",
 		type: "number",
@@ -73,6 +132,27 @@ const buttons: Array<CalculatorButton> = [
 		value: "8",
 		type: "number",
 	},
+
+	{
+		label: "ln",
+		value: "ln(",
+		type: "function",
+	},
+	{
+		label: "sinh",
+		value: "sinh(",
+		type: "function",
+	},
+	{
+		label: "cosh",
+		value: "cosh(",
+		type: "function",
+	},
+	{
+		label: "tanh",
+		value: "tanh(",
+		type: "function",
+	},
 	{
 		label: "9",
 		value: "9",
@@ -89,16 +169,6 @@ const buttons: Array<CalculatorButton> = [
 		type: "number",
 	},
 	{
-		label: "(",
-		value: "(",
-		type: "operator",
-	},
-	{
-		label: ")",
-		value: ")",
-		type: "operator",
-	},
-	{
 		label: "=",
 		value: "=",
 		type: "equals",
@@ -106,11 +176,26 @@ const buttons: Array<CalculatorButton> = [
 ];
 
 function Froculator() {
+	const [expression, setExpression] = useState<string>("");
+	const [result, setResult] = useState<string>("");
+	const [error, setError] = useState<string>("");
+
+	const handleButtonClick = (value: string) => {
+		switch (value) {
+			case "=":
+				break;
+
+			default:
+				setExpression((exp) => exp + value);
+				break;
+		}
+	};
+
 	return (
 		<div className="flex flex-col p-4 gap-2 select-none">
 			<div className="display bg-foreground p-3 rounded-xl text-right flex flex-col justify-end gap-y-1 min-h-18">
-				<p className="text-sm break-all">EXPRESSION</p>
-				<p className="text-2xl font-semibold break-all">RESULT</p>
+				<p className="text-sm break-all">{expression}</p>
+				<p className="text-2xl font-semibold break-all">{result}</p>
 			</div>
 
 			<div className="grid grid-cols-8 gap-1.5 flex-1">
@@ -118,6 +203,7 @@ function Froculator() {
 					<button
 						key={`calculator-button-${element}-${index}`}
 						type="button"
+						onClick={() => handleButtonClick(element.value)}
 						className="rounded-md font-medium text-sm flex justify-center items-center p-1"
 					>
 						{element.label}
