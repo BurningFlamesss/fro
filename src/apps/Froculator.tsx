@@ -1,6 +1,13 @@
 import { useState } from "react";
 
-type ButtonType = "number" | "operator" | "equals" | "function" | "clear";
+type ButtonType =
+	| "number"
+	| "operator"
+	| "equals"
+	| "function"
+	| "clear"
+	| "memory"
+	| "utility";
 
 interface CalculatorButton {
 	label: string;
@@ -10,6 +17,46 @@ interface CalculatorButton {
 }
 
 const buttons: Array<CalculatorButton> = [
+	{
+		label: "MC",
+		value: "MC",
+		type: "memory",
+	},
+	{
+		label: "MR",
+		value: "MR",
+		type: "memory",
+	},
+	{
+		label: "M+",
+		value: "M+",
+		type: "memory",
+	},
+	{
+		label: "M-",
+		value: "M-",
+		type: "memory",
+	},
+	{
+		label: "Deg",
+		value: "Deg",
+		type: "utility",
+	},
+	{
+		label: "Rad",
+		value: "Rad",
+		type: "utility",
+	},
+	{
+		label: "C",
+		value: "C",
+		type: "clear",
+	},
+	{
+		label: "⌫",
+		value: "⌫",
+		type: "clear",
+	},
 	{
 		label: "!",
 		value: "!",
