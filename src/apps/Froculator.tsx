@@ -249,6 +249,26 @@ function Froculator() {
 				}
 				break;
 
+			case "MC":
+				setMemory(0);
+				break;
+
+			case "MR":
+				setExpression((exp) => exp + memory.toString());
+				break;
+
+			case "M+":
+				setMemory((mem) => mem + (result ? parseFloat(result) : 0));
+				break;
+
+			case "M-":
+				setMemory((mem) => mem - (result ? parseFloat(result) : 0));
+				break;
+
+			case "%":
+				setExpression((exp) => `${exp}/100`);
+				break;
+
 			case "Deg":
 				setAngleMode("Deg");
 				break;
