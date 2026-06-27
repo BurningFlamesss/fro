@@ -1,4 +1,9 @@
-import { balanceParentheses, cn, degree2radian, removeLastToken } from "#/lib/utils.ts";
+import {
+	balanceParentheses,
+	cn,
+	degree2radian,
+	removeLastToken,
+} from "#/lib/utils.ts";
 import { evaluate } from "mathjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -346,6 +351,86 @@ function Froculator() {
 				break;
 		}
 	};
+
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			const { key, shiftKey } = e;
+
+			if (/^[0-9.]$/.test(key)) {
+				e.preventDefault();
+				handleButtonClick(key);
+				return;
+			}
+
+			switch (key) {
+				case "+":
+				case "-":
+				case "*":
+				case "/":
+				case "(":
+				case ")":
+				case "^":
+				case "%":
+					e.preventDefault();
+					handleButtonClick(key);
+					break;
+				case "!":
+					e.preventDefault();
+					handleButtonClick("!");
+					break;
+				case "Enter":
+					e.preventDefault();
+					handleButtonClick("=");
+					break;
+				case "Backspace":
+					e.preventDefault();
+					handleButtonClick("⌫");
+					break;
+				case "Escape":
+					e.preventDefault();
+					handleButtonClick("C");
+					break;
+				case "e":
+					e.preventDefault()
+					handleButtonClick("e")
+					break;
+				case "p":
+					e.preventDefault()
+					handleButtonClick("pi")
+					break;
+				case "l":
+					e.preventDefault()
+					handleButtonClick("log(")
+					break;
+				case "s":
+					e.preventDefault()
+					handleButtonClick("sin(")
+					break;
+				case "c":
+					e.preventDefault()
+					handleButtonClick("cos(")
+					break;
+				case "t":
+					e.preventDefault()
+					handleButtonClick("tan(")
+					break;
+				case "d":
+					e.preventDefault()
+					setAngleMode("Deg")
+					break;
+				case "r":
+					e.preventDefault()
+					setAngleMode("Rad")
+					break;
+				default:
+					break;
+			}
+		};
+
+		window.addEventListener("keydown", handleKeyDown);
+
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, [handleButtonClick]);
 
 	return (
 		<div className="flex flex-col p-4 gap-2 select-none">
