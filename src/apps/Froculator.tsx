@@ -5,8 +5,10 @@ import {
 	removeLastToken,
 } from "#/lib/utils.ts";
 import { useCalculatorStore } from "#/store/calculator.tsx";
+import { useWindowStore } from "#/store/window.tsx";
 import { evaluate } from "mathjs";
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { WindowInstance } from "../constants";
 
 type ButtonType =
 	| "number"
@@ -230,7 +232,7 @@ const buttons: Array<CalculatorButton> = [
 	},
 ];
 
-function Froculator() {
+function Froculator({ windowId }: { windowId: string }) {
 	const exp = useCalculatorStore((state) => state.expression);
 	const [expression, setExpression] = useState<string>(exp);
 	const [result, setResult] = useState<string>("");
@@ -238,6 +240,13 @@ function Froculator() {
 	const [memory, setMemory] = useState(0);
 	const [angleMode, setAngleMode] = useState<"Deg" | "Rad">("Rad");
 	const skipEvalRef = useRef(false);
+	const { windows } = useWindowStore();
+	const topWindow = Object.values(windows)
+		.filter((win): win is WindowInstance => win !== undefined && !win.minimized)
+		.reduce(
+			(top, win) => (win.zIndex > (top?.zIndex ?? -1) ? win : top),
+			null as WindowInstance | null,
+		);
 
 	const evaluateExpression = useCallback(
 		(expression: string) => {
@@ -356,6 +365,9 @@ function Froculator() {
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
+			if (!topWindow) return;
+			if (topWindow.id !== windowId) return;
+
 			const { key, shiftKey } = e;
 
 			if (/^[0-9.]$/.test(key)) {
