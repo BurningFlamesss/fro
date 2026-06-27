@@ -1,4 +1,4 @@
-import { cn, degree2radian } from "#/lib/utils.ts";
+import { balanceParentheses, cn, degree2radian, removeLastToken } from "#/lib/utils.ts";
 import { evaluate } from "mathjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -252,7 +252,7 @@ function Froculator() {
 								tanh: (x: number) => Math.tanh(degree2radian(x)),
 							}
 						: {};
-				const response = evaluate(expression, scope);
+				const response = evaluate(balanceParentheses(expression), scope);
 
 				if (typeof response === "number" && Number.isFinite(response)) {
 					setResult((+response.toFixed(10)).toString());
@@ -286,7 +286,7 @@ function Froculator() {
 				break;
 
 			case "⌫":
-				setExpression((exp) => exp.slice(0, -1));
+				setExpression((exp) => removeLastToken(exp));
 				break;
 
 			case "=":
