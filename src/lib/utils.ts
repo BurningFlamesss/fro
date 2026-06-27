@@ -34,3 +34,32 @@ export function normalizeUrl(url: string) {
 }
 
 export const degree2radian = (degree: number) => (degree * Math.PI) / 180;
+
+export const LAST_TOKEN_REGEX =
+	/(sin\(|cos\(|tan\(|log\(|ln\(|sinh\(|cosh\(|tanh\(|factorial\(|pi|e|\^2|\^|[-+*/()]|\/100|\d+\.?\d*)$/; // From AI
+
+export function removeLastToken(expression: string): string {
+	const match = expression.match(LAST_TOKEN_REGEX);
+
+	if (!match) {
+		return expression.slice(0, -1); // When no match is found, the calculator will delete only one character which is the intended behavior as of my brain cells could think of
+	}
+
+	const token = match[0];
+
+	return expression.slice(0, expression.length - token.length);
+}
+
+export function balanceParentheses(expression: string): string {
+	let open = 0;
+
+	for (const character of expression) {
+		if (character === "(") {
+			open++;
+		} else if (character === ")") {
+			open--;
+		}
+	}
+
+	return expression + ")".repeat(Math.max(0, open));
+}
