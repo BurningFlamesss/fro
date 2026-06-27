@@ -4,6 +4,7 @@ import {
 	degree2radian,
 	removeLastToken,
 } from "#/lib/utils.ts";
+import { useCalculatorStore } from "#/store/calculator.tsx";
 import { evaluate } from "mathjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -230,7 +231,8 @@ const buttons: Array<CalculatorButton> = [
 ];
 
 function Froculator() {
-	const [expression, setExpression] = useState<string>("");
+	const exp = useCalculatorStore((state) => state.expression);
+	const [expression, setExpression] = useState<string>(exp);
 	const [result, setResult] = useState<string>("");
 	const [error, setError] = useState<string>("");
 	const [memory, setMemory] = useState(0);

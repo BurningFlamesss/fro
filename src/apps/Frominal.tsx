@@ -4,6 +4,7 @@ import { fetchResponse, pingUrl } from "#/server/fetchResponses.tsx";
 import { useNoteStore } from "#/store/note.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
+import { useCalculatorStore } from "#/store/calculator.tsx";
 
 type TerminalResponse = React.ReactNode | string;
 
@@ -34,6 +35,7 @@ function Frominal() {
 	const [terminalLines, setTerminalLines] = useState<Array<TerminalLine>>([]);
 	const [command, setCommand] = useState<string>("");
 	const [isProcessing, setIsProcessing] = useState(false);
+	const { setExpression } = useCalculatorStore();
 
 	const username = "FRO";
 	const hostname = "CUS";
@@ -389,6 +391,7 @@ function Frominal() {
 			}
 
 			if (!/^[0-9+\-*/().%\s]+$/.test(equation)) {
+				setExpression(equation);
 				openApp("calculator");
 				return (
 					<>
