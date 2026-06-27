@@ -391,36 +391,36 @@ function Froculator() {
 					handleButtonClick("C");
 					break;
 				case "e":
-					e.preventDefault()
-					handleButtonClick("e")
+					e.preventDefault();
+					handleButtonClick("e");
 					break;
 				case "p":
-					e.preventDefault()
-					handleButtonClick("pi")
+					e.preventDefault();
+					handleButtonClick("pi");
 					break;
 				case "l":
-					e.preventDefault()
-					handleButtonClick("log(")
+					e.preventDefault();
+					handleButtonClick("log(");
 					break;
 				case "s":
-					e.preventDefault()
-					handleButtonClick("sin(")
+					e.preventDefault();
+					handleButtonClick("sin(");
 					break;
 				case "c":
-					e.preventDefault()
-					handleButtonClick("cos(")
+					e.preventDefault();
+					handleButtonClick("cos(");
 					break;
 				case "t":
-					e.preventDefault()
-					handleButtonClick("tan(")
+					e.preventDefault();
+					handleButtonClick("tan(");
 					break;
 				case "d":
-					e.preventDefault()
-					setAngleMode("Deg")
+					e.preventDefault();
+					setAngleMode("Deg");
 					break;
 				case "r":
-					e.preventDefault()
-					setAngleMode("Rad")
+					e.preventDefault();
+					setAngleMode("Rad");
 					break;
 				default:
 					break;
@@ -434,7 +434,7 @@ function Froculator() {
 
 	return (
 		<div className="flex flex-col p-4 gap-2 select-none">
-			<div className="display bg-foreground p-3 rounded-xl text-right flex flex-col justify-end gap-y-1 min-h-24">
+			<div className="display glassmorphism p-3 rounded-xl text-right flex flex-col justify-end gap-y-1 min-h-24">
 				<p
 					className={cn(
 						"text-2xl break-all transition-all ease-in-out duration-75",
@@ -455,7 +455,7 @@ function Froculator() {
 						type="button"
 						onClick={() => handleButtonClick(element.value)}
 						className={cn(
-							"rounded-md font-medium text-sm flex justify-center items-center p-1",
+							"rounded-md font-medium text-sm flex justify-center items-center p-1 glassmorphism cursor-pointer",
 							element.label === "Deg" && angleMode === "Deg"
 								? "text-green-400"
 								: "",
