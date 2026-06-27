@@ -35,7 +35,7 @@ function Frominal() {
 	const [terminalLines, setTerminalLines] = useState<Array<TerminalLine>>([]);
 	const [command, setCommand] = useState<string>("");
 	const [isProcessing, setIsProcessing] = useState(false);
-	const { setExpression } = useCalculatorStore();
+	const { setCalculatorExpression } = useCalculatorStore();
 
 	const username = "FRO";
 	const hostname = "CUS";
@@ -384,18 +384,35 @@ function Frominal() {
 		},
 
 		calc: (params) => {
-			const equation = params.join(" ");
+			let equation: string = "";
+			let mode: "Deg" | "Rad" = "Rad";
+
+			for (const param of params) {
+				switch (param) {
+					case "--deg":
+						mode = "Deg";
+						break;
+					case "--rad":
+						mode = "Rad";
+						break;
+
+					default:
+						equation = `${equation} ${param}`;
+						break;
+				}
+			}
+
 			if (!equation) {
 				openApp("calculator");
 				return <p>Opening Calculator...</p>;
 			}
 
 			if (!/^[0-9+\-*/().%\s]+$/.test(equation)) {
-				setExpression(equation);
+				setCalculatorExpression(equation, mode);
 				openApp("calculator");
 				return (
 					<>
-						<p className="text-red-500">Invalid characters</p>
+						<p className="text-red-500">Beyond the capability of frominal!</p>
 						<p>Opening Calculator...</p>
 					</>
 				);

@@ -233,12 +233,12 @@ const buttons: Array<CalculatorButton> = [
 ];
 
 function Froculator({ windowId }: { windowId: string }) {
-	const exp = useCalculatorStore((state) => state.expression);
+	const { expression: exp, mode } = useCalculatorStore();
 	const [expression, setExpression] = useState<string>(exp);
 	const [result, setResult] = useState<string>("");
 	const [error, setError] = useState<string>("");
 	const [memory, setMemory] = useState(0);
-	const [angleMode, setAngleMode] = useState<"Deg" | "Rad">("Rad");
+	const [angleMode, setAngleMode] = useState<"Deg" | "Rad">(mode);
 	const skipEvalRef = useRef(false);
 	const { windows } = useWindowStore();
 	const topWindow = Object.values(windows)
