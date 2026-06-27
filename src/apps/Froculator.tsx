@@ -233,7 +233,11 @@ const buttons: Array<CalculatorButton> = [
 ];
 
 function Froculator({ windowId }: { windowId: string }) {
-	const { expression: exp, mode } = useCalculatorStore();
+	const {
+		expression: exp,
+		mode,
+		setCalculatorExpression,
+	} = useCalculatorStore();
 	const [expression, setExpression] = useState<string>(exp);
 	const [result, setResult] = useState<string>("");
 	const [error, setError] = useState<string>("");
@@ -289,6 +293,7 @@ function Froculator({ windowId }: { windowId: string }) {
 			skipEvalRef.current = false;
 			return;
 		}
+		setCalculatorExpression("", "Rad");
 		evaluateExpression(expression);
 	}, [expression, evaluateExpression]);
 
