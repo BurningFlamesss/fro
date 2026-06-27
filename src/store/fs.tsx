@@ -15,6 +15,15 @@ export interface FileNode {
 
 interface FileSystemState {
 	nodes: Record<string, FileNode>;
+	rootId: string;
+	desktopFolderIds: Array<string>;
+	createNode: (
+		parentId: string,
+		name: string,
+		type: "file" | "folder",
+		content?: string,
+	) => void;
+	deleteNode: (id: string) => void;
 }
 
 const createRoot = (): FileNode => ({
@@ -32,5 +41,9 @@ export const useFileSystemStore = create<FileSystemState>()(
 		nodes: {
 			root: createRoot(),
 		},
+		rootId: "root",
+		desktopFolderIds: [],
+		createNode: (parentId, name, type, content) => {},
+		deleteNode: (id) => {},
 	})),
 );
