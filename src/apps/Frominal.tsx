@@ -1,6 +1,7 @@
 import React, { type Ref, useEffect, useRef, useState } from "react";
 import {
 	formatBytes,
+	matchFlag,
 	normalizeUrl,
 	parseDate,
 	parseDuration,
@@ -8,10 +9,10 @@ import {
 } from "#/lib/utils.ts";
 import { fetchResponse, pingUrl } from "#/server/fetchResponses.tsx";
 import { useCalculatorStore } from "#/store/calculator.tsx";
+import { useCalendarStore } from "#/store/calendar.tsx";
 import { useNoteStore } from "#/store/note.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
-import { useCalendarStore } from "#/store/calendar.tsx";
 import { EVENT_COLORS } from "./Frolendar";
 
 type TerminalResponse = React.ReactNode | string;
@@ -649,21 +650,25 @@ function Frominal() {
 			let current: "title" | "start" | "end" | "dur" = "title";
 
 			for (const param of params) {
-				if (param.startsWith("--start@")) {
-					current = "start";
-					startInput = param.slice("--start@".length).trim();
-					continue;
-				}
+				const match = matchFlag(param);
 
-				if (param.startsWith("--end@")) {
-					current = "end";
-					endInput = param.slice("--end@".length).trim();
-					continue;
-				}
+				if (match) {
+					current = match.flag;
 
-				if (param.startsWith("--dur@")) {
-					current = "dur";
-					durationInput = param.slice("--dur@".length).trim();
+					switch (match.flag) {
+						case "start":
+							startInput = match.value;
+							break;
+
+						case "end":
+							endInput = match.value;
+							break;
+
+						case "dur":
+							durationInput = match.value;
+							break;
+					}
+
 					continue;
 				}
 

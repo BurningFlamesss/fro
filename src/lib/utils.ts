@@ -71,7 +71,7 @@ export const DEFAULT_DURATION = 30 * 60 * 1000;
 export function parseDate(input?: string): Date | null {
 	if (!input) return null;
 
-	const date = chrono.parseDate(input);
+	const date = chrono.parseDate(input, new Date());
 
 	return date ?? null;
 }
@@ -102,8 +102,7 @@ export function splitEvent(
 		const dayEnd = new Date(current);
 		dayEnd.setHours(23, 59, 59, 999);
 
-		const eventEnd =
-			dayEnd < end ? dayEnd : end;
+		const eventEnd = dayEnd < end ? dayEnd : end;
 
 		events.push({
 			id: crypto.randomUUID(),
@@ -123,4 +122,25 @@ export function splitEvent(
 	}
 
 	return events;
+}
+
+const FLAG_ALIASES = {
+	start: ["--start@", "-start@", "--start", "-start", "@"],
+	end: ["--end@", "-end@", "--end", "-end"],
+	dur: ["--dur@", "-dur@", "--dur", "-dur", "+"],
+} as const;
+
+export function matchFlag(param: string) {
+	for (const [flag, aliases] of Object.entries(FLAG_ALIASES)) {
+		for (const alias of [...aliases].sort((a, b) => b.length - a.length)) {
+			if (param.startsWith(alias)) {
+				return {
+					flag: flag as "start" | "end" | "dur",
+					value: param.slice(alias.length).trim(),
+				};
+			}
+		}
+	}
+
+	return null;
 }
