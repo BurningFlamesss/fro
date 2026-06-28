@@ -40,7 +40,7 @@ import { Input } from "#/components/ui/input";
 import { cn } from "#/lib/utils";
 import { type CalendarEvent, useCalendarStore } from "#/store/calendar";
 
-const EVENT_COLORS = [
+export const EVENT_COLORS = [
 	"#3B82F6",
 	"#EF4444",
 	"#10B981",

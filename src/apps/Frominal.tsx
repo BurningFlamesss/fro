@@ -1,10 +1,18 @@
 import React, { type Ref, useEffect, useRef, useState } from "react";
-import { formatBytes, normalizeUrl } from "#/lib/utils.ts";
+import {
+	formatBytes,
+	normalizeUrl,
+	parseDate,
+	parseDuration,
+	splitEvent,
+} from "#/lib/utils.ts";
 import { fetchResponse, pingUrl } from "#/server/fetchResponses.tsx";
+import { useCalculatorStore } from "#/store/calculator.tsx";
 import { useNoteStore } from "#/store/note.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
-import { useCalculatorStore } from "#/store/calculator.tsx";
+import { useCalendarStore } from "#/store/calendar.tsx";
+import { EVENT_COLORS } from "./Frolendar";
 
 type TerminalResponse = React.ReactNode | string;
 
@@ -29,13 +37,14 @@ function parseCommand(input: string) {
 function Frominal() {
 	const { apps, openApp, windows, closeWindow, pinApp, unpinApp } =
 		useWindowStore();
-	const { addTab, tabs, closeTab } = useNoteStore();
 	const terminalRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [terminalLines, setTerminalLines] = useState<Array<TerminalLine>>([]);
 	const [command, setCommand] = useState<string>("");
 	const [isProcessing, setIsProcessing] = useState(false);
+	const { addTab, tabs, closeTab } = useNoteStore();
 	const { setCalculatorExpression } = useCalculatorStore();
+	const { events, addEvent, deleteEvent } = useCalendarStore();
 
 	const username = "FRO";
 	const hostname = "CUS";
@@ -77,9 +86,9 @@ function Frominal() {
 		refresh: "Refresh the OS",
 		geo: "Get latitude & longitude. Usage: `geo [--copy | --map]`",
 		clipboard: "Read and display the content in the clipboard",
-		"create.do": "Create a TODO. Usage: `create.do <TODO>`",
-		"read.do": "List all the TODO items",
-		"done.do": "Mark TODO as completed. Usage: `done.do <*INDICES>`",
+		"task.create": "Create a TASK. Usage: `task.create <TASK>`",
+		"task.read": "List all the TASK items",
+		"task.done": "Mark TASK as completed. Usage: `task.done <*INDICES>`",
 	};
 
 	const commands: Record<string, CommandHandler> = {
@@ -484,7 +493,7 @@ function Frominal() {
 			if (!params.length) {
 				return;
 			}
-			addTab(`Frominal Note #${params[0]}`, params.join(" "));
+			addTab(`Frote #${params[0]}`, params.join(" "));
 
 			return <p>Added note!</p>;
 		},
@@ -554,30 +563,30 @@ function Frominal() {
 			}
 		},
 
-		"create.do": async (params) => {
+		"task.add": async (params) => {
 			if (!params.length) {
 				return (
 					<div>
 						Please provide the content to create note.
 						<p>Here's the currents do's</p>
-						<div>{await executeCommand("read.do")}</div>
+						<div>{await executeCommand("task.read")}</div>
 					</div>
 				);
 			}
 
-			// TODO: Process via AI
+			// TASK: Process via AI
 
-			addTab(`TODO #${params[0]}`, params.join(" "));
+			addTab(`TASK #${params[0]}`, params.join(" "));
 
-			return <p>Added TODO!</p>;
+			return <p>Added TASK!</p>;
 		},
 
-		"read.do": () => {
-			const todoTabs = tabs.filter((tab) => tab.title.startsWith("TODO"));
+		"task.read": () => {
+			const taskTabs = tabs.filter((tab) => tab.title.startsWith("TASK"));
 
 			return (
 				<ul>
-					{todoTabs.map((tab, index) => (
+					{taskTabs.map((tab, index) => (
 						<li key={`read-do-${tab.id}`}>
 							{index + 1}. {tab.content}
 						</li>
@@ -586,19 +595,19 @@ function Frominal() {
 			);
 		},
 
-		"done.do": (params) => {
+		"task.done": (params) => {
 			if (!params.length) {
 				return;
 			}
 
 			const doneIndex = params.map((param) => +param);
-			const doneTodos: Array<{ title: string; content: string }> = [];
+			const doneTasks: Array<{ title: string; content: string }> = [];
 
 			doneIndex.forEach((index) => {
 				const tab = tabs[index - 1];
 
 				if (tab) {
-					doneTodos.push({
+					doneTasks.push({
 						title: tab.title,
 						content: tab.content,
 					});
@@ -608,7 +617,7 @@ function Frominal() {
 
 			return (
 				<ul className="flex flex-col gap-2">
-					{doneTodos.map((tab, index) => (
+					{doneTasks.map((tab, index) => (
 						<li key={`Done-do-${tab.title}`}>
 							<p>
 								{index + 1}. {tab.title}
@@ -617,6 +626,118 @@ function Frominal() {
 						</li>
 					))}
 				</ul>
+			);
+		},
+
+		"event.add": async (params) => {
+			if (!params.length) {
+				return (
+					<div>
+						Please provide an event.
+						<p>Current events:</p>
+						<div>{await executeCommand("event.read")}</div>
+					</div>
+				);
+			}
+
+			const titleParts: string[] = [];
+
+			let startInput = "";
+			let endInput = "";
+			let durationInput = "";
+
+			let current: "title" | "start" | "end" | "dur" = "title";
+
+			for (const param of params) {
+				if (param.startsWith("--start@")) {
+					current = "start";
+					startInput = param.slice("--start@".length).trim();
+					continue;
+				}
+
+				if (param.startsWith("--end@")) {
+					current = "end";
+					endInput = param.slice("--end@".length).trim();
+					continue;
+				}
+
+				if (param.startsWith("--dur@")) {
+					current = "dur";
+					durationInput = param.slice("--dur@".length).trim();
+					continue;
+				}
+
+				switch (current) {
+					case "title":
+						titleParts.push(param);
+						break;
+
+					case "start":
+						startInput += (startInput ? " " : "") + param;
+						break;
+
+					case "end":
+						endInput += (endInput ? " " : "") + param;
+						break;
+
+					case "dur":
+						durationInput += (durationInput ? " " : "") + param;
+						break;
+				}
+			}
+
+			const title = titleParts.join(" ");
+
+			const duration = parseDuration(durationInput);
+
+			const start = parseDate(startInput);
+			const end = parseDate(endInput);
+
+			let finalStart: Date;
+			let finalEnd: Date;
+
+			if (start && end) {
+				finalStart = start;
+				finalEnd = end;
+			} else if (start) {
+				finalStart = start;
+				finalEnd = new Date(start.getTime() + duration);
+			} else if (end) {
+				finalEnd = end;
+				finalStart = new Date(end.getTime() - duration);
+			} else {
+				finalStart = new Date();
+				finalEnd = new Date(finalStart.getTime() + duration);
+			}
+
+			if (finalEnd <= finalStart) {
+				return (
+					<p className="text-red-500">End time must be after the start time.</p>
+				);
+			}
+
+			const color =
+				EVENT_COLORS[Math.floor(Math.random() * EVENT_COLORS.length)];
+
+			const events = splitEvent(
+				title || "Untitled Event",
+				finalStart,
+				finalEnd,
+				color,
+			);
+
+			events.forEach(addEvent);
+
+			return (
+				<div>
+					<p>
+						Added <strong>{title || "Untitled Event"}</strong>
+					</p>
+
+					<p>
+						{finalStart.toLocaleString()} &rarr; {finalEnd.toLocaleString()}
+					</p>
+				</div>
 			);
 		},
 	};
