@@ -1,6 +1,7 @@
 import * as chrono from "chrono-node";
 import type { ClassValue } from "clsx";
 import { clsx } from "clsx";
+import { format, isSameDay, isSameYear, isToday, isTomorrow } from "date-fns";
 import ms from "ms";
 import { twMerge } from "tailwind-merge";
 
@@ -143,4 +144,42 @@ export function matchFlag(param: string) {
 	}
 
 	return null;
+}
+
+export function formatEventRange(
+	start: Date | string,
+	end: Date | string,
+): string {
+	const s = new Date(start);
+	const e = new Date(end);
+
+	const time = (date: Date) => format(date, "h:mm a");
+
+	if (isToday(s) && isSameDay(s, e)) {
+		return `Today at ${time(s)} to ${time(e)}`;
+	}
+
+	if (isTomorrow(s) && isSameDay(s, e)) {
+		return `Tomorrow at ${time(s)} to ${time(e)}`;
+	}
+
+	if (isSameDay(s, e)) {
+		if (isSameYear(s, new Date())) {
+			return `${format(s, "EEE, MMM d")} at ${time(s)} to ${time(e)}`;
+		}
+
+		return `${format(s, "EEE, MMM d, yyyy")} at ${time(s)} to ${time(e)}`;
+	}
+
+	if (isSameYear(s, e) && isSameYear(s, new Date())) {
+		return `${format(s, "EEE, MMM d, h:mm a")} to ${format(
+			e,
+			"EEE, MMM d, h:mm a",
+		)}`;
+	}
+
+	return `${format(s, "EEE, MMM d, yyyy, h:mm a")} to ${format(
+		e,
+		"EEE, MMM d, yyyy, h:mm a",
+	)}`;
 }

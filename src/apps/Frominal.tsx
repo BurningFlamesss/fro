@@ -1,6 +1,8 @@
+import { formatDate, formatRelative } from "date-fns";
 import React, { type Ref, useEffect, useRef, useState } from "react";
 import {
 	formatBytes,
+	formatEventRange,
 	matchFlag,
 	normalizeUrl,
 	parseDate,
@@ -743,6 +745,24 @@ function Frominal() {
 						{finalStart.toLocaleString()} &rarr; {finalEnd.toLocaleString()}
 					</p>
 				</div>
+			);
+		},
+
+		"event.read": async () => {
+			const eventsTab = events.filter((tab) => tab.title);
+
+			return (
+				<ul>
+					{eventsTab.map((tab, index) => (
+						<li key={tab.id}>
+							{index + 1}. {tab.title}
+							<br />
+							<span className="text-muted-foreground text-sm">
+								{formatEventRange(tab.start, tab.end)}
+							</span>
+						</li>
+					))}
+				</ul>
 			);
 		},
 	};
