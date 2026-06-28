@@ -3,6 +3,8 @@ import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TooltipProvider } from "#/components/ui/tooltip.tsx";
 import appCss from "../styles.css?url";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 export const Route = createRootRoute({
 	head: () => ({
@@ -35,7 +37,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<TooltipProvider>{children}</TooltipProvider>
+				<DndProvider backend={HTML5Backend}>
+					<TooltipProvider>{children}</TooltipProvider>
+				</DndProvider>
 				<TanStackDevtools
 					config={{
 						position: "bottom-right",
