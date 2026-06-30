@@ -385,9 +385,9 @@ function ResultsView({
 														title: result.title,
 													});
 												}}
-												className="group w-full text-left"
+												className="group w-full text-left cursor-pointer"
 											>
-												<article className="rounded-xl border border-transparent p-3 transition-colors hover:border-background/10 hover:bg-background/5">
+												<article className="rounded-xl border border-transparent p-3 transition-colors">
 													<div className="flex flex-start gap-3">
 														<div className="flex w-6 h-6 shrink-0 items-center justify-center rounded-md bg-background/10">
 															{result.favicon ? (
@@ -412,7 +412,23 @@ function ResultsView({
 															<h3 className="truncate text-sm font-medium text-background group:text-primary">
 																{result.title}
 															</h3>
+															<div className="mt-0.5 flex items-center gap-2 text-xs text-background/40">
+																<span className="truncate group-hover:underline text-primary">{result.url}</span>
+																{result.publishedDate && (
+																	<>
+																		<span>-</span>
+																		<span>{result.publishedDate}</span>
+																	</>
+																)}
+															</div>
+															<p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-background/60">
+																{result.content}
+															</p>
 														</div>
+														<PiArrowUpRight
+															className="mt-0.5 shrink-0 text-background/40 opacity-0 group-hover:opacity-100 transition-all duration-150"
+															size={14}
+														/>
 													</div>
 												</article>
 											</button>
