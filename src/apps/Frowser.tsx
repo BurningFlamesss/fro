@@ -347,43 +347,53 @@ function ResultsView({
 	return (
 		<div className="h-full w-full overflow-y-auto px-4 py-6">
 			<div className="mx-auto space-y-8">
-				{
-					answer && (
-						<div className="rounded-2xl border border-primary  p-5">
-							<div className="flex items-start gap-3">
-								<div>
-									<h2 className="text-sm font-semibold text-primary">
-										AI Overview
-									</h2>
-									<p className="mt-2 text-sm leading-relaxed text-background/80">
-										{answer}
-									</p>
-								</div>
+				{answer && (
+					<div className="rounded-2xl border border-primary  p-5">
+						<div className="flex items-start gap-3">
+							<div>
+								<h2 className="text-sm font-semibold text-primary">
+									AI Overview
+								</h2>
+								<p className="mt-2 text-sm leading-relaxed text-background/80">
+									{answer}
+								</p>
 							</div>
 						</div>
-					)
-				}
-				<br />
+					</div>
+				)}
+
 				<main className="h-auto w-full flex flex-col justify-start items-start">
-					{tab.searchResponse?.results?.map((result) => {
-						return (
-							<button
-								type="button"
-								onClick={(e) => {
-									e.preventDefault();
-									addAndUpdateTab({
-										url: result.url,
-										state: "surfing",
-										title: result.title,
-									});
-								}}
-								className="cursor-pointer text-primary underline"
-								key={`result-${result.title}`}
-							>
-								{result.title}
-							</button>
-						);
-					})}
+					{results.length > 0 && (
+						<section>
+							<div className="mb-3 flex items-center gap-2">
+								<h2 className="text-sm font-medium text-background/60">
+									Frow Results
+								</h2>
+							</div>
+							<ul className="space-y-4">
+								{results?.map((result) => {
+									return (
+										<li key={`result-${result.title}-${result.url}`}>
+											<button
+												type="button"
+												onClick={(e) => {
+													e.preventDefault();
+													addAndUpdateTab({
+														url: result.url,
+														state: "surfing",
+														title: result.title,
+													});
+												}}
+												className="cursor-pointer text-primary underline"
+											>
+												{result.title}
+											</button>
+										</li>
+									);
+								})}
+							</ul>
+						</section>
+					)}
 				</main>
 				<main>
 					{tab.searchResponse?.images?.map((image) => {
