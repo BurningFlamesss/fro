@@ -3,6 +3,7 @@ import type { IconType } from "react-icons";
 import { FaPenFancy, FaWikipediaW } from "react-icons/fa6";
 import {
 	PiArrowUpRight,
+	PiChatCircleText,
 	PiCompassDuotone,
 	PiGlobeDuotone,
 	PiMagnifyingGlassDuotone,
@@ -339,42 +340,63 @@ function ResultsView({
 	addAndUpdateTab: (patch: Partial<Tab>) => void;
 	updateTab: (id: string, patch: Partial<Tab>) => void;
 }) {
+	const answer = tab.searchResponse?.answer ?? "";
+	const results = tab.searchResponse?.results ?? [];
+	const images = tab.searchResponse?.images ?? [];
+
 	return (
-		<div className="h-full w-full overflow-y-auto">
-			AI answer: {tab.searchResponse?.answer}
-			<br />
-			<main className="h-auto w-full flex flex-col justify-start items-start">
-				{tab.searchResponse?.results?.map((result) => {
-					return (
-						<button
-							type="button"
-							onClick={(e) => {
-								e.preventDefault();
-								addAndUpdateTab({
-									url: result.url,
-									state: "surfing",
-									title: result.title,
-								});
-							}}
-							className="cursor-pointer text-primary underline"
-							key={`result-${result.title}`}
-						>
-							{result.title}
-						</button>
-					);
-				})}
-			</main>
-			<main>
-				{tab.searchResponse?.images?.map((image) => {
-					return (
-						<img
-							key={`image-${image.description}`}
-							src={image.url}
-							alt={image.description ?? ""}
-						/>
-					);
-				})}
-			</main>
+		<div className="h-full w-full overflow-y-auto px-4 py-6">
+			<div className="mx-auto space-y-8">
+				{
+					answer && (
+						<div className="rounded-2xl border border-primary  p-5">
+							<div className="flex items-start gap-3">
+								<div>
+									<h2 className="text-sm font-semibold text-primary">
+										AI Overview
+									</h2>
+									<p className="mt-2 text-sm leading-relaxed text-background/80">
+										{answer}
+									</p>
+								</div>
+							</div>
+						</div>
+					)
+				}
+				<br />
+				<main className="h-auto w-full flex flex-col justify-start items-start">
+					{tab.searchResponse?.results?.map((result) => {
+						return (
+							<button
+								type="button"
+								onClick={(e) => {
+									e.preventDefault();
+									addAndUpdateTab({
+										url: result.url,
+										state: "surfing",
+										title: result.title,
+									});
+								}}
+								className="cursor-pointer text-primary underline"
+								key={`result-${result.title}`}
+							>
+								{result.title}
+							</button>
+						);
+					})}
+				</main>
+				<main>
+					{tab.searchResponse?.images?.map((image) => {
+						return (
+							<img
+								key={`image-${image.description}`}
+								src={image.url}
+								alt={image.description ?? ""}
+							/>
+						);
+					})}
+				</main>
+			</div>
 		</div>
 	);
 }

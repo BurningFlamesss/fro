@@ -16,9 +16,9 @@ export const getSearchResults = createServerFn({ method: "POST" })
 			});
 
 			const response = await client.search(data.query, {
-				searchDepth: "ultra-fast",
+				searchDepth: "fast",
                 includeAnswer: "basic",
-                includeImages: true
+                includeImages: true,
 			});
 
 			if (!response) {
