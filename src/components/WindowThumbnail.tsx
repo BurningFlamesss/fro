@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { useWindowStore } from "#/store/window.tsx";
 import type { WindowInstance } from "../constants";
+import { useMusicStore } from "#/store/music.tsx";
 
 interface Props {
 	win: WindowInstance;
@@ -11,6 +12,7 @@ const THUMB_HEIGHT = 100;
 
 const WindowThumbnail = memo(function WindowThumbnail({ win }: Props) {
 	const { closeWindow, focusWindow, previewCache } = useWindowStore();
+	const { deactivate } = useMusicStore();
 	if (!win) return null;
 
 	const { id, title, logo } = win;
@@ -19,6 +21,9 @@ const WindowThumbnail = memo(function WindowThumbnail({ win }: Props) {
 	const handleThumbnailClick = () => focusWindow(id);
 	const handleClose = (e: React.MouseEvent) => {
 		e.stopPropagation();
+		if (id.startsWith("music_")) {
+			deactivate();
+		}
 		closeWindow(id);
 	};
 
@@ -45,11 +50,7 @@ const WindowThumbnail = memo(function WindowThumbnail({ win }: Props) {
 					className="text-background/50 hover:text-red-400 hover:bg-red-400/10 rounded p-1 flex items-center justify-center transition-colors cursor-pointer"
 					onClick={handleClose}
 				>
-					<img
-						src="/general/Close.svg"
-						alt="Close"
-						className="w-3 h-3"
-					/>
+					<img src="/general/Close.svg" alt="Close" className="w-3 h-3" />
 				</button>
 			</div>
 
