@@ -6,6 +6,7 @@ import {
 	PiChatCircleText,
 	PiCompassDuotone,
 	PiGlobeDuotone,
+	PiGlobeSimple,
 	PiMagnifyingGlassDuotone,
 	PiMicrophone,
 	PiPlus,
@@ -384,9 +385,36 @@ function ResultsView({
 														title: result.title,
 													});
 												}}
-												className="cursor-pointer text-primary underline"
+												className="group w-full text-left"
 											>
-												{result.title}
+												<article className="rounded-xl border border-transparent p-3 transition-colors hover:border-background/10 hover:bg-background/5">
+													<div className="flex flex-start gap-3">
+														<div className="flex w-6 h-6 shrink-0 items-center justify-center rounded-md bg-background/10">
+															{result.favicon ? (
+																<img
+																	src={result.favicon}
+																	alt=""
+																	className="h-4 w-4 object-contain"
+																	onError={(e) => {
+																		(
+																			e.target as HTMLImageElement
+																		).style.display = "none";
+																	}}
+																/>
+															) : (
+																<PiGlobeSimple
+																	className="text-background/40"
+																	size={14}
+																/>
+															)}
+														</div>
+														<div className="min-w-flex-1 ">
+															<h3 className="truncate text-sm font-medium text-background group:text-primary">
+																{result.title}
+															</h3>
+														</div>
+													</div>
+												</article>
 											</button>
 										</li>
 									);
@@ -396,15 +424,16 @@ function ResultsView({
 					)}
 				</main>
 				<main>
-					{tab.searchResponse?.images?.map((image) => {
-						return (
-							<img
-								key={`image-${image.description}`}
-								src={image.url}
-								alt={image.description ?? ""}
-							/>
-						);
-					})}
+					{images.length > 0 &&
+						images?.map((image) => {
+							return (
+								<img
+									key={`image-${image.description}`}
+									src={image.url}
+									alt={image.description ?? ""}
+								/>
+							);
+						})}
 				</main>
 			</div>
 		</div>

@@ -19,6 +19,7 @@ export const getSearchResults = createServerFn({ method: "POST" })
 				searchDepth: "fast",
                 includeAnswer: "basic",
                 includeImages: true,
+				includeFavicon: true,
 			});
 
 			if (!response) {
