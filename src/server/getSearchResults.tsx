@@ -17,8 +17,8 @@ export const getSearchResults = createServerFn({ method: "POST" })
 
 			const response = await client.search(data.query, {
 				searchDepth: "fast",
-                includeAnswer: "basic",
-                includeImages: true,
+				includeAnswer: "basic",
+				includeImages: true,
 				includeFavicon: true,
 			});
 
@@ -28,10 +28,10 @@ export const getSearchResults = createServerFn({ method: "POST" })
 
 			return {
 				data: {
-                    answer: response.answer,
-                    results: response.results,
-                    images: response.images
-                },
+					answer: response.answer,
+					results: response.results,
+					images: response.images,
+				},
 				status: {
 					success: true,
 					code: 200,

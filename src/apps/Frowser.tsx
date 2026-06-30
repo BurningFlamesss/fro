@@ -346,7 +346,7 @@ function ResultsView({
 	const images = tab.searchResponse?.images ?? [];
 
 	return (
-		<div className="h-full w-full overflow-y-auto px-4 py-6">
+		<div className="h-full w-full overflow-y-auto overflow-x-hidden px-4 py-6">
 			<div className="mx-auto space-y-8">
 				{answer && (
 					<div className="rounded-2xl border border-primary  p-5">
@@ -361,6 +361,38 @@ function ResultsView({
 							</div>
 						</div>
 					</div>
+				)}
+
+				{images.length > 0 && (
+					<section>
+						<div className="mb-3 flex items-center gap-2">
+							<h2 className="text-sm font-medium text-background/60">Images</h2>
+						</div>
+						<div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
+							{images.map((image, index) => (
+								<a
+									href={image.url}
+									key={`image-${image.url}`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									<img
+										src={image.url}
+										alt={image.description ?? `Image ${index + 1}`}
+										className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+										loading="lazy"
+									/>
+									{image.description && (
+										<div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/60 to-transparent p-2 opacity-0 transition-opacity group-hover:opacity-100">
+											<p className="truncate text-xs text-white">
+												{image.description}
+											</p>
+										</div>
+									)}
+								</a>
+							))}
+						</div>
+					</section>
 				)}
 
 				<main className="h-auto w-full flex flex-col justify-start items-start">
@@ -408,12 +440,14 @@ function ResultsView({
 																/>
 															)}
 														</div>
-														<div className="min-w-flex-1 ">
+														<div className="min-w-0 flex-1 ">
 															<h3 className="truncate text-sm font-medium text-background group:text-primary">
 																{result.title}
 															</h3>
 															<div className="mt-0.5 flex items-center gap-2 text-xs text-background/40">
-																<span className="truncate group-hover:underline text-primary">{result.url}</span>
+																<span className="truncate group-hover:underline text-primary">
+																	{result.url}
+																</span>
 																{result.publishedDate && (
 																	<>
 																		<span>-</span>
@@ -438,18 +472,6 @@ function ResultsView({
 							</ul>
 						</section>
 					)}
-				</main>
-				<main>
-					{images.length > 0 &&
-						images?.map((image) => {
-							return (
-								<img
-									key={`image-${image.description}`}
-									src={image.url}
-									alt={image.description ?? ""}
-								/>
-							);
-						})}
 				</main>
 			</div>
 		</div>
