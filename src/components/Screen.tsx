@@ -49,48 +49,70 @@ function Screen() {
 	};
 
 	return (
-		<div className="relative z-10 h-[calc(100dvh-76px)] w-full p-2 flex flex-col flex-wrap content-start overflow-y-auto">
-			
-			{Object.entries(apps).map(([key, app]) => (
-				<ContextMenu key={`screen-app-${key}`}>
-					<ContextMenuTrigger>
-						<button
-							type="button"
-							onDoubleClick={() => toggleApp(app)}
-							className={cn(
-								"w-24 h-24 group p-2 rounded-xl transition-all duration-150 cursor-pointer flex flex-col items-center justify-center shrink-0",
-							)}
-						>
-							<img
-								className="w-12 h-12 object-contain opacity-90 group-hover:opacity-100 select-none"
-								src={app.logo}
-								alt={app.name}
-								draggable={false}
-							/>
-							<p className="text-background glassmorphism py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
-								{app.name}
-							</p>
-						</button>
-					</ContextMenuTrigger>
+		<ContextMenu modal={false}>
+			<ContextMenuTrigger>
+				<div className="relative z-10 h-[calc(100dvh-76px)] w-full p-2 flex flex-col flex-wrap content-start overflow-y-auto">
+					{Object.entries(apps).map(([key, app]) => (
+						<ContextMenu key={`screen-app-${key}`}>
+							<ContextMenuTrigger>
+								<button
+									type="button"
+									onDoubleClick={() => toggleApp(app)}
+									className={cn(
+										"w-24 h-24 group p-2 rounded-xl transition-all duration-150 cursor-pointer flex flex-col items-center justify-center shrink-0",
+									)}
+								>
+									<img
+										className="w-12 h-12 object-contain opacity-90 group-hover:opacity-100 select-none"
+										src={app.logo}
+										alt={app.name}
+										draggable={false}
+									/>
+									<p className="text-background glassmorphism py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
+										{app.name}
+									</p>
+								</button>
+							</ContextMenuTrigger>
 
-					<ContextMenuContent className="z-100000002">
-						<ContextMenuGroup>
-							<ContextMenuItem onClick={() => toggleApp(app)}>
-								<img draggable={false} className="h-4 w-4" src={app.logo} alt="" /> Open{" "}
-								{app.name}
-							</ContextMenuItem>
-							<ContextMenuItem onClick={() => openApp(app.id)}>
-								<img draggable={false} className="h-4 w-4" src={app.logo} alt="" /> New Window
-							</ContextMenuItem>
-							<ContextMenuItem onClick={() => pinApp(app.id)}>
-								<RiPushpinLine className="text-background" />
-								Pin to taskbar
-							</ContextMenuItem>
-						</ContextMenuGroup>
-					</ContextMenuContent>
-				</ContextMenu>
-			))}
-		</div>
+							<ContextMenuContent className="z-100000002">
+								<ContextMenuGroup>
+									<ContextMenuItem onClick={() => toggleApp(app)}>
+										<img
+											draggable={false}
+											className="h-4 w-4"
+											src={app.logo}
+											alt=""
+										/>{" "}
+										Open {app.name}
+									</ContextMenuItem>
+									<ContextMenuItem onClick={() => openApp(app.id)}>
+										<img
+											draggable={false}
+											className="h-4 w-4"
+											src={app.logo}
+											alt=""
+										/>{" "}
+										New Window
+									</ContextMenuItem>
+									<ContextMenuItem onClick={() => pinApp(app.id)}>
+										<RiPushpinLine className="text-background" />
+										Pin to taskbar
+									</ContextMenuItem>
+								</ContextMenuGroup>
+							</ContextMenuContent>
+						</ContextMenu>
+					))}
+				</div>
+			</ContextMenuTrigger>
+			<ContextMenuContent className="z-100000002">
+				<ContextMenuGroup>
+					<ContextMenuItem onClick={() => {}}>
+						<RiPushpinLine className="text-background" />
+						Pin to taskbar
+					</ContextMenuItem>
+				</ContextMenuGroup>
+			</ContextMenuContent>
+		</ContextMenu>
 	);
 }
 
