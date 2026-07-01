@@ -8,6 +8,7 @@ import Frotes from "#/apps/Frotes.tsx";
 import Frotore from "#/apps/Frotore.tsx";
 import Frottings from "#/apps/Frottings.tsx";
 import Frowser from "#/apps/Frowser.tsx";
+import Froxplorer from "#/apps/Froxplorer.tsx";
 
 export const INITIAL_Z_INDEX = 1000;
 export const BACK_Z_INDEX = 0;
@@ -73,7 +74,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		logo: "/apps/Folder.svg",
 		isPinned: true,
 		theme: DEFAULT_THEME,
-		component: <></>,
+		component: <Froxplorer />,
 	},
 	settings: {
 		id: "settings",
