@@ -1,5 +1,5 @@
 import type React from "react";
-import Froame from "#/apps/Froame.tsx";
+import Froncher from "#/apps/Froncher.tsx";
 import Froculator from "#/apps/Froculator.tsx";
 import Frolendar from "#/apps/Frolendar.tsx";
 import Frominal from "#/apps/Frominal.tsx";
@@ -52,7 +52,7 @@ export type AppId =
 	| "calendar"
 	| "music"
 	| "store"
-	| "game"
+	| "launcher"
 	| `app_${string}`;
 
 export type WindowId = `${AppId}_${string}`;
@@ -140,14 +140,14 @@ export const Apps: Record<AppId, AppInstance> = {
 		theme: DEFAULT_THEME,
 		component: <Frotore />,
 	},
-	game: {
-		id: "game",
-		name: "Froame",
-		title: "Froame Launcher",
+	launcher: {
+		id: "launcher",
+		name: "Froncher",
+		title: "Froncher",
 		logo: "/apps/Game.svg",
 		isPinned: false,
 		theme: DEFAULT_THEME,
-		component: <Froame />,
+		component: <Froncher />,
 	},
 };
 

@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { PiMagnifyingGlassDuotone, PiMicrophone, PiX } from "react-icons/pi";
 import { cn } from "#/lib/utils.ts";
 
-function Froame() {
+function Froncher() {
 	const [value, setValue] = useState("");
 	const [focused, setFocused] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -134,7 +134,7 @@ function Froame() {
 					</button>
 					<div className="">
 						<p className="truncate text-xs font-medium text-background">
-							Froame
+							Froncher
 						</p>
 					</div>
 				</div>
@@ -143,4 +143,4 @@ function Froame() {
 	);
 }
 
-export default Froame;
+export default Froncher;

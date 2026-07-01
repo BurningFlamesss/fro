@@ -134,7 +134,7 @@ function Frotore() {
 					</button>
 					<div className="">
 						<p className="truncate text-xs font-medium text-background">
-							Froame
+							Froncher
 						</p>
 					</div>
 				</div>
