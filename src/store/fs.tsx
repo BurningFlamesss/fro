@@ -23,7 +23,11 @@ interface FileSystemState {
 		type: "file" | "folder",
 		content?: string,
 	) => void;
+	renameNode: (id: string, newName: string) => void;
+	moveNode: (id: string, newParentId: string) => void;
 	deleteNode: (id: string) => void;
+	addToDesktop: () => void;
+	removeFromDesktop: () => void;
 }
 
 const createRoot = (): FileNode => ({
@@ -44,6 +48,10 @@ export const useFileSystemStore = create<FileSystemState>()(
 		rootId: "root",
 		desktopFolderIds: [],
 		createNode: (parentId, name, type, content) => {},
+		renameNode: (id, newName) => {},
+		moveNode: (id, newParentId) => {},
+		addToDesktop: () => {},
+		removeFromDesktop: () => {},
 		deleteNode: (id) => {},
 	})),
 );

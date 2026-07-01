@@ -42,6 +42,7 @@ export interface WindowInstance {
 
 export type AppId =
 	| "notes"
+	| "file_explorer"
 	| "settings"
 	| "browser"
 	| "terminal"
@@ -63,6 +64,15 @@ export const Apps: Record<AppId, AppInstance> = {
 		isPinned: true,
 		theme: DEFAULT_THEME,
 		component: <Frotes />,
+	},
+	file_explorer: {
+		id: "file_explorer",
+		name: "Froxplorer",
+		title: "Froxplorer",
+		logo: "/apps/Folder.svg",
+		isPinned: true,
+		theme: DEFAULT_THEME,
+		component: <></>,
 	},
 	settings: {
 		id: "settings",
@@ -98,7 +108,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		logo: "/apps/Calculator.svg",
 		isPinned: true,
 		theme: DEFAULT_THEME,
-		component: <Froculator />,
+		component: <Froculator windowId="" />,
 	},
 	calendar: {
 		id: "calendar",
@@ -117,14 +127,14 @@ export const Apps: Record<AppId, AppInstance> = {
 		singleInstance: true,
 		isPinned: true,
 		theme: DEFAULT_THEME,
-		component: <Frosic />,
+		component: <Frosic windowId="" />,
 	},
 	store: {
 		id: "store",
 		name: "Frotore",
 		title: "Frotore",
 		logo: "/apps/Store.svg",
-		isPinned: true,
+		isPinned: false,
 		theme: DEFAULT_THEME,
 		component: <Frotore />,
 	},
@@ -133,7 +143,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		name: "Froame",
 		title: "Froame Launcher",
 		logo: "/apps/Game.svg",
-		isPinned: true,
+		isPinned: false,
 		theme: DEFAULT_THEME,
 		component: <Froame />,
 	},
