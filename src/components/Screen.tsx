@@ -1,3 +1,5 @@
+import { FaPlus } from "react-icons/fa6";
+import { IoMdRefresh } from "react-icons/io";
 import { RiPushpinLine } from "react-icons/ri";
 import { cn } from "#/lib/utils.ts";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
@@ -7,6 +9,9 @@ import {
 	ContextMenuContent,
 	ContextMenuGroup,
 	ContextMenuItem,
+	ContextMenuSub,
+	ContextMenuSubContent,
+	ContextMenuSubTrigger,
 	ContextMenuTrigger,
 } from "./ui/context-menu";
 
@@ -107,9 +112,20 @@ function Screen() {
 			<ContextMenuContent className="z-100000002">
 				<ContextMenuGroup>
 					<ContextMenuItem onClick={() => {}}>
-						<RiPushpinLine className="text-background" />
-						Pin to taskbar
+						<IoMdRefresh className="text-background" />
+						Refresh
 					</ContextMenuItem>
+					<ContextMenuSub>
+						<ContextMenuSubTrigger>
+							<FaPlus className="text-background" />
+							New
+						</ContextMenuSubTrigger>
+						<ContextMenuSubContent className="w-44 z-100000003">
+							<ContextMenuItem>Folder</ContextMenuItem>
+							<ContextMenuItem>File</ContextMenuItem>
+							<ContextMenuItem>Fro File</ContextMenuItem>
+						</ContextMenuSubContent>
+					</ContextMenuSub>
 				</ContextMenuGroup>
 			</ContextMenuContent>
 		</ContextMenu>
