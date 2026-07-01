@@ -1,8 +1,8 @@
 import type React from "react";
-import Froncher from "#/apps/Froncher.tsx";
 import Froculator from "#/apps/Froculator.tsx";
 import Frolendar from "#/apps/Frolendar.tsx";
 import Frominal from "#/apps/Frominal.tsx";
+import Froncher from "#/apps/Froncher.tsx";
 import Frosic from "#/apps/Frosic.tsx";
 import Frotes from "#/apps/Frotes.tsx";
 import Frotore from "#/apps/Frotore.tsx";
@@ -39,6 +39,7 @@ export interface WindowInstance {
 	maximized: boolean;
 	theme?: string;
 	component: React.ReactNode;
+	fileId?: string;
 	folderId?: string;
 }
 
@@ -127,7 +128,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		title: "Frosic",
 		logo: "/apps/Music.svg",
 		singleInstance: true,
-		isPinned: true,
+		isPinned: false,
 		theme: DEFAULT_THEME,
 		component: <Frosic windowId="" />,
 	},
@@ -145,7 +146,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		name: "Froncher",
 		title: "Froncher",
 		logo: "/apps/Game.svg",
-		isPinned: false,
+		isPinned: true,
 		theme: DEFAULT_THEME,
 		component: <Froncher />,
 	},

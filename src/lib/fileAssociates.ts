@@ -12,3 +12,5 @@ export const FILE_ASSOCIATIONS: Record<AppId, Array<string>> = {
 	store: [],
 	terminal: [],
 };
+
+export const DEFAULT_APP_FOR_UNKNOWN_TYPE: AppId | null = null;

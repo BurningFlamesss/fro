@@ -52,7 +52,7 @@ function Froncher() {
 									inputRef.current?.blur();
 								}
 							}}
-							placeholder="Find your games"
+							placeholder="Find your apps to launch"
 							className="flex-1 bg-transparent text-sm text-background outline-none placeholder:text-background/40"
 						/>
 
