@@ -77,7 +77,16 @@ export const useFileSystemStore = create<FileSystemState>()(
 				parent.children = parent.children ? [...parent.children, id] : [id];
 			});
 		},
-		renameNode: (id, newName) => {},
+		renameNode: (id, newName) => {
+			set((state) => {
+				const node = state.nodes[id];
+
+				if (node && newName.trim().length > 0) {
+					node.name = newName.trim();
+					node.modifiedAt = Date.now();
+				}
+			});
+		},
 		moveNode: (id, newParentId) => {},
 		addToDesktop: () => {},
 		removeFromDesktop: () => {},

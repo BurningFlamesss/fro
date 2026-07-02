@@ -6,7 +6,7 @@ import {
 	ContextMenuItem,
 	ContextMenuTrigger,
 } from "#/components/ui/context-menu.tsx";
-import { useFileSystemStore } from "#/store/fs.tsx";
+import { useFileSystemStore, type FileNode } from "#/store/fs.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { WindowInstance } from "../constants";
 
@@ -48,6 +48,18 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 		}
 	};
 
+	const handleRenameStart = (node: FileNode) => {
+		setRenameTarget(node.id);
+		setNewName(node.name);
+	};
+
+	const handleRenameSubmit = () => {
+		if (renameTarget && newName.trim().length > 0) {
+			renameNode(renameTarget, newName);
+			setRenameTarget(null);
+		}
+	};
+
 	const pathIds = getPath(currentFolderId);
 	const breadcrumb = pathIds?.map((id) => nodes[id].name).join(" / ");
 
@@ -64,11 +76,16 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 			</div>
 
 			<div className="flex-1 overflow-auto p-2">
-				<div className="grid grid-cols-4 p-4">
+				<div className="grid grid-cols-6 p-4">
 					{children?.map((node) => (
 						<ContextMenu key={`fs-node-${node.id}`}>
 							<ContextMenuTrigger>
-								<button type="button" onDoubleClick={() => {}} className="">
+								<button
+									title={node.name}
+									type="button"
+									onDoubleClick={() => {}}
+									className=""
+								>
 									<img
 										className="w-12 h-12 object-contain select-none"
 										src={
@@ -82,11 +99,15 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 										<input
 											value={newName}
 											onChange={(e) => setNewName(e.target.value)}
-											className="text-xs text-center bg-transparent outline-none"
+											onBlur={handleRenameSubmit}
+											onKeyDown={(e) =>
+												e.key === "Enter" && handleRenameSubmit()
+											}
+											className="text-xs text-center bg-white text-black outline-none w-12"
 											type="text"
 										/>
 									) : (
-										<p className="text-xs text-center mt-1 truncate w-full select-none">
+										<p className="text-xs text-center mt-1 truncate w-12 select-none">
 											{node.name}
 										</p>
 									)}
@@ -94,7 +115,9 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 							</ContextMenuTrigger>
 							<ContextMenuContent className="z-100000002">
 								<ContextMenuItem>Open</ContextMenuItem>
-								<ContextMenuItem>Rename</ContextMenuItem>
+								<ContextMenuItem onClick={() => handleRenameStart(node)}>
+									Rename
+								</ContextMenuItem>
 								<ContextMenuItem>Delete</ContextMenuItem>
 							</ContextMenuContent>
 						</ContextMenu>
