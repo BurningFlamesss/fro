@@ -28,6 +28,8 @@ interface FileSystemState {
 	deleteNode: (id: string) => void;
 	addToDesktop: () => void;
 	removeFromDesktop: () => void;
+	getChildren: (parentId: string) => Array<FileNode>;
+	getPath: (id: string) => Array<string>;
 }
 
 const createRoot = (): FileNode => ({
@@ -53,5 +55,7 @@ export const useFileSystemStore = create<FileSystemState>()(
 		addToDesktop: () => {},
 		removeFromDesktop: () => {},
 		deleteNode: (id) => {},
+		getChildren: (parentId) => {},
+		getPath: (id) => {},
 	})),
 );
