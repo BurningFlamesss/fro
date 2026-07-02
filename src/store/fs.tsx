@@ -118,9 +118,29 @@ export const useFileSystemStore = create<FileSystemState>()(
 				node.modifiedAt = Date.now();
 			});
 		},
+		deleteNode: (id) => {
+			set((state) => {
+				const node = state.nodes[id];
+
+				if (!node) {
+					return;
+				}
+
+				const deleteRecusive = (nodeId: string) => {
+					const node = state.nodes[nodeId];
+
+					if (node.type === "folder" && node.children) {
+						node.children.map((childId) => deleteRecusive(childId));
+					}
+
+					delete state.nodes[nodeId];
+				};
+
+				deleteRecusive(id);
+			});
+		},
 		addToDesktop: () => {},
 		removeFromDesktop: () => {},
-		deleteNode: (id) => {},
 		getChildren: (parentId) => {
 			const state = get();
 			const parent = state.nodes[parentId];
