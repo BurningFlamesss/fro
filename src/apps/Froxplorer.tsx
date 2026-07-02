@@ -32,6 +32,20 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 	const children = getChildren(currentFolderId);
 	const currentFolder = nodes[currentFolderId];
 
+	const handleNewFolder = () => {
+		const name = prompt("Enter the folder name");
+		if (name) {
+			createNode(currentFolderId, name, "folder");
+		}
+	};
+
+	const handleNewFile = () => {
+		const name = prompt("Enter the file name");
+		if (name) {
+			createNode(currentFolderId, name, "file");
+		}
+	};
+
 	const pathIds = getPath(currentFolderId);
 	const breadcrumb = pathIds?.map((id) => nodes[id].name).join(" / ");
 
@@ -67,6 +81,23 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 						</ContextMenu>
 					))}
 				</div>
+			</div>
+
+			<div className="flex p-2 gap-2 border-t">
+				<button
+					type="button"
+					onClick={handleNewFolder}
+					className="text-xs p-1 rounded"
+				>
+					New Folder
+				</button>
+				<button
+					type="button"
+					onClick={handleNewFile}
+					className="text-xs p-1 rounded"
+				>
+					New File
+				</button>
 			</div>
 		</div>
 	);
