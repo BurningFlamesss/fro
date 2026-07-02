@@ -87,7 +87,37 @@ export const useFileSystemStore = create<FileSystemState>()(
 				}
 			});
 		},
-		moveNode: (id, newParentId) => {},
+		moveNode: (id, newParentId) => {
+			set((state) => {
+				const node = state.nodes[id];
+				const newParent = state.nodes[newParentId];
+
+				if (
+					!node ||
+					!newParent ||
+					newParent.type !== "folder" ||
+					node.parentId === newParentId
+				) {
+					return;
+				}
+
+				if (node.parentId) {
+					const oldParent = state.nodes[node.parentId];
+
+					if (oldParent?.children) {
+						oldParent.children = oldParent.children.filter(
+							(child) => child !== id,
+						);
+					}
+				}
+
+				newParent.children = newParent.children
+					? [...newParent.children, id]
+					: [id];
+				node.parentId = newParentId;
+				node.modifiedAt = Date.now();
+			});
+		},
 		addToDesktop: () => {},
 		removeFromDesktop: () => {},
 		deleteNode: (id) => {},
