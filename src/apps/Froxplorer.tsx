@@ -2,6 +2,8 @@ import { useState } from "react";
 import { FaArrowUp } from "react-icons/fa6";
 import {
 	ContextMenu,
+	ContextMenuContent,
+	ContextMenuItem,
 	ContextMenuTrigger,
 } from "#/components/ui/context-menu.tsx";
 import { useFileSystemStore } from "#/store/fs.tsx";
@@ -68,7 +70,7 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 							<ContextMenuTrigger>
 								<button type="button" onDoubleClick={() => {}} className="">
 									<img
-										className="w-12 h-12 object-contain"
+										className="w-12 h-12 object-contain select-none"
 										src={
 											node.type === "folder"
 												? "/apps/Opened-Folder.svg"
@@ -76,8 +78,25 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 										}
 										alt=""
 									/>
+									{renameTarget === node.id ? (
+										<input
+											value={newName}
+											onChange={(e) => setNewName(e.target.value)}
+											className="text-xs text-center bg-transparent outline-none"
+											type="text"
+										/>
+									) : (
+										<p className="text-xs text-center mt-1 truncate w-full select-none">
+											{node.name}
+										</p>
+									)}
 								</button>
 							</ContextMenuTrigger>
+							<ContextMenuContent className="z-100000002">
+								<ContextMenuItem>Open</ContextMenuItem>
+								<ContextMenuItem>Rename</ContextMenuItem>
+								<ContextMenuItem>Delete</ContextMenuItem>
+							</ContextMenuContent>
 						</ContextMenu>
 					))}
 				</div>
