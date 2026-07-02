@@ -49,7 +49,34 @@ export const useFileSystemStore = create<FileSystemState>()(
 		},
 		rootId: "root",
 		desktopFolderIds: [],
-		createNode: (parentId, name, type, content) => {},
+		createNode: (parentId, name, type, content) => {
+			const id = crypto.randomUUID();
+
+			set((state) => {
+				const parent = state.nodes[parentId];
+
+				if (!parent || parent.type !== "folder") return;
+
+				const node: FileNode = {
+					id,
+					name,
+					type,
+					content,
+					parentId,
+					createdAt: Date.now(),
+					modifiedAt: Date.now(),
+				};
+
+				if (type === "folder") {
+					node.children = [];
+				} else {
+					node.content = content;
+				}
+
+				state.nodes[id] = node;
+				parent.children = parent.children ? [...parent.children, id] : [id];
+			});
+		},
 		renameNode: (id, newName) => {},
 		moveNode: (id, newParentId) => {},
 		addToDesktop: () => {},
