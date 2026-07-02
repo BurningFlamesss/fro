@@ -55,7 +55,28 @@ export const useFileSystemStore = create<FileSystemState>()(
 		addToDesktop: () => {},
 		removeFromDesktop: () => {},
 		deleteNode: (id) => {},
-		getChildren: (parentId) => {},
-		getPath: (id) => {},
+		getChildren: (parentId) => {
+			const state = get();
+			const parent = state.nodes[parentId];
+			if (!parent || parent.type !== "folder" || !parent.children) {
+				return [];
+			}
+
+			return parent.children
+				.map((id) => state.nodes[id])
+				.filter(Boolean) as Array<FileNode>;
+		},
+		getPath: (id) => {
+			const state = get();
+			const path: Array<string> = [];
+			let current: FileNode | null = state.nodes[id];
+
+			while (current) {
+				path.unshift(current.id);
+				current = current.parentId ? state.nodes[current.parentId] : null;
+			}
+
+			return path;
+		},
 	})),
 );
