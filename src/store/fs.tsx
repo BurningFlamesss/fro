@@ -136,7 +136,19 @@ export const useFileSystemStore = create<FileSystemState>()(
 					delete state.nodes[nodeId];
 				};
 
+				if (node.parentId) {
+					const parent = state.nodes[node.parentId];
+
+					if (parent.children) {
+						parent.children = parent.children.filter((child) => child !== id);
+					}
+				}
+
 				deleteRecusive(id);
+
+				state.desktopFolderIds = state.desktopFolderIds.filter(
+					(folderId) => folderId !== id,
+				);
 			});
 		},
 		addToDesktop: () => {},
