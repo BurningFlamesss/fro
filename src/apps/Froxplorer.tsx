@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { FaArrowUp } from "react-icons/fa6";
 import {
 	ContextMenu,
@@ -46,7 +46,7 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 		if (node.type === "folder") {
 			navigateTo(node.id);
 		} else {
-			alert(`Opening file...`)
+			alert(`Opening file...`);
 		}
 	};
 
@@ -90,7 +90,23 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 				>
 					<FaArrowUp />
 				</button>
-				<span className="text-sm opacity-80">{breadcrumb}</span>
+				<span className="text-sm opacity-80">
+					{pathIds?.map((id, index) => {
+						const node = nodes[id];
+						return (
+							<React.Fragment key={`breadcrumb-${id}`}>
+								<span>{` ${index ? "/" : ""} `}</span>
+								<button
+									onClick={() => navigateTo(node.id)}
+									type="button"
+									className="cursor-pointer"
+								>
+									{node.name}
+								</button>
+							</React.Fragment>
+						);
+					})}
+				</span>
 			</div>
 
 			<div className="flex-1 overflow-auto p-2">
@@ -132,11 +148,15 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 								</button>
 							</ContextMenuTrigger>
 							<ContextMenuContent className="z-100000002">
-								<ContextMenuItem onClick={() => handleOpen(node)}>Open</ContextMenuItem>
+								<ContextMenuItem onClick={() => handleOpen(node)}>
+									Open
+								</ContextMenuItem>
 								<ContextMenuItem onClick={() => handleRenameStart(node)}>
 									Rename
 								</ContextMenuItem>
-								<ContextMenuItem onClick={() => deleteNode(node.id)}>Delete</ContextMenuItem>
+								<ContextMenuItem onClick={() => deleteNode(node.id)}>
+									Delete
+								</ContextMenuItem>
 							</ContextMenuContent>
 						</ContextMenu>
 					))}
