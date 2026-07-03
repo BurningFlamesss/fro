@@ -34,6 +34,22 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 	const children = getChildren(currentFolderId);
 	const currentFolder = nodes[currentFolderId];
 
+	const navigateTo = (id: string) => setCurrentFolderId(id);
+
+	const goUp = () => {
+		if (currentFolder.parentId) {
+			navigateTo(currentFolder.parentId);
+		}
+	};
+
+	const handleOpen = (node: FileNode) => {
+		if (node.type === "folder") {
+			navigateTo(node.id);
+		} else {
+			alert(`Opening file...`)
+		}
+	};
+
 	const handleNewFolder = () => {
 		const name = prompt("Enter the folder name");
 		if (name) {
@@ -68,6 +84,8 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 			<div className="flex items-center p-2 gap-2">
 				<button
 					type="button"
+					onClick={goUp}
+					disabled={!currentFolder.parentId}
 					className="p-1 rounded-full hover:bg-background/10 cursor-pointer"
 				>
 					<FaArrowUp />
@@ -83,8 +101,8 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 								<button
 									title={node.name}
 									type="button"
-									onDoubleClick={() => {}}
-									className=""
+									onDoubleClick={() => handleOpen(node)}
+									className="flex flex-col items-center p-2 rounded-xl w-full cursor-pointer"
 								>
 									<img
 										className="w-12 h-12 object-contain select-none"
@@ -103,22 +121,22 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 											onKeyDown={(e) =>
 												e.key === "Enter" && handleRenameSubmit()
 											}
-											className="text-xs text-center bg-white text-black outline-none w-12"
+											className="mt-1 text-xs text-center bg-white text-black outline-none w-16"
 											type="text"
 										/>
 									) : (
-										<p className="text-xs text-center mt-1 truncate w-12 select-none">
+										<p className="text-xs text-center mt-1 truncate w-16 select-none">
 											{node.name}
 										</p>
 									)}
 								</button>
 							</ContextMenuTrigger>
 							<ContextMenuContent className="z-100000002">
-								<ContextMenuItem>Open</ContextMenuItem>
+								<ContextMenuItem onClick={() => handleOpen(node)}>Open</ContextMenuItem>
 								<ContextMenuItem onClick={() => handleRenameStart(node)}>
 									Rename
 								</ContextMenuItem>
-								<ContextMenuItem>Delete</ContextMenuItem>
+								<ContextMenuItem onClick={() => deleteNode(node.id)}>Delete</ContextMenuItem>
 							</ContextMenuContent>
 						</ContextMenu>
 					))}
