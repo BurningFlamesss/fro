@@ -2,6 +2,7 @@ import { FaPlus } from "react-icons/fa6";
 import { IoMdRefresh } from "react-icons/io";
 import { RiPushpinLine } from "react-icons/ri";
 import { cn } from "#/lib/utils.ts";
+import { useFileSystemStore } from "#/store/fs.tsx";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
 import {
@@ -14,7 +15,6 @@ import {
 	ContextMenuSubTrigger,
 	ContextMenuTrigger,
 } from "./ui/context-menu";
-import { useFileSystemStore } from "#/store/fs.tsx";
 
 function Screen() {
 	const { apps, openApp, windows, focusWindow, pinApp } = useWindowStore();

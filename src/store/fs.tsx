@@ -1,5 +1,7 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import { createDebouncedStorage } from "#/lib/debounced-storage.ts";
 
 export interface FileNode {
 	id: string;
@@ -43,153 +45,159 @@ const createRoot = (): FileNode => ({
 });
 
 export const useFileSystemStore = create<FileSystemState>()(
-	immer((set, get) => ({
-		nodes: {
-			root: createRoot(),
-		},
-		rootId: "root",
-		desktopFolderIds: [],
-		createNode: (parentId, name, type, content) => {
-			const id = crypto.randomUUID();
+	persist(
+		immer((set, get) => ({
+			nodes: {
+				root: createRoot(),
+			},
+			rootId: "root",
+			desktopFolderIds: [],
+			createNode: (parentId, name, type, content) => {
+				const id = crypto.randomUUID();
 
-			set((state) => {
-				const parent = state.nodes[parentId];
+				set((state) => {
+					const parent = state.nodes[parentId];
 
-				if (!parent || parent.type !== "folder") return;
+					if (!parent || parent.type !== "folder") return;
 
-				const node: FileNode = {
-					id,
-					name,
-					type,
-					content,
-					parentId,
-					createdAt: Date.now(),
-					modifiedAt: Date.now(),
-				};
+					const node: FileNode = {
+						id,
+						name,
+						type,
+						content,
+						parentId,
+						createdAt: Date.now(),
+						modifiedAt: Date.now(),
+					};
 
-				if (type === "folder") {
-					node.children = [];
-				} else {
-					node.content = content;
-				}
+					if (type === "folder") {
+						node.children = [];
+					} else {
+						node.content = content;
+					}
 
-				state.nodes[id] = node;
-				parent.children = parent.children ? [...parent.children, id] : [id];
-			});
-		},
-		renameNode: (id, newName) => {
-			set((state) => {
-				const node = state.nodes[id];
+					state.nodes[id] = node;
+					parent.children = parent.children ? [...parent.children, id] : [id];
+				});
+			},
+			renameNode: (id, newName) => {
+				set((state) => {
+					const node = state.nodes[id];
 
-				if (node && newName.trim().length > 0) {
-					node.name = newName.trim();
+					if (node && newName.trim().length > 0) {
+						node.name = newName.trim();
+						node.modifiedAt = Date.now();
+					}
+				});
+			},
+			moveNode: (id, newParentId) => {
+				set((state) => {
+					const node = state.nodes[id];
+					const newParent = state.nodes[newParentId];
+
+					if (
+						!node ||
+						!newParent ||
+						newParent.type !== "folder" ||
+						node.parentId === newParentId
+					) {
+						return;
+					}
+
+					if (node.parentId) {
+						const oldParent = state.nodes[node.parentId];
+
+						if (oldParent?.children) {
+							oldParent.children = oldParent.children.filter(
+								(child) => child !== id,
+							);
+						}
+					}
+
+					newParent.children = newParent.children
+						? [...newParent.children, id]
+						: [id];
+					node.parentId = newParentId;
 					node.modifiedAt = Date.now();
-				}
-			});
-		},
-		moveNode: (id, newParentId) => {
-			set((state) => {
-				const node = state.nodes[id];
-				const newParent = state.nodes[newParentId];
+				});
+			},
+			deleteNode: (id) => {
+				set((state) => {
+					const node = state.nodes[id];
 
-				if (
-					!node ||
-					!newParent ||
-					newParent.type !== "folder" ||
-					node.parentId === newParentId
-				) {
-					return;
-				}
-
-				if (node.parentId) {
-					const oldParent = state.nodes[node.parentId];
-
-					if (oldParent?.children) {
-						oldParent.children = oldParent.children.filter(
-							(child) => child !== id,
-						);
-					}
-				}
-
-				newParent.children = newParent.children
-					? [...newParent.children, id]
-					: [id];
-				node.parentId = newParentId;
-				node.modifiedAt = Date.now();
-			});
-		},
-		deleteNode: (id) => {
-			set((state) => {
-				const node = state.nodes[id];
-
-				if (!node) {
-					return;
-				}
-
-				const deleteRecusive = (nodeId: string) => {
-					const node = state.nodes[nodeId];
-
-					if (node.type === "folder" && node.children) {
-						node.children.map((childId) => deleteRecusive(childId));
+					if (!node) {
+						return;
 					}
 
-					delete state.nodes[nodeId];
-				};
+					const deleteRecusive = (nodeId: string) => {
+						const node = state.nodes[nodeId];
 
-				if (node.parentId) {
-					const parent = state.nodes[node.parentId];
+						if (node.type === "folder" && node.children) {
+							node.children.map((childId) => deleteRecusive(childId));
+						}
 
-					if (parent.children) {
-						parent.children = parent.children.filter((child) => child !== id);
+						delete state.nodes[nodeId];
+					};
+
+					if (node.parentId) {
+						const parent = state.nodes[node.parentId];
+
+						if (parent.children) {
+							parent.children = parent.children.filter((child) => child !== id);
+						}
 					}
+
+					deleteRecusive(id);
+
+					state.desktopFolderIds = state.desktopFolderIds.filter(
+						(folderId) => folderId !== id,
+					);
+				});
+			},
+			addToDesktop: (folderId) => {
+				set((state) => {
+					if (
+						state.nodes[folderId].type === "folder" &&
+						!state.desktopFolderIds.includes(folderId)
+					) {
+						state.desktopFolderIds.push(folderId);
+					}
+				});
+			},
+			removeFromDesktop: (folderId) => {
+				set((state) => {
+					state.desktopFolderIds = state.desktopFolderIds.filter(
+						(id) => id !== folderId,
+					);
+				});
+			},
+			getChildren: (parentId) => {
+				const state = get();
+				const parent = state.nodes[parentId];
+				if (!parent || parent.type !== "folder" || !parent.children) {
+					return [];
 				}
 
-				deleteRecusive(id);
+				return parent.children
+					.map((id) => state.nodes[id])
+					.filter(Boolean) as Array<FileNode>;
+			},
+			getPath: (id) => {
+				const state = get();
+				const path: Array<string> = [];
+				let current: FileNode | null = state.nodes[id];
 
-				state.desktopFolderIds = state.desktopFolderIds.filter(
-					(folderId) => folderId !== id,
-				);
-			});
-		},
-		addToDesktop: (folderId) => {
-			set((state) => {
-				if (
-					state.nodes[folderId].type === "folder" &&
-					!state.desktopFolderIds.includes(folderId)
-				) {
-					state.desktopFolderIds.push(folderId);
+				while (current) {
+					path.unshift(current.id);
+					current = current.parentId ? state.nodes[current.parentId] : null;
 				}
-			});
-		},
-		removeFromDesktop: (folderId) => {
-			set((state) => {
-				state.desktopFolderIds = state.desktopFolderIds.filter(
-					(id) => id !== folderId,
-				);
-			});
-		},
-		getChildren: (parentId) => {
-			const state = get();
-			const parent = state.nodes[parentId];
-			if (!parent || parent.type !== "folder" || !parent.children) {
-				return [];
-			}
 
-			return parent.children
-				.map((id) => state.nodes[id])
-				.filter(Boolean) as Array<FileNode>;
+				return path;
+			},
+		})),
+		{
+			name: "froxplorer-storage",
+			storage: createDebouncedStorage(1000),
 		},
-		getPath: (id) => {
-			const state = get();
-			const path: Array<string> = [];
-			let current: FileNode | null = state.nodes[id];
-
-			while (current) {
-				path.unshift(current.id);
-				current = current.parentId ? state.nodes[current.parentId] : null;
-			}
-
-			return path;
-		},
-	})),
+	),
 );
