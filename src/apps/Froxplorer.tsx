@@ -6,6 +6,7 @@ import {
 	ContextMenuItem,
 	ContextMenuTrigger,
 } from "#/components/ui/context-menu.tsx";
+import { parseFileName } from "#/lib/utils.ts";
 import { type FileNode, useFileSystemStore } from "#/store/fs.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { WindowInstance } from "../constants";
@@ -59,9 +60,14 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 
 	const handleNewFile = () => {
 		const name = prompt("Enter the file name");
-		const correctedName = name?.includes(".") ? name : `${name}.txt`;
-		if (correctedName) {
-			createNode(currentFolderId, correctedName, "file");
+		if (name) {
+			const { name: fileName, extension } = parseFileName(name);
+
+			createNode(
+				currentFolderId,
+				`${fileName}.${extension ? extension : "txt"}`,
+				"file",
+			);
 		}
 	};
 
@@ -72,8 +78,8 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 
 	const handleRenameSubmit = () => {
 		if (renameTarget && newName.trim().length > 0) {
-			const correctedName = newName.includes(".") ? newName : `${newName}.txt`;
-			renameNode(renameTarget, correctedName);
+			const { name: fileName, extension } = parseFileName(newName);
+			renameNode(renameTarget, `${fileName}.${extension ? extension : "txt"}`);
 			setRenameTarget(null);
 		}
 	};
@@ -150,7 +156,7 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 										<input
 											autoFocus={true}
 											value={newName}
-											onDoubleClick={e => e.stopPropagation()}
+											onDoubleClick={(e) => e.stopPropagation()}
 											onChange={(e) => setNewName(e.target.value)}
 											onBlur={handleRenameSubmit}
 											onKeyDown={(e) =>

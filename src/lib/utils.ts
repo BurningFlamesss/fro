@@ -183,3 +183,41 @@ export function formatEventRange(
 		"EEE, MMM d, yyyy, h:mm a",
 	)}`;
 }
+
+export const parseFileName = (
+	fileName: string,
+	extensionList?: Array<string>,
+): { name: string; extension: string } => {
+	const trimmed = fileName.trim();
+
+	if (!trimmed) {
+		return {
+			name: "",
+			extension: "",
+		};
+	}
+
+	if (trimmed.startsWith(".") && !trimmed.includes(".", 1)) {
+		return {
+			name: trimmed.toLowerCase(),
+			extension: "",
+		};
+	}
+
+	const lastDotIndex = trimmed.lastIndexOf(".");
+
+	if (lastDotIndex === -1 || lastDotIndex === trimmed.length - 1) {
+		return {
+			name: trimmed.toLowerCase(),
+			extension: "",
+		};
+	}
+
+	const name = trimmed.slice(0, lastDotIndex);
+	const extension = trimmed.slice(lastDotIndex + 1);
+
+	return {
+		name: name.toLowerCase() || trimmed.toLowerCase(),
+		extension: extension.toLowerCase(),
+	};
+};
