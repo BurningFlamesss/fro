@@ -26,8 +26,8 @@ interface FileSystemState {
 	renameNode: (id: string, newName: string) => void;
 	moveNode: (id: string, newParentId: string) => void;
 	deleteNode: (id: string) => void;
-	addToDesktop: () => void;
-	removeFromDesktop: () => void;
+	addToDesktop: (folderId: string) => void;
+	removeFromDesktop: (folderId: string) => void;
 	getChildren: (parentId: string) => Array<FileNode>;
 	getPath: (id: string) => Array<string>;
 }
@@ -151,8 +151,23 @@ export const useFileSystemStore = create<FileSystemState>()(
 				);
 			});
 		},
-		addToDesktop: () => {},
-		removeFromDesktop: () => {},
+		addToDesktop: (folderId) => {
+			set((state) => {
+				if (
+					state.nodes[folderId].type === "folder" &&
+					!state.desktopFolderIds.includes(folderId)
+				) {
+					state.desktopFolderIds.push(folderId);
+				}
+			});
+		},
+		removeFromDesktop: (folderId) => {
+			set((state) => {
+				state.desktopFolderIds = state.desktopFolderIds.filter(
+					(id) => id !== folderId,
+				);
+			});
+		},
 		getChildren: (parentId) => {
 			const state = get();
 			const parent = state.nodes[parentId];
