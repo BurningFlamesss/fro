@@ -10,7 +10,6 @@ export interface FileNode {
 	parentId?: string | null;
 	children?: Array<string>; // For folders
 	content?: string; // For files
-	extension?: string; // For files
 	createdAt: number;
 	modifiedAt: number;
 }

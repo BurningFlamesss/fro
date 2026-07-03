@@ -59,8 +59,9 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 
 	const handleNewFile = () => {
 		const name = prompt("Enter the file name");
-		if (name) {
-			createNode(currentFolderId, name, "file");
+		const correctedName = name?.includes(".") ? name : `${name}.txt`;
+		if (correctedName) {
+			createNode(currentFolderId, correctedName, "file");
 		}
 	};
 
@@ -71,7 +72,8 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 
 	const handleRenameSubmit = () => {
 		if (renameTarget && newName.trim().length > 0) {
-			renameNode(renameTarget, newName);
+			const correctedName = newName.includes(".") ? newName : `${newName}.txt`;
+			renameNode(renameTarget, correctedName);
 			setRenameTarget(null);
 		}
 	};
@@ -125,7 +127,7 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 			</div>
 
 			<div className="flex-1 overflow-auto p-2">
-				<div className="grid grid-cols-6 p-4">
+				<div className="grid grid-cols-6 p-4 gap-2">
 					{children?.map((node) => (
 						<ContextMenu key={`fs-node-${node.id}`}>
 							<ContextMenuTrigger>
@@ -146,17 +148,19 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 									/>
 									{renameTarget === node.id ? (
 										<input
+											autoFocus={true}
 											value={newName}
+											onDoubleClick={e => e.stopPropagation()}
 											onChange={(e) => setNewName(e.target.value)}
 											onBlur={handleRenameSubmit}
 											onKeyDown={(e) =>
 												e.key === "Enter" && handleRenameSubmit()
 											}
-											className="mt-1 text-xs text-center bg-white text-black outline-none w-16"
+											className="mt-1 text-xs text-center bg-white text-black outline-none w-18"
 											type="text"
 										/>
 									) : (
-										<p className="text-xs text-center mt-1 truncate w-16 select-none">
+										<p className="text-xs text-center mt-1 truncate w-18 select-none">
 											{node.name}
 										</p>
 									)}
