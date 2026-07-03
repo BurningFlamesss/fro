@@ -6,7 +6,7 @@ import {
 	ContextMenuItem,
 	ContextMenuTrigger,
 } from "#/components/ui/context-menu.tsx";
-import { useFileSystemStore, type FileNode } from "#/store/fs.tsx";
+import { type FileNode, useFileSystemStore } from "#/store/fs.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { WindowInstance } from "../constants";
 
@@ -77,7 +77,6 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 	};
 
 	const pathIds = getPath(currentFolderId);
-	const breadcrumb = pathIds?.map((id) => nodes[id].name).join(" / ");
 
 	return (
 		<div className="flex flex-col h-full">
@@ -169,6 +168,12 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 								</ContextMenuItem>
 								<ContextMenuItem onClick={() => handleRenameStart(node)}>
 									Rename
+								</ContextMenuItem>
+								<ContextMenuItem onClick={() => addToDesktop(node.id)}>
+									Add to desktop
+								</ContextMenuItem>
+								<ContextMenuItem onClick={() => removeFromDesktop(node.id)}>
+									Remove from desktop
 								</ContextMenuItem>
 								<ContextMenuItem onClick={() => deleteNode(node.id)}>
 									Delete

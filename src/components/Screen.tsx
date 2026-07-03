@@ -14,9 +14,15 @@ import {
 	ContextMenuSubTrigger,
 	ContextMenuTrigger,
 } from "./ui/context-menu";
+import { useFileSystemStore } from "#/store/fs.tsx";
 
 function Screen() {
 	const { apps, openApp, windows, focusWindow, pinApp } = useWindowStore();
+	const { desktopFolderIds, nodes, removeFromDesktop } = useFileSystemStore();
+
+	const desktopFolders = desktopFolderIds
+		.map((id) => nodes[id])
+		.filter(Boolean);
 
 	const toggleApp = (app: AppInstance) => {
 		const appWindows = findAppWindows(windows, app.id);
@@ -107,6 +113,49 @@ function Screen() {
 							</ContextMenuContent>
 						</ContextMenu>
 					))}
+					{desktopFolders.map((folder) => {
+						return (
+							<ContextMenu key={`desktop-folder-${folder.id}`}>
+								<ContextMenuTrigger>
+									<button
+										type="button"
+										onDoubleClick={() =>
+											openApp("file_explorer", undefined, {
+												folderId: folder.id,
+											})
+										}
+										className={cn(
+											"w-24 h-24 group p-2 rounded-xl transition-all duration-150 cursor-pointer flex flex-col items-center justify-center shrink-0",
+										)}
+									>
+										<img
+											className="w-12 h-12 object-contain opacity-90 group-hover:opacity-100 select-none"
+											src={"/public/apps/Folder.svg"}
+											alt={folder.name}
+											draggable={false}
+										/>
+										<p className="text-background glassmorphism py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
+											{folder.name}
+										</p>
+									</button>
+								</ContextMenuTrigger>
+								<ContextMenuContent>
+									<ContextMenuItem
+										onClick={() =>
+											openApp("file_explorer", undefined, {
+												folderId: folder.id,
+											})
+										}
+									>
+										Open
+									</ContextMenuItem>
+									<ContextMenuItem onClick={() => removeFromDesktop(folder.id)}>
+										Remove from desktop
+									</ContextMenuItem>
+								</ContextMenuContent>
+							</ContextMenu>
+						);
+					})}
 				</div>
 			</ContextMenuTrigger>
 			<ContextMenuContent className="z-100000002">
