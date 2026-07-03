@@ -107,6 +107,22 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 						);
 					})}
 				</span>
+				<div className="flex ml-auto p-2 gap-2">
+					<button
+						type="button"
+						onClick={handleNewFolder}
+						className="text-xs p-1 rounded cursor-pointer"
+					>
+						New Folder
+					</button>
+					<button
+						type="button"
+						onClick={handleNewFile}
+						className="text-xs p-1 rounded cursor-pointer"
+					>
+						New File
+					</button>
+				</div>
 			</div>
 
 			<div className="flex-1 overflow-auto p-2">
@@ -161,23 +177,6 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 						</ContextMenu>
 					))}
 				</div>
-			</div>
-
-			<div className="flex p-2 gap-2 border-t">
-				<button
-					type="button"
-					onClick={handleNewFolder}
-					className="text-xs p-1 rounded"
-				>
-					New Folder
-				</button>
-				<button
-					type="button"
-					onClick={handleNewFile}
-					className="text-xs p-1 rounded"
-				>
-					New File
-				</button>
 			</div>
 		</div>
 	);
