@@ -32,7 +32,10 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 	} = useFileSystemStore();
 
 	const [currentFolderId, setCurrentFolderId] = useState<string>(folderId);
-	const [renameTarget, setRenameTarget] = useState<string | null>(null);
+	const [renameTarget, setRenameTarget] = useState<{
+		id: string;
+		type: "folder" | "file";
+	} | null>(null);
 	const [newName, setNewName] = useState<string>("");
 
 	const children = getChildren(currentFolderId);
@@ -75,17 +78,21 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 	};
 
 	const handleRenameStart = (node: FileNode) => {
-		setRenameTarget(node.id);
+		setRenameTarget({ id: node.id, type: node.type });
 		setNewName(node.name);
 	};
 
 	const handleRenameSubmit = () => {
-		if (renameTarget && newName.trim().length > 0) {
-			const { name: fileName, extension } = parseFileName(newName);
-			renameNode(
-				renameTarget,
-				`${fileName}.${extension ? extension : "frote"}`,
-			);
+		if (renameTarget?.id && newName.trim().length > 0) {
+			if (renameTarget.type === "folder") {
+				renameNode(renameTarget.id, newName.trim());
+			} else if (renameTarget.type === "file") {
+				const { name: fileName, extension } = parseFileName(newName);
+				renameNode(
+					renameTarget.id,
+					`${fileName}.${extension ? extension : "frote"}`,
+				);
+			}
 			setRenameTarget(null);
 		}
 	};
@@ -158,7 +165,7 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 										}
 										alt=""
 									/>
-									{renameTarget === node.id ? (
+									{renameTarget && renameTarget.id === node.id ? (
 										<input
 											autoFocus={true}
 											value={newName}

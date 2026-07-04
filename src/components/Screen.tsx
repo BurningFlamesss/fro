@@ -6,7 +6,7 @@ import {
 	parseFileName,
 	searchFileAssociatesThroughExtension,
 } from "#/lib/utils.ts";
-import { useFileSystemStore } from "#/store/fs.tsx";
+import { useFileSystemStore, type FileNode } from "#/store/fs.tsx";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
 import {
@@ -29,8 +29,15 @@ function Screen() {
 		removeFromDesktop,
 		createNode,
 		addToDesktop,
+		renameNode,
 	} = useFileSystemStore();
-	const [currentFolderId, setCurrentFolderId] = useState<string>("root");
+	const [renameTarget, setRenameTarget] = useState<{
+		id: string;
+		type: "folder" | "file";
+	} | null>(null);
+	const [newName, setNewName] = useState<string>("");
+
+	const rootFolderID = "root";
 
 	const desktopContainers = desktopContainerIds
 		.map((id) => nodes[id])
@@ -39,7 +46,7 @@ function Screen() {
 	const handleNewFolder = () => {
 		const name = prompt("Enter the folder name");
 		if (name) {
-			const id = createNode(currentFolderId, name, "folder");
+			const id = createNode(rootFolderID, name, "folder");
 			addToDesktop(id);
 		}
 	};
@@ -50,12 +57,32 @@ function Screen() {
 			const { name: fileName, extension } = parseFileName(name);
 
 			const id = createNode(
-				currentFolderId,
+				rootFolderID,
 				`${fileName}.${extension ? extension : "frote"}`,
 				"file",
 			);
 
 			addToDesktop(id);
+		}
+	};
+
+	const handleRenameStart = (node: FileNode) => {
+		setRenameTarget({ id: node.id, type: node.type });
+		setNewName(node.name);
+	};
+
+	const handleRenameSubmit = () => {
+		if (renameTarget?.id && newName.trim().length > 0) {
+			if (renameTarget.type === "folder") {
+				renameNode(renameTarget.id, newName.trim());
+				return;
+			}
+			const { name: fileName, extension } = parseFileName(newName);
+			renameNode(
+				renameTarget.id,
+				`${fileName}.${extension ? extension : "frote"}`,
+			);
+			setRenameTarget(null);
 		}
 	};
 
@@ -173,9 +200,24 @@ function Screen() {
 											alt={container.name}
 											draggable={false}
 										/>
-										<p className="text-background glassmorphism py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
-											{container.name}
-										</p>
+										{renameTarget && renameTarget.id === container.id ? (
+											<input
+												autoFocus={true}
+												value={newName}
+												onDoubleClick={(e) => e.stopPropagation()}
+												onChange={(e) => setNewName(e.target.value)}
+												onBlur={handleRenameSubmit}
+												onKeyDown={(e) =>
+													e.key === "Enter" && handleRenameSubmit()
+												}
+												className="py-0.5 px-2 text-xs text-center bg-white text-black outline-none max-w-full"
+												type="text"
+											/>
+										) : (
+											<p className="text-background glassmorphism py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
+												{container.name}
+											</p>
+										)}
 									</button>
 								</ContextMenuTrigger>
 								<ContextMenuContent>
@@ -187,6 +229,9 @@ function Screen() {
 										}
 									>
 										Open
+									</ContextMenuItem>
+									<ContextMenuItem onClick={() => handleRenameStart(container)}>
+										Rename
 									</ContextMenuItem>
 									<ContextMenuItem
 										onClick={() => removeFromDesktop(container.id)}
