@@ -72,7 +72,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		id: "file_explorer",
 		name: "Froxplorer",
 		title: "Froxplorer",
-		logo: "/apps/Folder.svg",
+		logo: "/apps/Explorer.svg",
 		isPinned: true,
 		theme: DEFAULT_THEME,
 		component: <Froxplorer />,

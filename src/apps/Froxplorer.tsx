@@ -6,7 +6,10 @@ import {
 	ContextMenuItem,
 	ContextMenuTrigger,
 } from "#/components/ui/context-menu.tsx";
-import { parseFileName } from "#/lib/utils.ts";
+import {
+	parseFileName,
+	searchFileAssociatesThroughExtension,
+} from "#/lib/utils.ts";
 import { type FileNode, useFileSystemStore } from "#/store/fs.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { WindowInstance } from "../constants";
@@ -65,7 +68,7 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 
 			createNode(
 				currentFolderId,
-				`${fileName}.${extension ? extension : "txt"}`,
+				`${fileName}.${extension ? extension : "frote"}`,
 				"file",
 			);
 		}
@@ -79,7 +82,10 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 	const handleRenameSubmit = () => {
 		if (renameTarget && newName.trim().length > 0) {
 			const { name: fileName, extension } = parseFileName(newName);
-			renameNode(renameTarget, `${fileName}.${extension ? extension : "txt"}`);
+			renameNode(
+				renameTarget,
+				`${fileName}.${extension ? extension : "frote"}`,
+			);
 			setRenameTarget(null);
 		}
 	};
@@ -147,8 +153,8 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 										className="w-12 h-12 object-contain select-none"
 										src={
 											node.type === "folder"
-												? "/apps/Opened-Folder.svg"
-												: "/apps/Notepad.svg"
+												? "/general/fs/Folder.svg"
+												: `/general/fs/File-${searchFileAssociatesThroughExtension(parseFileName(node.name).extension).file_image}.svg`
 										}
 										alt=""
 									/>

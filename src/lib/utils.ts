@@ -4,6 +4,7 @@ import { clsx } from "clsx";
 import { format, isSameDay, isSameYear, isToday, isTomorrow } from "date-fns";
 import ms from "ms";
 import { twMerge } from "tailwind-merge";
+import { FILE_ASSOCIATIONS } from "./fileAssociates";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -219,5 +220,27 @@ export const parseFileName = (
 	return {
 		name: name.toLowerCase() || trimmed.toLowerCase(),
 		extension: extension.toLowerCase(),
+	};
+};
+
+export const searchFileAssociatesThroughExtension = (extension: string) => {
+	const entry = Object.entries(FILE_ASSOCIATIONS).find(([key, value]) =>
+		value.extension.some(
+			(val) => val.toLowerCase() === extension.toLowerCase(),
+		),
+	);
+
+	if (entry) {
+		return {
+			key: entry[0],
+			file_image: entry[1].file_image,
+			extension: entry[1].extension,
+		};
+	}
+
+	return {
+		key: "NOT_FOUND",
+		file_image: "default",
+		extension: extension,
 	};
 };
