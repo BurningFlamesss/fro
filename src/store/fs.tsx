@@ -23,7 +23,7 @@ interface FileSystemState {
 		name: string,
 		type: "file" | "folder",
 		content?: string,
-	) => void;
+	) => `${string}-${string}-${string}-${string}-${string}`;
 	renameNode: (id: string, newName: string) => void;
 	moveNode: (id: string, newParentId: string) => void;
 	deleteNode: (id: string) => void;
@@ -78,6 +78,8 @@ export const useFileSystemStore = create<FileSystemState>()(
 					state.nodes[id] = node;
 					parent.children = parent.children ? [...parent.children, id] : [id];
 				});
+
+				return id;
 			},
 			renameNode: (id, newName) => {
 				set((state) => {

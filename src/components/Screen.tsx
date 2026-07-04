@@ -19,15 +19,45 @@ import {
 	ContextMenuSubTrigger,
 	ContextMenuTrigger,
 } from "./ui/context-menu";
+import { useState } from "react";
 
 function Screen() {
 	const { apps, openApp, windows, focusWindow, pinApp } = useWindowStore();
-	const { desktopContainerIds, nodes, removeFromDesktop } =
-		useFileSystemStore();
+	const {
+		desktopContainerIds,
+		nodes,
+		removeFromDesktop,
+		createNode,
+		addToDesktop,
+	} = useFileSystemStore();
+	const [currentFolderId, setCurrentFolderId] = useState<string>("root");
 
 	const desktopContainers = desktopContainerIds
 		.map((id) => nodes[id])
 		.filter(Boolean);
+
+	const handleNewFolder = () => {
+		const name = prompt("Enter the folder name");
+		if (name) {
+			const id = createNode(currentFolderId, name, "folder");
+			addToDesktop(id);
+		}
+	};
+
+	const handleNewFile = () => {
+		const name = prompt("Enter the file name");
+		if (name) {
+			const { name: fileName, extension } = parseFileName(name);
+
+			const id = createNode(
+				currentFolderId,
+				`${fileName}.${extension ? extension : "frote"}`,
+				"file",
+			);
+
+			addToDesktop(id);
+		}
+	};
 
 	const toggleApp = (app: AppInstance) => {
 		const appWindows = findAppWindows(windows, app.id);
@@ -171,7 +201,13 @@ function Screen() {
 			</ContextMenuTrigger>
 			<ContextMenuContent className="z-100000002">
 				<ContextMenuGroup>
-					<ContextMenuItem onClick={() => {}}>
+					<ContextMenuItem
+						onClick={() => {
+							setTimeout(() => {
+								window.location.reload();
+							}, 200);
+						}}
+					>
 						<IoMdRefresh className="text-background" />
 						Refresh
 					</ContextMenuItem>
@@ -181,8 +217,12 @@ function Screen() {
 							New
 						</ContextMenuSubTrigger>
 						<ContextMenuSubContent className="w-44 z-100000003">
-							<ContextMenuItem>Folder</ContextMenuItem>
-							<ContextMenuItem>File</ContextMenuItem>
+							<ContextMenuItem onClick={() => handleNewFolder()}>
+								Folder
+							</ContextMenuItem>
+							<ContextMenuItem onClick={() => handleNewFile()}>
+								File
+							</ContextMenuItem>
 							<ContextMenuItem>Fro File</ContextMenuItem>
 						</ContextMenuSubContent>
 					</ContextMenuSub>
