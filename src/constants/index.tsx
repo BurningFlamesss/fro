@@ -39,8 +39,7 @@ export interface WindowInstance {
 	maximized: boolean;
 	theme?: string;
 	component: React.ReactNode;
-	fileId?: string;
-	folderId?: string;
+	containerId?: string
 }
 
 export type AppId =

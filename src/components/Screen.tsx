@@ -1,7 +1,11 @@
 import { FaPlus } from "react-icons/fa6";
 import { IoMdRefresh } from "react-icons/io";
 import { RiPushpinLine } from "react-icons/ri";
-import { cn } from "#/lib/utils.ts";
+import {
+	cn,
+	parseFileName,
+	searchFileAssociatesThroughExtension,
+} from "#/lib/utils.ts";
 import { useFileSystemStore } from "#/store/fs.tsx";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
@@ -18,9 +22,10 @@ import {
 
 function Screen() {
 	const { apps, openApp, windows, focusWindow, pinApp } = useWindowStore();
-	const { desktopFolderIds, nodes, removeFromDesktop } = useFileSystemStore();
+	const { desktopContainerIds, nodes, removeFromDesktop } =
+		useFileSystemStore();
 
-	const desktopFolders = desktopFolderIds
+	const desktopContainers = desktopContainerIds
 		.map((id) => nodes[id])
 		.filter(Boolean);
 
@@ -113,15 +118,15 @@ function Screen() {
 							</ContextMenuContent>
 						</ContextMenu>
 					))}
-					{desktopFolders.map((folder) => {
+					{desktopContainers.map((container) => {
 						return (
-							<ContextMenu key={`desktop-folder-${folder.id}`}>
+							<ContextMenu key={`desktop-container-${container.id}`}>
 								<ContextMenuTrigger>
 									<button
 										type="button"
 										onDoubleClick={() =>
 											openApp("file_explorer", undefined, {
-												folderId: folder.id,
+												containerId: container.id,
 											})
 										}
 										className={cn(
@@ -130,12 +135,16 @@ function Screen() {
 									>
 										<img
 											className="w-12 h-12 object-contain opacity-90 group-hover:opacity-100 select-none"
-											src={"/public/apps/Folder.svg"}
-											alt={folder.name}
+											src={
+												container.type === "folder"
+													? "/general/fs/Folder.svg"
+													: `/general/fs/File-${searchFileAssociatesThroughExtension(parseFileName(container.name).extension).file_image}.svg`
+											}
+											alt={container.name}
 											draggable={false}
 										/>
 										<p className="text-background glassmorphism py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
-											{folder.name}
+											{container.name}
 										</p>
 									</button>
 								</ContextMenuTrigger>
@@ -143,13 +152,15 @@ function Screen() {
 									<ContextMenuItem
 										onClick={() =>
 											openApp("file_explorer", undefined, {
-												folderId: folder.id,
+												containerId: container.id,
 											})
 										}
 									>
 										Open
 									</ContextMenuItem>
-									<ContextMenuItem onClick={() => removeFromDesktop(folder.id)}>
+									<ContextMenuItem
+										onClick={() => removeFromDesktop(container.id)}
+									>
 										Remove from desktop
 									</ContextMenuItem>
 								</ContextMenuContent>

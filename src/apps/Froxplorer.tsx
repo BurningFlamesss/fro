@@ -16,13 +16,13 @@ import type { WindowInstance } from "../constants";
 
 function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 	const win = useWindowStore((state) => state.windows[windowId]);
-	const folderId = win?.folderId ?? "root";
+	const folderId = win?.containerId ?? "root";
 	const {
 		nodes,
 		addToDesktop,
 		createNode,
 		deleteNode,
-		desktopFolderIds,
+		desktopContainerIds,
 		moveNode,
 		removeFromDesktop,
 		renameNode,

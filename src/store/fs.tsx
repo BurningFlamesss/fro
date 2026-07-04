@@ -17,7 +17,7 @@ export interface FileNode {
 interface FileSystemState {
 	nodes: Record<string, FileNode>;
 	rootId: string;
-	desktopFolderIds: Array<string>;
+	desktopContainerIds: Array<string>;
 	createNode: (
 		parentId: string,
 		name: string,
@@ -27,8 +27,8 @@ interface FileSystemState {
 	renameNode: (id: string, newName: string) => void;
 	moveNode: (id: string, newParentId: string) => void;
 	deleteNode: (id: string) => void;
-	addToDesktop: (folderId: string) => void;
-	removeFromDesktop: (folderId: string) => void;
+	addToDesktop: (containerId: string) => void;
+	removeFromDesktop: (containerId: string) => void;
 	getChildren: (parentId: string) => Array<FileNode>;
 	getPath: (id: string) => Array<string>;
 }
@@ -50,7 +50,7 @@ export const useFileSystemStore = create<FileSystemState>()(
 				root: createRoot(),
 			},
 			rootId: "root",
-			desktopFolderIds: [],
+			desktopContainerIds: [],
 			createNode: (parentId, name, type, content) => {
 				const id = crypto.randomUUID();
 
@@ -148,25 +148,22 @@ export const useFileSystemStore = create<FileSystemState>()(
 
 					deleteRecusive(id);
 
-					state.desktopFolderIds = state.desktopFolderIds.filter(
+					state.desktopContainerIds = state.desktopContainerIds.filter(
 						(folderId) => folderId !== id,
 					);
 				});
 			},
-			addToDesktop: (folderId) => {
+			addToDesktop: (containerId) => {
 				set((state) => {
-					if (
-						state.nodes[folderId].type === "folder" &&
-						!state.desktopFolderIds.includes(folderId)
-					) {
-						state.desktopFolderIds.push(folderId);
+					if (!state.desktopContainerIds.includes(containerId)) {
+						state.desktopContainerIds.push(containerId);
 					}
 				});
 			},
-			removeFromDesktop: (folderId) => {
+			removeFromDesktop: (containerId) => {
 				set((state) => {
-					state.desktopFolderIds = state.desktopFolderIds.filter(
-						(id) => id !== folderId,
+					state.desktopContainerIds = state.desktopContainerIds.filter(
+						(id) => id !== containerId,
 					);
 				});
 			},
