@@ -25,6 +25,7 @@ interface FileSystemState {
 		content?: string,
 	) => `${string}-${string}-${string}-${string}-${string}`;
 	renameNode: (id: string, newName: string) => void;
+	updateNode: (id: string, content: string) => void;
 	moveNode: (id: string, newParentId: string) => void;
 	deleteNode: (id: string) => void;
 	addToDesktop: (containerId: string) => void;
@@ -80,6 +81,15 @@ export const useFileSystemStore = create<FileSystemState>()(
 				});
 
 				return id;
+			},
+			updateNode: (id, content) => {
+				set((state) => {
+					const node = state.nodes[id];
+					if (node && node.type === "file" && content.trim().length > 0) {
+						node.content = content;
+						node.modifiedAt = Date.now();
+					}
+				});
 			},
 			renameNode: (id, newName) => {
 				set((state) => {

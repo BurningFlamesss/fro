@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { createDebouncedStorage } from "#/lib/debounced-storage.ts";
+import { useFileSystemStore } from "./fs";
 
 interface NoteTab {
 	id: string;
@@ -23,7 +24,16 @@ interface NoteStore {
 export const useNoteStore = create<NoteStore>()(
 	persist(
 		immer((set, get) => {
-			const firstTabId = crypto.randomUUID();
+			const { createNode, updateNode, renameNode, deleteNode } =
+				useFileSystemStore.getState();
+
+			const frotesDestination = createNode("root", "notes", "folder");
+			const firstTabId = createNode(
+				frotesDestination,
+				"Untitled.frote",
+				"file",
+				"",
+			);
 
 			return {
 				tabs: [
@@ -36,8 +46,15 @@ export const useNoteStore = create<NoteStore>()(
 				activeTabId: firstTabId,
 
 				addTab: (title = "Untitled", content = "") => {
+					const id = createNode(
+						frotesDestination,
+						`${title}.frote`,
+						"file",
+						content,
+					);
+
 					const newTab: NoteTab = {
-						id: crypto.randomUUID(),
+						id,
 						title: title,
 						content: content,
 					};
@@ -57,7 +74,12 @@ export const useNoteStore = create<NoteStore>()(
 						state.tabs.splice(index, 1);
 
 						if (state.tabs.length === 0) {
-							const tabId = crypto.randomUUID();
+							const tabId = createNode(
+								frotesDestination,
+								"Untitled.frote",
+								"file",
+								"",
+							);
 
 							state.tabs.push({
 								id: tabId,
@@ -83,6 +105,7 @@ export const useNoteStore = create<NoteStore>()(
 
 						if (tab) {
 							tab.content = content;
+							updateNode(tab.id, content);
 						}
 					}),
 
@@ -91,6 +114,7 @@ export const useNoteStore = create<NoteStore>()(
 						const tab = state.tabs.find((tab) => tab.id === id);
 						if (tab) {
 							tab.title = title;
+							renameNode(tab.id, `${title}.frote`);
 						}
 					}),
 			};
