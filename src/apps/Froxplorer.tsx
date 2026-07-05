@@ -14,13 +14,14 @@ import { type FileNode, useFileSystemStore } from "#/store/fs.tsx";
 import { useNoteStore } from "#/store/note.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import { Apps, type WindowInstance } from "../constants";
+import { useLauncherStore } from "#/store/launcher.tsx";
 
 function Froxplorer({ windowId }: { windowId: string }) {
 	const { windows } = useWindowStore();
 	const win = Object.values(windows)
 		.filter((win): win is WindowInstance => win !== undefined)
 		.find((win) => win.id === windowId);
-		
+
 	const folderId = win?.containerId ?? "root";
 	const {
 		nodes,
@@ -37,6 +38,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 	} = useFileSystemStore();
 	const { apps, openApp } = useWindowStore();
 	const { tabs, selectTab, addTab } = useNoteStore();
+	const { launchables, launch } = useLauncherStore();
 
 	const [currentFolderId, setCurrentFolderId] = useState<string>(folderId);
 	const [renameTarget, setRenameTarget] = useState<{
@@ -63,6 +65,13 @@ function Froxplorer({ windowId }: { windowId: string }) {
 			const { name, extension } = parseFileName(node.name);
 			const { key } = searchFileAssociatesThroughExtension(extension);
 			const app = Apps[key];
+			console.log("Trying to open...", name, extension, key, app);
+
+			if (!app) {
+				const launchable = launchables.app_not_found;
+				launch(launchable);
+				return;
+			}
 
 			switch (app.id) {
 				case "notes": {
@@ -72,13 +81,16 @@ function Froxplorer({ windowId }: { windowId: string }) {
 					} else {
 						selectTab(node.id);
 					}
+					openApp(app.id);
 					break;
 				}
 
-				default:
+				default: {
+					const launchable = launchables.app_not_found;
+					launch(launchable);
 					break;
+				}
 			}
-			openApp(app.id);
 		}
 	};
 

@@ -9,7 +9,6 @@ import Frotore from "#/apps/Frotore.tsx";
 import Frottings from "#/apps/Frottings.tsx";
 import Frowser from "#/apps/Frowser.tsx";
 import Froxplorer from "#/apps/Froxplorer.tsx";
-import FroncherInitialPage from "#/components/FroncherInitialPage.tsx";
 
 export const INITIAL_Z_INDEX = 1000;
 export const BACK_Z_INDEX = 0;
@@ -55,7 +54,6 @@ export type AppId =
 	| "music"
 	| "store"
 	| "launcher"
-	| "app_not_found"
 	| `app_${string}`;
 
 export type WindowId = `${AppId}_${string}`;

@@ -16,6 +16,7 @@ export interface Launchable {
 		  }
 		| false;
 	logo: string;
+	// extension?: Array<string>;
 }
 
 interface LauncherStore {
@@ -39,24 +40,17 @@ export const useLauncherStore = create<LauncherStore>()(
 				},
 			},
 			recentLaunches: [],
-			launched: null,
 			launch: (data) =>
 				set((state) => {
-					const launchable =
-						state.launchables?.[data.id] || state.launchables.app_not_found;
-
 					state.recentLaunches.push({
-						id: launchable.id,
+						id: data.id,
 						launchedAt: Date.now(),
 					});
 
 					useWindowStore.getState().openApp("launcher", undefined, {
-						launchSpecifications: {
+						launchSpecification: {
 							name: data.name,
-							source: {
-								type: data.source.type,
-								code: data.source.code,
-							},
+							source: data.source,
 						},
 					});
 				}),

@@ -231,7 +231,7 @@ export const searchFileAssociatesThroughExtension = (
 		{ file_image: string; extension: Array<string> }
 	>,
 ): {
-	key: AppId;
+	key: AppId | "app_not_found";
 	file_image: string;
 	extension: Array<string> | string;
 } => {
