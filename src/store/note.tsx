@@ -27,30 +27,34 @@ export const useNoteStore = create<NoteStore>()(
 			const { createNode, updateNode, renameNode, deleteNode, nodes } =
 				useFileSystemStore.getState();
 
-			const firstTabId = createNode(
-				"notes",
-				"Untitled.frote",
-				"file",
-				"",
+			const node = Object.entries(nodes).find(
+				([key, value]) => value.id === "notes",
 			);
+
+			let id: string = "";
+
+			if (!node) {
+				id = createNode("notes", "Untitled.frote", "file", "");
+			} else {
+				if (!node[1].children?.length) {
+					id = createNode("notes", "Untitled.frote", "file", "");
+				} else {
+					id = node[1].children[0];
+				}
+			}
 
 			return {
 				tabs: [
 					{
-						id: firstTabId,
+						id: id,
 						title: "Untitled",
 						content: "",
 					},
 				],
-				activeTabId: firstTabId,
+				activeTabId: id,
 
 				addTab: (title = "Untitled", content = "") => {
-					const id = createNode(
-						"notes",
-						`${title}.frote`,
-						"file",
-						content,
-					);
+					const id = createNode("notes", `${title}.frote`, "file", content);
 
 					const newTab: NoteTab = {
 						id,
@@ -74,12 +78,7 @@ export const useNoteStore = create<NoteStore>()(
 						deleteNode(id);
 
 						if (state.tabs.length === 0) {
-							const tabId = createNode(
-								"notes",
-								"Untitled.frote",
-								"file",
-								"",
-							);
+							const tabId = createNode("notes", "Untitled.frote", "file", "");
 
 							state.tabs.push({
 								id: tabId,

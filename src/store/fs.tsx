@@ -39,7 +39,6 @@ const createRoot = (): FileNode => ({
 	name: "Froot",
 	type: "folder",
 	parentId: null,
-	children: [],
 	createdAt: Date.now(),
 	modifiedAt: Date.now(),
 });
@@ -48,7 +47,10 @@ export const useFileSystemStore = create<FileSystemState>()(
 	persist(
 		immer((set, get) => ({
 			nodes: {
-				root: createRoot(),
+				root: {
+					...createRoot(),
+					children: ["notes"],
+				},
 				notes: {
 					parentId: "root",
 					id: "notes",
@@ -56,6 +58,7 @@ export const useFileSystemStore = create<FileSystemState>()(
 					modifiedAt: Date.now(),
 					name: "notes",
 					type: "folder",
+					children: [],
 				},
 			},
 			rootId: "root",
