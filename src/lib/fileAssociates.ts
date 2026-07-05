@@ -44,6 +44,10 @@ export const FILE_ASSOCIATIONS: Record<
 		file_image: "fromine",
 		extension: [],
 	},
+	not_found: {
+		file_image: "",
+		extension: [],
+	},
 };
 
-export const DEFAULT_APP_FOR_UNKNOWN_TYPE: AppId | null = null;
+export const DEFAULT_APP_FOR_UNKNOWN_TYPE: AppId = "not_found";

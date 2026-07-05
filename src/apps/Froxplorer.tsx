@@ -12,7 +12,8 @@ import {
 } from "#/lib/utils.ts";
 import { type FileNode, useFileSystemStore } from "#/store/fs.tsx";
 import { useWindowStore } from "#/store/window.tsx";
-import type { WindowInstance } from "../constants";
+import { Apps, type WindowInstance } from "../constants";
+import { useNoteStore } from "#/store/note.tsx";
 
 function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 	const win = useWindowStore((state) => state.windows[windowId]);
@@ -30,6 +31,8 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 		getChildren,
 		getPath,
 	} = useFileSystemStore();
+	const { apps, openApp } = useWindowStore();
+	const { tabs, selectTab, addTab } = useNoteStore();
 
 	const [currentFolderId, setCurrentFolderId] = useState<string>(folderId);
 	const [renameTarget, setRenameTarget] = useState<{
@@ -53,7 +56,25 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 		if (node.type === "folder") {
 			navigateTo(node.id);
 		} else {
-			alert(`Opening file...`);
+			const { name, extension } = parseFileName(node.name);
+			const { key } = searchFileAssociatesThroughExtension(extension);
+			const app = Apps[key];
+
+			switch (app.id) {
+				case "notes": {
+					const tab = tabs.find((tab) => tab.id === node.id);
+					if (!tab) {
+						addTab(name, node.content, node.id);
+					} else {
+						selectTab(node.id);
+					}
+					break;
+				}
+
+				default:
+					break;
+			}
+			openApp(app.id);
 		}
 	};
 

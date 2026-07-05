@@ -5,6 +5,7 @@ import { format, isSameDay, isSameYear, isToday, isTomorrow } from "date-fns";
 import ms from "ms";
 import { twMerge } from "tailwind-merge";
 import { FILE_ASSOCIATIONS } from "./fileAssociates";
+import type { AppId } from "../constants";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -223,7 +224,13 @@ export const parseFileName = (
 	};
 };
 
-export const searchFileAssociatesThroughExtension = (extension: string) => {
+export const searchFileAssociatesThroughExtension = (
+	extension: string,
+): {
+	key: AppId;
+	file_image: string;
+	extension: Array<string> | string;
+} => {
 	const entry = Object.entries(FILE_ASSOCIATIONS).find(([key, value]) =>
 		value.extension.some(
 			(val) => val.toLowerCase() === extension.toLowerCase(),
@@ -232,14 +239,14 @@ export const searchFileAssociatesThroughExtension = (extension: string) => {
 
 	if (entry) {
 		return {
-			key: entry[0],
+			key: entry[0] as AppId,
 			file_image: entry[1].file_image,
 			extension: entry[1].extension,
 		};
 	}
 
 	return {
-		key: "NOT_FOUND",
+		key: "not_found",
 		file_image: "default",
 		extension: extension,
 	};

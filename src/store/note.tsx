@@ -14,7 +14,7 @@ interface NoteStore {
 	tabs: Array<NoteTab>;
 	activeTabId: string;
 
-	addTab: (title?: string, content?: string) => NoteTab;
+	addTab: (title?: string, content?: string, identifier?: string) => NoteTab;
 	closeTab: (id: string) => void;
 	selectTab: (id: string) => void;
 	updateContent: (id: string, content: string) => void;
@@ -53,8 +53,10 @@ export const useNoteStore = create<NoteStore>()(
 				],
 				activeTabId: id,
 
-				addTab: (title = "Untitled", content = "") => {
-					const id = createNode("notes", `${title}.frote`, "file", content);
+				addTab: (title = "Untitled", content = "", identifier) => {
+					const id = identifier
+						? identifier
+						: createNode("notes", `${title}.frote`, "file", content);
 
 					const newTab: NoteTab = {
 						id,
