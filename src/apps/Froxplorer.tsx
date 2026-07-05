@@ -85,8 +85,10 @@ function Froxplorer({ windowId }: { windowId: string }) {
 				}
 
 				default: {
-					const launchable = launchables.app_not_found;
-					launch(launchable);
+					const launchable = Object.entries(launchables).find(([key, value]) =>
+						value.extension?.includes(extension),
+					) || ["app_not_found", launchables.app_not_found];
+					launch(launchable?.[1]);
 					break;
 				}
 			}

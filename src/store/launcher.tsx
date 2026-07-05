@@ -16,7 +16,7 @@ export interface Launchable {
 		  }
 		| false;
 	logo: string;
-	// extension?: Array<string>;
+	extension?: Array<string>;
 }
 
 interface LauncherStore {
@@ -36,7 +36,7 @@ export const useLauncherStore = create<LauncherStore>()(
 						type: "fromponent",
 						code: <>Not found!!!</>,
 					},
-					logo: "",
+					logo: "/apps/Game.svg",
 				},
 			},
 			recentLaunches: [],
@@ -52,6 +52,8 @@ export const useLauncherStore = create<LauncherStore>()(
 							name: data.name,
 							source: data.source,
 						},
+						title: data.name,
+						logo: data.logo
 					});
 				}),
 		};
