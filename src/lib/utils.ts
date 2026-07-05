@@ -226,12 +226,18 @@ export const parseFileName = (
 
 export const searchFileAssociatesThroughExtension = (
 	extension: string,
+	file_associations?: Record<
+		AppId,
+		{ file_image: string; extension: Array<string> }
+	>,
 ): {
 	key: AppId;
 	file_image: string;
 	extension: Array<string> | string;
 } => {
-	const entry = Object.entries(FILE_ASSOCIATIONS).find(([key, value]) =>
+	const entry = Object.entries(
+		file_associations ? file_associations : FILE_ASSOCIATIONS,
+	).find(([key, value]) =>
 		value.extension.some(
 			(val) => val.toLowerCase() === extension.toLowerCase(),
 		),
@@ -246,7 +252,7 @@ export const searchFileAssociatesThroughExtension = (
 	}
 
 	return {
-		key: "not_found",
+		key: "app_not_found",
 		file_image: "default",
 		extension: extension,
 	};

@@ -11,9 +11,9 @@ import {
 	searchFileAssociatesThroughExtension,
 } from "#/lib/utils.ts";
 import { type FileNode, useFileSystemStore } from "#/store/fs.tsx";
+import { useNoteStore } from "#/store/note.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import { Apps, type WindowInstance } from "../constants";
-import { useNoteStore } from "#/store/note.tsx";
 
 function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 	const win = useWindowStore((state) => state.windows[windowId]);
@@ -72,6 +72,7 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 				}
 
 				default:
+					
 					break;
 			}
 			openApp(app.id);

@@ -30,7 +30,7 @@ export const FILE_ASSOCIATIONS: Record<
 	},
 	notes: {
 		file_image: "frote",
-		extension: ["md", "txt", "frote"],
+		extension: ["md", "txt", "frote", "task", "todo"],
 	},
 	settings: {
 		file_image: "frotting",
@@ -44,10 +44,10 @@ export const FILE_ASSOCIATIONS: Record<
 		file_image: "fromine",
 		extension: [],
 	},
-	not_found: {
+	app_not_found: {
 		file_image: "default",
 		extension: [],
 	},
 };
 
-export const DEFAULT_APP_FOR_UNKNOWN_TYPE: AppId = "not_found";
+export const DEFAULT_APP_FOR_UNKNOWN_TYPE: AppId = "app_not_found";

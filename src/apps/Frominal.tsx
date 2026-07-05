@@ -7,6 +7,8 @@ import {
 	normalizeUrl,
 	parseDate,
 	parseDuration,
+	parseFileName,
+	searchFileAssociatesThroughExtension,
 	splitEvent,
 } from "#/lib/utils.ts";
 import { fetchResponse, pingUrl } from "#/server/fetchResponses.tsx";
@@ -16,6 +18,8 @@ import { useNoteStore } from "#/store/note.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
 import { EVENT_COLORS } from "./Frolendar";
+import { useFileSystemStore } from "#/store/fs.tsx";
+import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
 
 type TerminalResponse = React.ReactNode | string;
 
@@ -46,8 +50,9 @@ function Frominal() {
 	const [command, setCommand] = useState<string>("");
 	const [isProcessing, setIsProcessing] = useState(false);
 	const { addTab, tabs, closeTab } = useNoteStore();
+	const { createNode, updateNode, deleteNode, nodes } = useFileSystemStore();
 	const { setCalculatorExpression } = useCalculatorStore();
-	const { events, addEvent, deleteEvent } = useCalendarStore();
+	const { events, addEvent } = useCalendarStore();
 
 	const username = "FRO";
 	const hostname = "CUS";
@@ -579,19 +584,29 @@ function Frominal() {
 
 			// TASK: Process via AI
 
-			addTab(`TASK #${params[0]}`, params.join(" "));
+			const id = createNode(
+				"notes",
+				`TASK-${params[0]}.task`,
+				"file",
+				params.join(" "),
+			);
+			addTab(`TASK #${params[0]}`, params.join(" "), id);
 
 			return <p>Added TASK!</p>;
 		},
 
 		"task.read": () => {
-			const taskTabs = tabs.filter((tab) => tab.title.startsWith("TASK"));
+			const taskTabs = Object.entries(nodes)
+				.filter(([key, value]) => {
+					const { extension } = parseFileName(value.name);
+					return ["todo", "task"].includes(extension.toLowerCase());
+				})
 
 			return (
 				<ul>
 					{taskTabs.map((tab, index) => (
-						<li key={`read-do-${tab.id}`}>
-							{index + 1}. {tab.content}
+						<li key={`read-do-${tab[0]}`}>
+							{index + 1}. {tab[1].content}
 						</li>
 					))}
 				</ul>
@@ -615,6 +630,7 @@ function Frominal() {
 						content: tab.content,
 					});
 					closeTab(tab.id);
+					deleteNode(tab.id);
 				}
 			});
 

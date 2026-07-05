@@ -53,7 +53,7 @@ export type AppId =
 	| "music"
 	| "store"
 	| "launcher"
-	| "not_found"
+	| "app_not_found"
 	| `app_${string}`;
 
 export type WindowId = `${AppId}_${string}`;
@@ -149,14 +149,6 @@ export const Apps: Record<AppId, AppInstance> = {
 		isPinned: true,
 		theme: DEFAULT_THEME,
 		component: <Froncher />,
-	},
-	not_found: {
-		id: "not_found",
-		name: "NOT_FOUND",
-		title: "NOT_FOUND",
-		logo: "/public/logo.png",
-		isPinned: false,
-		component: <>NOT FOUND</>,
 	},
 };
 
