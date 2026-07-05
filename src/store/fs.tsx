@@ -155,7 +155,7 @@ export const useFileSystemStore = create<FileSystemState>()(
 						const node = state.nodes[nodeId];
 
 						if (node.type === "folder" && node.children) {
-							node.children.map((childId) => deleteRecusive(childId));
+							node.children.forEach((childId) => deleteRecusive(childId));
 						}
 
 						delete state.nodes[nodeId];

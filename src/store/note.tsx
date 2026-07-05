@@ -13,6 +13,7 @@ interface NoteTab {
 interface NoteStore {
 	tabs: Array<NoteTab>;
 	activeTabId: string;
+	ensureDefaultTab: () => void;
 
 	addTab: (title?: string, content?: string, identifier?: string) => NoteTab;
 	closeTab: (id: string) => void;
@@ -24,39 +25,27 @@ interface NoteStore {
 export const useNoteStore = create<NoteStore>()(
 	persist(
 		immer((set, get) => {
-			const { createNode, updateNode, renameNode, deleteNode, nodes } =
-				useFileSystemStore.getState();
-
-			const node = Object.entries(nodes).find(
-				([key, value]) => value.id === "notes",
-			);
-
-			let id: string = "";
-
-			if (!node) {
-				id = createNode("notes", "Untitled.frote", "file", "");
-			} else {
-				if (!node[1].children?.length) {
-					id = createNode("notes", "Untitled.frote", "file", "");
-				} else {
-					id = node[1].children[0];
-				}
-			}
-
 			return {
-				tabs: [
-					{
-						id: id,
-						title: "Untitled",
-						content: "",
-					},
-				],
-				activeTabId: id,
+				tabs: [],
+				activeTabId: "",
+
+				ensureDefaultTab: () =>
+					set((state) => {
+						if (state.tabs.length === 0) {
+							const id = useFileSystemStore
+								.getState()
+								.createNode("notes", "Untitled.frote", "file", "");
+							state.tabs.push({ id, title: "Untitled", content: "" });
+							state.activeTabId = id;
+						}
+					}),
 
 				addTab: (title = "Untitled", content = "", identifier) => {
 					const id = identifier
 						? identifier
-						: createNode("notes", `${title}.frote`, "file", content);
+						: useFileSystemStore
+								.getState()
+								.createNode("notes", `${title}.frote`, "file", content);
 
 					const newTab: NoteTab = {
 						id,
@@ -80,7 +69,9 @@ export const useNoteStore = create<NoteStore>()(
 						// deleteNode(id); // We actually wanna preserve this because that's the motive of adding fs.
 
 						if (state.tabs.length === 0) {
-							const tabId = createNode("notes", "Untitled.frote", "file", "");
+							const tabId = useFileSystemStore
+								.getState()
+								.createNode("notes", "Untitled.frote", "file", "");
 
 							state.tabs.push({
 								id: tabId,
@@ -103,39 +94,37 @@ export const useNoteStore = create<NoteStore>()(
 				updateContent: (id, content) =>
 					set((state) => {
 						const tab = state.tabs.find((tab) => tab.id === id);
-						const node = Object.entries(nodes).find(
-							([key, value]) => value.id === id,
-						);
+						if (!tab) return;
+						tab.content = content;
 
-						if (tab) {
-							tab.content = content;
+						const latestNodes = useFileSystemStore.getState().nodes;
+						const fileNode = latestNodes[id];
 
-							// This maynot be suitable logic though
-							if (node) {
-								updateNode(tab.id, content);
-							} else {
-								createNode("notes", `${tab.title}.frote`, "file", content);
-							}
+						if (fileNode) {
+							useFileSystemStore.getState().updateNode(id, content);
+						} else {
+							useFileSystemStore
+								.getState()
+								.createNode("notes", `${tab.title}.frote`, "file", content);
 						}
 					}),
 
 				renameTab: (id, title) =>
 					set((state) => {
 						const tab = state.tabs.find((tab) => tab.id === id);
-						const node = Object.entries(nodes).find(
-							([key, value]) => value.id === id,
-						);
+						if (!tab) return;
 
-						if (tab) {
-							tab.title = title;
-							renameNode(tab.id, `${title}.frote`);
+						tab.title = title;
 
-							// This maynot be suitable logic though
-							if (node) {
-								renameNode(tab.id, `${title}.frote`);
-							} else {
-								createNode("notes", `${title}.frote`, "file", tab.content);
-							}
+						const latestNodes = useFileSystemStore.getState().nodes;
+						const fileNode = latestNodes[id];
+
+						if (fileNode) {
+							useFileSystemStore.getState().renameNode(id, `${title}.frote`);
+						} else {
+							useFileSystemStore
+								.getState()
+								.createNode("notes", `${title}.frote`, "file", tab.content);
 						}
 					}),
 			};

@@ -45,7 +45,7 @@ export const FILE_ASSOCIATIONS: Record<
 		extension: [],
 	},
 	not_found: {
-		file_image: "",
+		file_image: "default",
 		extension: [],
 	},
 };

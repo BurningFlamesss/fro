@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PiEye, PiPencil, PiPlus, PiX } from "react-icons/pi";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -19,7 +19,11 @@ function Frotes() {
 	const activeTab = tabs.find((tab) => tab.id === activeTabId);
 	const [editingTabId, setEditingTabId] = useState<string | null>(null);
 	const [editingTitle, setEditingTitle] = useState("");
-	
+	const ensureDefaultTab = useNoteStore((state) => state.ensureDefaultTab);
+
+	useEffect(() => {
+		ensureDefaultTab();
+	}, [ensureDefaultTab]);
 
 	return (
 		<div className="flex flex-col bg-foreground text-background w-full h-full">
