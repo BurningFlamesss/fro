@@ -19,15 +19,7 @@ function Frotes() {
 	const activeTab = tabs.find((tab) => tab.id === activeTabId);
 	const [editingTabId, setEditingTabId] = useState<string | null>(null);
 	const [editingTitle, setEditingTitle] = useState("");
-
-	// useEffect(() => {
-	// 	if (
-	// 		(activeTab?.title === "Untitled" || !activeTab?.title?.trim()) &&
-	// 		activeTab?.content?.trim()
-	// 	) {
-	// 		renameTab(activeTabId, activeTab.content.trim().slice(0, 20));
-	// 	}
-	// }, [activeTabId]);
+	
 
 	return (
 		<div className="flex flex-col bg-foreground text-background w-full h-full">

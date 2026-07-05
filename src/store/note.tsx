@@ -75,7 +75,7 @@ export const useNoteStore = create<NoteStore>()(
 						const index = state.tabs.findIndex((tab) => tab.id === id);
 
 						state.tabs.splice(index, 1);
-						deleteNode(id);
+						// deleteNode(id); // We actually wanna preserve this because that's the motive of adding fs.
 
 						if (state.tabs.length === 0) {
 							const tabId = createNode("notes", "Untitled.frote", "file", "");
@@ -101,19 +101,39 @@ export const useNoteStore = create<NoteStore>()(
 				updateContent: (id, content) =>
 					set((state) => {
 						const tab = state.tabs.find((tab) => tab.id === id);
+						const node = Object.entries(nodes).find(
+							([key, value]) => value.id === id,
+						);
 
 						if (tab) {
 							tab.content = content;
-							updateNode(tab.id, content);
+
+							// This maynot be suitable logic though
+							if (node) {
+								updateNode(tab.id, content);
+							} else {
+								createNode("notes", `${tab.title}.frote`, "file", content);
+							}
 						}
 					}),
 
 				renameTab: (id, title) =>
 					set((state) => {
 						const tab = state.tabs.find((tab) => tab.id === id);
+						const node = Object.entries(nodes).find(
+							([key, value]) => value.id === id,
+						);
+
 						if (tab) {
 							tab.title = title;
 							renameNode(tab.id, `${title}.frote`);
+
+							// This maynot be suitable logic though
+							if (node) {
+								renameNode(tab.id, `${title}.frote`);
+							} else {
+								createNode("notes", `${title}.frote`, "file", tab.content);
+							}
 						}
 					}),
 			};
