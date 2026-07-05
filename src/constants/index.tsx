@@ -2,13 +2,14 @@ import type React from "react";
 import Froculator from "#/apps/Froculator.tsx";
 import Frolendar from "#/apps/Frolendar.tsx";
 import Frominal from "#/apps/Frominal.tsx";
-import Froncher from "#/apps/Froncher.tsx";
+import Froncher, { type LaunchSpecification } from "#/apps/Froncher.tsx";
 import Frosic from "#/apps/Frosic.tsx";
 import Frotes from "#/apps/Frotes.tsx";
 import Frotore from "#/apps/Frotore.tsx";
 import Frottings from "#/apps/Frottings.tsx";
 import Frowser from "#/apps/Frowser.tsx";
 import Froxplorer from "#/apps/Froxplorer.tsx";
+import FroncherInitialPage from "#/components/FroncherInitialPage.tsx";
 
 export const INITIAL_Z_INDEX = 1000;
 export const BACK_Z_INDEX = 0;
@@ -40,6 +41,7 @@ export interface WindowInstance {
 	theme?: string;
 	component: React.ReactNode;
 	containerId?: string;
+	launchSpecification?: LaunchSpecification;
 }
 
 export type AppId =
@@ -75,7 +77,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		logo: "/apps/Explorer.svg",
 		isPinned: true,
 		theme: DEFAULT_THEME,
-		component: <Froxplorer />,
+		component: <Froxplorer windowId="" />,
 	},
 	settings: {
 		id: "settings",
@@ -148,7 +150,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		logo: "/apps/Game.svg",
 		isPinned: true,
 		theme: DEFAULT_THEME,
-		component: <Froncher />,
+		component: <Froncher windowId="" />,
 	},
 };
 

@@ -15,8 +15,12 @@ import { useNoteStore } from "#/store/note.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import { Apps, type WindowInstance } from "../constants";
 
-function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
-	const win = useWindowStore((state) => state.windows[windowId]);
+function Froxplorer({ windowId }: { windowId: string }) {
+	const { windows } = useWindowStore();
+	const win = Object.values(windows)
+		.filter((win): win is WindowInstance => win !== undefined)
+		.find((win) => win.id === windowId);
+		
 	const folderId = win?.containerId ?? "root";
 	const {
 		nodes,
@@ -72,7 +76,6 @@ function Froxplorer({ windowId }: { windowId: WindowInstance["id"] }) {
 				}
 
 				default:
-					
 					break;
 			}
 			openApp(app.id);
