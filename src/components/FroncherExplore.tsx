@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { PiMagnifyingGlassDuotone, PiMicrophone, PiX } from "react-icons/pi";
 import { cn } from "#/lib/utils.ts";
 
-function FroncherInitialPage() {
+function FroncherExplore() {
 	const [value, setValue] = useState("");
 	const [focused, setFocused] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -143,4 +143,4 @@ function FroncherInitialPage() {
 	);
 }
 
-export default FroncherInitialPage;
+export default FroncherExplore;

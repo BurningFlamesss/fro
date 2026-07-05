@@ -65,7 +65,6 @@ function Froxplorer({ windowId }: { windowId: string }) {
 			const { name, extension } = parseFileName(node.name);
 			const { key } = searchFileAssociatesThroughExtension(extension);
 			const app = Apps[key];
-			console.log("Trying to open...", name, extension, key, app);
 
 			if (!app) {
 				const launchable = launchables.app_not_found;

@@ -1,5 +1,5 @@
 import type React from "react";
-import FroncherInitialPage from "#/components/FroncherInitialPage.tsx";
+import FroncherExplore from "#/components/FroncherExplore.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { WindowInstance } from "../constants";
 
@@ -18,7 +18,7 @@ function Froncher({ windowId }: { windowId: string }) {
 		name: "search",
 		source: {
 			type: "fromponent",
-			code: <FroncherInitialPage />,
+			code: <FroncherExplore />,
 		},
 	};
 
