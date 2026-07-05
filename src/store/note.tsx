@@ -24,12 +24,11 @@ interface NoteStore {
 export const useNoteStore = create<NoteStore>()(
 	persist(
 		immer((set, get) => {
-			const { createNode, updateNode, renameNode, deleteNode } =
+			const { createNode, updateNode, renameNode, deleteNode, nodes } =
 				useFileSystemStore.getState();
 
-			const frotesDestination = createNode("root", "notes", "folder");
 			const firstTabId = createNode(
-				frotesDestination,
+				"notes",
 				"Untitled.frote",
 				"file",
 				"",
@@ -47,7 +46,7 @@ export const useNoteStore = create<NoteStore>()(
 
 				addTab: (title = "Untitled", content = "") => {
 					const id = createNode(
-						frotesDestination,
+						"notes",
 						`${title}.frote`,
 						"file",
 						content,
@@ -72,10 +71,11 @@ export const useNoteStore = create<NoteStore>()(
 						const index = state.tabs.findIndex((tab) => tab.id === id);
 
 						state.tabs.splice(index, 1);
+						deleteNode(id);
 
 						if (state.tabs.length === 0) {
 							const tabId = createNode(
-								frotesDestination,
+								"notes",
 								"Untitled.frote",
 								"file",
 								"",

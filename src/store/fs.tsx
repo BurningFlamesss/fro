@@ -49,6 +49,14 @@ export const useFileSystemStore = create<FileSystemState>()(
 		immer((set, get) => ({
 			nodes: {
 				root: createRoot(),
+				notes: {
+					parentId: "root",
+					id: "notes",
+					createdAt: Date.now(),
+					modifiedAt: Date.now(),
+					name: "notes",
+					type: "folder",
+				},
 			},
 			rootId: "root",
 			desktopContainerIds: [],
