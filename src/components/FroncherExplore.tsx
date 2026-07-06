@@ -1,11 +1,17 @@
+import { formatDistanceToNow } from "date-fns";
 import { useRef, useState } from "react";
 import { PiMagnifyingGlassDuotone, PiMicrophone, PiX } from "react-icons/pi";
 import { cn } from "#/lib/utils.ts";
+import { useLauncherStore } from "#/store/launcher.tsx";
 
 function FroncherExplore() {
+	const { launchables, recentLaunches, launch } = useLauncherStore();
 	const [value, setValue] = useState("");
 	const [focused, setFocused] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
+	const trueLaunchables = Object.entries(launchables).filter(
+		([key, value]) => value.showInCollections,
+	);
 
 	const submit = (text: string) => {
 		const trimmed = text.trim();
@@ -116,29 +122,83 @@ function FroncherExplore() {
 					onClick={() => setFocused(false)}
 				/>
 			)}
+
 			<h2 className="mb-4 text-lg font-semibold">Collections</h2>
-			<div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
-				<div className="flex flex-col items-center justify-center gap-y-1">
-					<button
-						type="button"
-						className={cn(
-							"group relative overflow-hidden rounded-xl transition-all cursor-pointer",
-						)}
-					>
-						<img
-							src={"/public/apps/Game.svg"}
-							alt={""}
-							loading="lazy"
-							className="h-full w-full object-cover"
-						/>
-					</button>
-					<div className="">
-						<p className="truncate text-xs font-medium text-background">
-							Froncher
-						</p>
-					</div>
+
+			{trueLaunchables.length ? (
+				<div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
+					{trueLaunchables.map(([key, launchable]) => {
+						return (
+							<div
+								key={`launchable-${key}`}
+								className="flex flex-col items-center justify-center gap-y-1"
+							>
+								<button
+									type="button"
+									onDoubleClick={() => launch(launchable)}
+									className={cn(
+										"group relative overflow-hidden rounded-xl transition-all cursor-pointer",
+									)}
+								>
+									<img
+										src={launchable.logo ?? "/apps/Game.svg"}
+										alt={""}
+										loading="lazy"
+										className="h-full w-full object-cover"
+									/>
+								</button>
+								<div className="">
+									<p className="truncate text-xs font-medium text-background">
+										{launchable.name}
+									</p>
+								</div>
+							</div>
+						);
+					})}
 				</div>
-			</div>
+			) : (
+				<div>Browser Frotore and add some launchables</div>
+			)}
+
+			{recentLaunches.length ? (
+				<>
+					<h2 className="my-4 text-lg font-semibold">Recent Launches</h2>
+					<div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
+						{recentLaunches.map((meta) => {
+							const launchable = launchables[meta.id];
+							return (
+								<div
+									title={formatDistanceToNow(new Date(meta.launchedAt), {
+										addSuffix: true,
+									})}
+									key={`launchable-${meta.id}`}
+									className="flex flex-col items-center justify-center gap-y-1"
+								>
+									<button
+										type="button"
+										onDoubleClick={() => launch(launchable)}
+										className={cn(
+											"group relative overflow-hidden rounded-xl transition-all cursor-pointer",
+										)}
+									>
+										<img
+											src={launchable.logo ?? "/apps/Game.svg"}
+											alt={""}
+											loading="lazy"
+											className="h-full w-full object-cover"
+										/>
+									</button>
+									<div className="">
+										<p className="truncate text-xs font-medium text-background">
+											{launchable.name}
+										</p>
+									</div>
+								</div>
+							);
+						})}
+					</div>
+				</>
+			) : null}
 		</div>
 	);
 }

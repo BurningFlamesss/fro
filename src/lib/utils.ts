@@ -4,8 +4,8 @@ import { clsx } from "clsx";
 import { format, isSameDay, isSameYear, isToday, isTomorrow } from "date-fns";
 import ms from "ms";
 import { twMerge } from "tailwind-merge";
-import { FILE_ASSOCIATIONS } from "./fileAssociates";
 import type { AppId } from "../constants";
+import { FILE_ASSOCIATIONS } from "./fileAssociates";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
