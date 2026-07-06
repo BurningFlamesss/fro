@@ -22,7 +22,7 @@ export interface Launchable {
 
 interface LauncherStore {
 	launchables: Record<string, Launchable>;
-	recentLaunches: Array<{ id: string; launchedAt: number }>;
+	recentLaunches: Map<string, number>;
 	launch: (data: Launchable) => void;
 }
 
@@ -54,13 +54,10 @@ export const useLauncherStore = create<LauncherStore>()(
 					showInCollections: false,
 				},
 			},
-			recentLaunches: [],
+			recentLaunches: new Map<string, number>(),
 			launch: (data) =>
 				set((state) => {
-					state.recentLaunches.push({
-						id: data.id,
-						launchedAt: Date.now(),
-					});
+					state.recentLaunches.set(data.id, Date.now());
 
 					useWindowStore.getState().openApp("launcher", undefined, {
 						launchSpecification: {

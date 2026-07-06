@@ -12,6 +12,7 @@ function FroncherExplore() {
 	const trueLaunchables = Object.entries(launchables).filter(
 		([key, value]) => value.showInCollections,
 	);
+	const trueRecentLaunchables = Array.from(recentLaunches)
 
 	const submit = (text: string) => {
 		const trimmed = text.trim();
@@ -157,21 +158,21 @@ function FroncherExplore() {
 					})}
 				</div>
 			) : (
-				<div>Browser Frotore and add some launchables</div>
+				<div className="text-muted">Browser Frotore and add some launchables</div>
 			)}
 
-			{recentLaunches.length ? (
+			{trueRecentLaunchables.length ? (
 				<>
 					<h2 className="my-4 text-lg font-semibold">Recent Launches</h2>
 					<div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
-						{recentLaunches.map((meta) => {
-							const launchable = launchables[meta.id];
+						{trueRecentLaunchables.map(([id, launchedAt]) => {
+							const launchable = launchables[id];
 							return (
 								<div
-									title={formatDistanceToNow(new Date(meta.launchedAt), {
+									title={formatDistanceToNow(new Date(launchedAt), {
 										addSuffix: true,
 									})}
-									key={`launchable-${meta.id}`}
+									key={`launchable-${id}`}
 									className="flex flex-col items-center justify-center gap-y-1"
 								>
 									<button

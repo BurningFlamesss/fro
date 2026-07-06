@@ -1,10 +1,13 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { TooltipProvider } from "#/components/ui/tooltip.tsx";
-import appCss from "../styles.css?url";
+import { enableMapSet } from "immer";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { TooltipProvider } from "#/components/ui/tooltip.tsx";
+import appCss from "../styles.css?url";
+
+enableMapSet();
 
 export const Route = createRootRoute({
 	head: () => ({
