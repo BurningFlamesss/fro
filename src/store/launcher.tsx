@@ -34,7 +34,18 @@ export const useLauncherStore = create<LauncherStore>()(
 					name: "App not found",
 					source: {
 						type: "fromponent",
-						code: <>Not found!!!</>,
+						code: (
+							<main className="min-h-full w-full flex flex-col items-center justify-center overflow-hidden">
+								<div className="min-h-full w-full flex flex-row items-center justify-center text-8xl font-black tracking-tight text-[#69C242]">
+										4<img src="/logo.png" className="w-32 h-32" alt="" />4
+								</div>
+								<p className="text-xl font-semibold text-primary">Are you f*#king kidding me?</p>
+								<p>
+									Uh-oh! App not found. 
+									(*I meant* <span className="text-primary font-semibold">"Froking"</span>)
+								</p>
+							</main>
+						),
 					},
 					logo: "/apps/Game.svg",
 				},
@@ -53,7 +64,7 @@ export const useLauncherStore = create<LauncherStore>()(
 							source: data.source,
 						},
 						title: data.name,
-						logo: data.logo
+						logo: data.logo,
 					});
 				}),
 		};
