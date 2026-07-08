@@ -16,7 +16,7 @@ import { useLauncherStore } from "#/store/launcher.tsx";
 import { useNoteStore } from "#/store/note.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import { Apps, type WindowInstance } from "../constants";
-import { useDrag } from "react-dnd";
+import { useDrag, useDrop } from "react-dnd";
 
 function Froxplorer({ windowId }: { windowId: string }) {
 	const { windows } = useWindowStore();
@@ -185,15 +185,18 @@ function Froxplorer({ windowId }: { windowId: string }) {
 				</div>
 			</div>
 
-			<Dropzone onDrop={() => {}}>
+			{/* <Dropzone onDrop={() => {}}>
 				{({ getRootProps, getInputProps }) => {
-					return (
-						<div {...getRootProps()} className="flex-1 overflow-auto p-2">
-							<input {...getInputProps()} />
-							<div className="grid grid-cols-6 p-4 gap-2">
-								{children?.map((node) => (
-									<ContextMenu key={`fs-node-${node.id}`}>
-										<ContextMenuTrigger>
+					return ( */}
+			<div className="flex-1 overflow-auto p-2">
+				{/* <input {...getInputProps()} /> */}
+				<div className="grid grid-cols-6 p-4 gap-2">
+					{children?.map((node) => (
+						<ContextMenu key={`fs-node-${node.id}`}>
+							<ContextMenuTrigger>
+								{node.type === "folder" ? (
+									<DroppableFolder node={node}>
+										<DraggableItem node={node}>
 											<button
 												title={node.name}
 												type="button"
@@ -202,11 +205,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 											>
 												<img
 													className="w-12 h-12 object-contain select-none"
-													src={
-														node.type === "folder"
-															? "/general/fs/Folder.svg"
-															: `/general/fs/File-${searchFileAssociatesThroughExtension(parseFileName(node.name).extension).file_image}.svg`
-													}
+													src={"/general/fs/Folder.svg"}
 													alt=""
 												/>
 												{renameTarget && renameTarget.id === node.id ? (
@@ -228,33 +227,67 @@ function Froxplorer({ windowId }: { windowId: string }) {
 													</p>
 												)}
 											</button>
-										</ContextMenuTrigger>
-										<ContextMenuContent className="z-100000002">
-											<ContextMenuItem onClick={() => handleOpen(node)}>
-												Open
-											</ContextMenuItem>
-											<ContextMenuItem onClick={() => handleRenameStart(node)}>
-												Rename
-											</ContextMenuItem>
-											<ContextMenuItem onClick={() => addToDesktop(node.id)}>
-												Add to desktop
-											</ContextMenuItem>
-											<ContextMenuItem
-												onClick={() => removeFromDesktop(node.id)}
-											>
-												Remove from desktop
-											</ContextMenuItem>
-											<ContextMenuItem onClick={() => deleteNode(node.id)}>
-												Delete
-											</ContextMenuItem>
-										</ContextMenuContent>
-									</ContextMenu>
-								))}
-							</div>
-						</div>
-					);
+										</DraggableItem>
+									</DroppableFolder>
+								) : (
+									<DraggableItem node={node}>
+										<button
+											title={node.name}
+											type="button"
+											onDoubleClick={() => handleOpen(node)}
+											className="flex flex-col items-center p-2 rounded-xl w-full cursor-pointer"
+										>
+											<img
+												className="w-12 h-12 object-contain select-none"
+												src={`/general/fs/File-${searchFileAssociatesThroughExtension(parseFileName(node.name).extension).file_image}.svg`}
+												alt=""
+											/>
+											{renameTarget && renameTarget.id === node.id ? (
+												<input
+													autoFocus={true}
+													value={newName}
+													onDoubleClick={(e) => e.stopPropagation()}
+													onChange={(e) => setNewName(e.target.value)}
+													onBlur={handleRenameSubmit}
+													onKeyDown={(e) =>
+														e.key === "Enter" && handleRenameSubmit()
+													}
+													className="mt-1 text-xs text-center bg-white text-black outline-none w-18"
+													type="text"
+												/>
+											) : (
+												<p className="text-xs text-center mt-1 truncate w-18 select-none">
+													{node.name}
+												</p>
+											)}
+										</button>
+									</DraggableItem>
+								)}
+							</ContextMenuTrigger>
+							<ContextMenuContent className="z-100000002">
+								<ContextMenuItem onClick={() => handleOpen(node)}>
+									Open
+								</ContextMenuItem>
+								<ContextMenuItem onClick={() => handleRenameStart(node)}>
+									Rename
+								</ContextMenuItem>
+								<ContextMenuItem onClick={() => addToDesktop(node.id)}>
+									Add to desktop
+								</ContextMenuItem>
+								<ContextMenuItem onClick={() => removeFromDesktop(node.id)}>
+									Remove from desktop
+								</ContextMenuItem>
+								<ContextMenuItem onClick={() => deleteNode(node.id)}>
+									Delete
+								</ContextMenuItem>
+							</ContextMenuContent>
+						</ContextMenu>
+					))}
+				</div>
+			</div>
+			{/* );
 				}}
-			</Dropzone>
+			</Dropzone> */}
 		</div>
 	);
 }
@@ -278,4 +311,20 @@ const DraggableItem = ({
 			{children}
 		</div>
 	);
+};
+
+const DroppableFolder = ({
+	node,
+	children,
+}: {
+	node: FileNode;
+	children: React.ReactNode;
+}) => {
+	const { moveNode } = useFileSystemStore();
+
+	const [unknown, drop] = useDrop(() => ({
+		accept: "FS_NODE",
+		drop: (item: { id: string }) => moveNode(item.id, node.id),
+	}));
+	return <div ref={drop}>{children}</div>;
 };
