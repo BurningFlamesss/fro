@@ -15,7 +15,7 @@ import { type FileNode, useFileSystemStore } from "#/store/fs.tsx";
 import { useLauncherStore } from "#/store/launcher.tsx";
 import { useNoteStore } from "#/store/note.tsx";
 import { useWindowStore } from "#/store/window.tsx";
-import { Apps, type WindowInstance } from "../constants";
+import { Apps, type AppId, type WindowInstance } from "../constants";
 
 function useHoverNavigate(onNavigate: () => void, delay = 600) {
 	const timeoutReference = useRef<NodeJS.Timeout | null>(null);
@@ -209,11 +209,23 @@ function Froxplorer({ windowId }: { windowId: string }) {
 		if (currentFolder.parentId) navigateTo(currentFolder.parentId);
 	};
 
-	const handleOpen = (node: FileNode) => {
+	const handleOpen = (node: FileNode, openId?: AppId) => {
+		const { name, extension } = parseFileName(node.name);
+
+		if (openId) {
+			const tab = tabs.find((tab) => tab.id === node.id);
+
+			if (!tab) addTab(name, node.content, node.id);
+			else selectTab(node.id);
+
+			openApp(openId);
+
+			return;
+		}
+
 		if (node.type === "folder") {
 			navigateTo(node.id);
 		} else {
-			const { name, extension } = parseFileName(node.name);
 			const { key } = searchFileAssociatesThroughExtension(extension);
 
 			const app = Apps[key];
@@ -238,7 +250,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 					const launchable = Object.entries(launchables).find(([, value]) =>
 						value.extension?.includes(extension),
 					) || ["app_not_found", launchables.app_not_found];
-					
+
 					launch(launchable[1]);
 				}
 			}
@@ -467,16 +479,56 @@ function Froxplorer({ windowId }: { windowId: string }) {
 			>
 				<input {...getInputProps()} id="upload-input" className="hidden" />
 				<div className="grid grid-cols-6 p-4 gap-2">
-					{children.map((node) => (
-						<ContextMenu key={`fs-node-${node.id}`}>
-							<ContextMenuTrigger>
-								{node.type === "folder" ? (
-									<DroppableFolder
-										node={node}
-										moveNode={moveNode}
-										onNavigate={() => navigateTo(node.id)}
-										draggedNodeId={draggedNodeId}
-									>
+					{children.map((node) => {
+						const { key, extension, file_image } =
+							searchFileAssociatesThroughExtension(
+								parseFileName(node.name).extension,
+							);
+
+						return (
+							<ContextMenu key={`fs-node-${node.id}`}>
+								<ContextMenuTrigger>
+									{node.type === "folder" ? (
+										<DroppableFolder
+											node={node}
+											moveNode={moveNode}
+											onNavigate={() => navigateTo(node.id)}
+											draggedNodeId={draggedNodeId}
+										>
+											<DraggableItem node={node} onDragStart={handleDragStart}>
+												<button
+													title={node.name}
+													type="button"
+													onDoubleClick={() => handleOpen(node)}
+													className="flex flex-col items-center p-2 rounded-xl w-full cursor-pointer"
+												>
+													<img
+														className="w-12 h-12 object-contain select-none"
+														src="/general/fs/Folder.svg"
+														alt=""
+														draggable={false}
+													/>
+													{renameTarget?.id === node.id ? (
+														<input
+															autoFocus
+															value={newName}
+															onDoubleClick={(e) => e.stopPropagation()}
+															onChange={(e) => setNewName(e.target.value)}
+															onBlur={handleRenameSubmit}
+															onKeyDown={(e) =>
+																e.key === "Enter" && handleRenameSubmit()
+															}
+															className="mt-1 text-xs text-center bg-white text-black outline-none w-18"
+														/>
+													) : (
+														<p className="text-xs text-center mt-1 truncate w-18 select-none">
+															{node.name}
+														</p>
+													)}
+												</button>
+											</DraggableItem>
+										</DroppableFolder>
+									) : (
 										<DraggableItem node={node} onDragStart={handleDragStart}>
 											<button
 												title={node.name}
@@ -486,7 +538,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 											>
 												<img
 													className="w-12 h-12 object-contain select-none"
-													src="/general/fs/Folder.svg"
+													src={`/general/fs/File-${file_image}.svg`}
 													alt=""
 													draggable={false}
 												/>
@@ -509,61 +561,33 @@ function Froxplorer({ windowId }: { windowId: string }) {
 												)}
 											</button>
 										</DraggableItem>
-									</DroppableFolder>
-								) : (
-									<DraggableItem node={node} onDragStart={handleDragStart}>
-										<button
-											title={node.name}
-											type="button"
-											onDoubleClick={() => handleOpen(node)}
-											className="flex flex-col items-center p-2 rounded-xl w-full cursor-pointer"
-										>
-											<img
-												className="w-12 h-12 object-contain select-none"
-												src={`/general/fs/File-${searchFileAssociatesThroughExtension(parseFileName(node.name).extension).file_image}.svg`}
-												alt=""
-												draggable={false}
-											/>
-											{renameTarget?.id === node.id ? (
-												<input
-													autoFocus
-													value={newName}
-													onDoubleClick={(e) => e.stopPropagation()}
-													onChange={(e) => setNewName(e.target.value)}
-													onBlur={handleRenameSubmit}
-													onKeyDown={(e) =>
-														e.key === "Enter" && handleRenameSubmit()
-													}
-													className="mt-1 text-xs text-center bg-white text-black outline-none w-18"
-												/>
-											) : (
-												<p className="text-xs text-center mt-1 truncate w-18 select-none">
-													{node.name}
-												</p>
-											)}
-										</button>
-									</DraggableItem>
-								)}
-							</ContextMenuTrigger>
-							<ContextMenuContent className="z-100000002">
-								<ContextMenuItem onClick={() => handleOpen(node)}>
-									Open
-								</ContextMenuItem>
-								<ContextMenuItem onClick={() => handleRenameStart(node)}>
-									Rename
-								</ContextMenuItem>
-								<ContextMenuItem onClick={() => addToDesktop(node.id)}>
-									Add to desktop
-								</ContextMenuItem>
-								<ContextMenuItem onClick={() => removeFromDesktop(node.id)}>
-									Remove from desktop
-								</ContextMenuItem>
-								<ContextMenuItem onClick={() => deleteNode(node.id)}>
-									Delete
-								</ContextMenuItem>
-							</ContextMenuContent>
-						</ContextMenu>
-					))}
+									)}
+								</ContextMenuTrigger>
+								<ContextMenuContent className="z-100000002">
+									<ContextMenuItem onClick={() => handleOpen(node)}>
+										Open
+									</ContextMenuItem>
+									<ContextMenuItem onClick={() => handleRenameStart(node)}>
+										Rename
+									</ContextMenuItem>
+									{node.type === "file" && node.content !== undefined && key ? (
+										<ContextMenuItem onClick={() => handleOpen(node, "notes")}>
+											Edit in Frotes
+										</ContextMenuItem>
+									) : null}
+									<ContextMenuItem onClick={() => addToDesktop(node.id)}>
+										Add to desktop
+									</ContextMenuItem>
+									<ContextMenuItem onClick={() => removeFromDesktop(node.id)}>
+										Remove from desktop
+									</ContextMenuItem>
+									<ContextMenuItem onClick={() => deleteNode(node.id)}>
+										Delete
+									</ContextMenuItem>
+								</ContextMenuContent>
+							</ContextMenu>
+						);
+					})}
 				</div>
 			</div>
 		</div>
