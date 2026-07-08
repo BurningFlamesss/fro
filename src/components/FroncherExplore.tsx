@@ -1,18 +1,39 @@
 import { formatDistanceToNow } from "date-fns";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { PiMagnifyingGlassDuotone, PiMicrophone, PiX } from "react-icons/pi";
 import { cn } from "#/lib/utils.ts";
-import { useLauncherStore } from "#/store/launcher.tsx";
+import { useLauncherStore, type Launchable } from "#/store/launcher.tsx";
 
 function FroncherExplore() {
 	const { launchables, recentLaunches, launch } = useLauncherStore();
-	const [value, setValue] = useState("");
+	const [query, setQuery] = useState("");
 	const [focused, setFocused] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
-	const trueLaunchables = Object.entries(launchables).filter(
-		([key, value]) => value.showInCollections,
+
+	const trimmedQuery = query.trim().toLowerCase();
+
+	const collectionItems = useMemo(
+		() =>
+			Object.entries(launchables).filter(
+				([key, value]) => value.showInCollections,
+			),
+		[launchables],
 	);
-	const trueRecentLaunchables = Array.from(recentLaunches);
+
+	const searchResults = useMemo(
+		() =>
+			trimmedQuery
+				? collectionItems.filter(([_, launchable]) =>
+						matchesSearch(launchable, trimmedQuery),
+					)
+				: [],
+
+		[collectionItems, trimmedQuery],
+	);
+
+	const recentItems = Array.from(recentLaunches);
+
+	const displayedItems = trimmedQuery ? searchResults : collectionItems;
 
 	const submit = (text: string) => {
 		const trimmed = text.trim();
@@ -20,7 +41,7 @@ function FroncherExplore() {
 
 		// TODO: handleSubmit
 
-		setValue("");
+		setQuery("");
 		setFocused(false);
 		inputRef.current?.blur();
 	};
@@ -49,11 +70,11 @@ function FroncherExplore() {
 
 						<input
 							ref={inputRef}
-							value={value}
-							onChange={(e) => setValue(e.target.value)}
+							value={query}
+							onChange={(e) => setQuery(e.target.value)}
 							onFocus={() => setFocused(true)}
 							onKeyDown={(e) => {
-								if (e.key === "Enter") submit(value);
+								if (e.key === "Enter") submit(query);
 								if (e.key === "Escape") {
 									setFocused(false);
 									inputRef.current?.blur();
@@ -63,13 +84,13 @@ function FroncherExplore() {
 							className="flex-1 bg-transparent text-sm text-background outline-none placeholder:text-background/40"
 						/>
 
-						{value && (
+						{query && (
 							<button
 								type="button"
 								aria-label="Clear search"
 								onClick={(e) => {
 									e.stopPropagation();
-									setValue("");
+									setQuery("");
 								}}
 								className="flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-full text-background/40 transition-colors hover:bg-background/10 hover:text-background/70"
 							>
@@ -125,20 +146,12 @@ function FroncherExplore() {
 			)}
 
 			<h2 className="mb-4 text-lg font-semibold">
-				{value.trim() ? "Search Results" : "Collections"}
+				{trimmedQuery ? "Search Results" : "Collections"}
 			</h2>
 
-			{trueLaunchables.length ? (
+			{displayedItems.length ? (
 				<div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
-					{trueLaunchables.map(([key, launchable]) => {
-						if (
-							!`${launchable.name} ${launchable.extension?.join(", ")} ${launchable.id} ${launchable.source.type}`
-								.toLowerCase()
-								.includes(value.trim().toLowerCase())
-						) {
-							return null;
-						}
-
+					{displayedItems.map(([key, launchable]) => {
 						return (
 							<div
 								key={`launchable-${key}`}
@@ -169,15 +182,17 @@ function FroncherExplore() {
 				</div>
 			) : (
 				<div className="text-gray-300">
-					Browser Frotore and add some launchables
+					{trimmedQuery
+						? "No matching apps found."
+						: "Browser Frotore and add some launchables"}
 				</div>
 			)}
 
-			{trueRecentLaunchables.length ? (
+			{recentItems.length ? (
 				<>
 					<h2 className="my-4 text-lg font-semibold">Recent Launches</h2>
 					<div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
-						{trueRecentLaunchables.map(([id, launchedAt]) => {
+						{recentItems.map(([id, launchedAt]) => {
 							const launchable = launchables[id];
 							return (
 								<div
@@ -217,3 +232,16 @@ function FroncherExplore() {
 }
 
 export default FroncherExplore;
+
+function matchesSearch(launchable: Launchable, query: string): boolean {
+	const searchable = [
+		launchable.name,
+		launchable.id,
+		launchable.source.type,
+		...(launchable.extension ?? []),
+	]
+		.join(" ")
+		.toLowerCase();
+
+	return searchable.includes(query);
+}
