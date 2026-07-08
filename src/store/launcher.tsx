@@ -57,6 +57,7 @@ export const useLauncherStore = create<LauncherStore>()(
 			recentLaunches: new Map<string, number>(),
 			launch: (data) =>
 				set((state) => {
+					state.launchables[data.id] = data
 					state.recentLaunches.set(data.id, Date.now());
 
 					useWindowStore.getState().openApp("launcher", undefined, {

@@ -17,6 +17,7 @@ import { useNoteStore } from "#/store/note.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import { Apps, type AppId, type WindowInstance } from "../constants";
 import { useCalculatorStore } from "#/store/calculator.tsx";
+import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
 
 function useHoverNavigate(onNavigate: () => void, delay = 600) {
 	const timeoutReference = useRef<NodeJS.Timeout | null>(null);
@@ -213,7 +214,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 
 	const handleOpen = async (node: FileNode, openId?: AppId) => {
 		await new Promise((resolve, reject) => setTimeout(() => resolve(null), 20)); // Awaiting so that the context menu gets in original position and the z-index order isnot disturbed
-		
+
 		const { name, extension } = parseFileName(node.name);
 
 		if (openId) {
@@ -230,30 +231,46 @@ function Froxplorer({ windowId }: { windowId: string }) {
 		if (node.type === "folder") {
 			navigateTo(node.id);
 		} else {
-			const { key } = searchFileAssociatesThroughExtension(extension);
+			const { key } = searchFileAssociatesThroughExtension(extension, {
+				...FILE_ASSOCIATIONS,
+				app_view: {
+					file_image: "view",
+					extension: ["png", "jpg", "jpeg", "svg"],
+				},
+			});
 
-			const app = Apps[key];
-
-			if (!app) {
-				launch(launchables.app_not_found);
-				return;
-			}
-
-			switch (app.id) {
+			switch (key) {
 				case "notes": {
 					const tab = tabs.find((tab) => tab.id === node.id);
 
 					if (!tab) addTab(name, node.content, node.id);
 					else selectTab(node.id);
 
-					openApp(app.id);
+					openApp(key);
 
 					break;
 				}
 				case "calculator": {
 					setCalculatorExpression(node.content ?? "");
-					openApp(app.id);
+					openApp(key);
 
+					break;
+				}
+				case "app_view": {
+					launch({
+						id: "app_froview",
+						name: "App_froview",
+						source: {
+							type: "fromponent",
+							code: (
+								<>
+									<img src={node.content} alt="" />
+								</>
+							),
+						},
+						logo: "/apps/Game.svg",
+						showInCollections: true,
+					});
 					break;
 				}
 				default: {
@@ -263,6 +280,11 @@ function Froxplorer({ windowId }: { windowId: string }) {
 
 					launch(launchable[1]);
 				}
+			}
+
+			if (!key) {
+				launch(launchables.app_not_found);
+				return;
 			}
 		}
 	};
