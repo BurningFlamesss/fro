@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import Dropzone from "react-dropzone";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useDropzone } from "react-dropzone";
 import { FaArrowUp } from "react-icons/fa6";
 import {
 	ContextMenu,
@@ -16,13 +16,166 @@ import { useLauncherStore } from "#/store/launcher.tsx";
 import { useNoteStore } from "#/store/note.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import { Apps, type WindowInstance } from "../constants";
-import { useDrag, useDrop } from "react-dnd";
+
+function useHoverNavigate(onNavigate: () => void, delay = 600) {
+	const timeoutReference = useRef<NodeJS.Timeout | null>(null);
+	const [isHovering, setIsHovering] = useState(false);
+
+	const onDragOverHandler = useCallback(
+		(event: React.DragEvent) => {
+			event.preventDefault();
+			if (!timeoutReference.current) {
+				setIsHovering(true);
+				timeoutReference.current = setTimeout(() => {
+					onNavigate();
+					timeoutReference.current = null;
+					setIsHovering(false);
+				}, delay);
+			}
+		},
+		[onNavigate, delay],
+	);
+
+	const onDragLeaveHandler = useCallback((event: React.DragEvent) => {
+		setIsHovering(false);
+		if (timeoutReference.current) {
+			clearTimeout(timeoutReference.current);
+			timeoutReference.current = null;
+		}
+	}, []);
+
+	const onDropHandler = useCallback((event: React.DragEvent) => {
+		setIsHovering(false);
+		if (timeoutReference.current) {
+			clearTimeout(timeoutReference.current);
+			timeoutReference.current = null;
+		}
+	}, []);
+
+	useEffect(() => {
+		return () => {
+			if (timeoutReference.current) clearTimeout(timeoutReference.current);
+		};
+	}, []);
+
+	return {
+		isHovering,
+		onDragOver: onDragOverHandler,
+		onDragLeave: onDragLeaveHandler,
+		onDrop: onDropHandler,
+	};
+}
+
+const DraggableItem = ({
+	node,
+	onDragStart,
+	children,
+}: {
+	node: FileNode;
+	onDragStart: (nodeId: string) => void;
+	children: React.ReactNode;
+}) => {
+	const handleDragStart = (event: React.DragEvent) => {
+		event.dataTransfer.setData("text/plain", node.id);
+		onDragStart(node.id);
+
+		const emptyImage = new Image();
+		emptyImage.src = "/logo.png";
+		event.dataTransfer.setDragImage(emptyImage, 0, 0);
+	};
+
+	return (
+		<div draggable onDragStart={handleDragStart} style={{ cursor: "grab" }}>
+			{children}
+		</div>
+	);
+};
+
+const DroppableFolder = ({
+	node,
+	moveNode,
+	onNavigate,
+	draggedNodeId,
+	children,
+}: {
+	node: FileNode;
+	moveNode: (id: string, newParentId: string) => void;
+	onNavigate: () => void;
+	draggedNodeId: string | null;
+	children: React.ReactNode;
+}) => {
+	const { isHovering, onDragOver, onDragLeave, onDrop } =
+		useHoverNavigate(onNavigate);
+
+	const handleDrop = useCallback(
+		(event: React.DragEvent) => {
+			event.preventDefault();
+			event.stopPropagation();
+			const nodeId = draggedNodeId || event.dataTransfer.getData("text/plain");
+			if (nodeId) {
+				moveNode(nodeId, node.id);
+			}
+			onDrop(event);
+		},
+		[node.id, moveNode, draggedNodeId, onDrop],
+	);
+
+	return (
+		<div
+			onDragOver={onDragOver}
+			onDragLeave={onDragLeave}
+			onDrop={handleDrop}
+			className={isHovering ? "ring-2 ring-primary/50 rounded-xl" : ""}
+		>
+			{children}
+		</div>
+	);
+};
+
+const BreadcrumbDropTarget = ({
+	node,
+	moveNode,
+	onNavigate,
+	draggedNodeId,
+	children,
+}: {
+	node: FileNode;
+	moveNode: (id: string, newParentId: string) => void;
+	onNavigate: () => void;
+	draggedNodeId: string | null;
+	children: React.ReactNode;
+}) => {
+	const { isHovering, onDragOver, onDragLeave, onDrop } =
+		useHoverNavigate(onNavigate);
+
+	const handleDrop = useCallback(
+		(event: React.DragEvent) => {
+			event.preventDefault();
+			event.stopPropagation();
+			const nodeId = draggedNodeId || event.dataTransfer.getData("text/plain");
+			if (nodeId) {
+				moveNode(nodeId, node.id);
+			}
+			onDrop(event);
+		},
+		[node.id, moveNode, draggedNodeId, onDrop],
+	);
+
+	return (
+		<span
+			onDragOver={onDragOver}
+			onDragLeave={onDragLeave}
+			onDrop={handleDrop}
+			className={isHovering ? "bg-primary" : ""}
+		>
+			{children}
+		</span>
+	);
+};
 
 function Froxplorer({ windowId }: { windowId: string }) {
 	const { windows } = useWindowStore();
-	const win = Object.values(windows)
-		.filter((win): win is WindowInstance => win !== undefined)
-		.find((win) => win.id === windowId);
+	const win = windows[windowId];
 
 	const folderId = win?.containerId ?? "root";
 	const {
@@ -30,15 +183,13 @@ function Froxplorer({ windowId }: { windowId: string }) {
 		addToDesktop,
 		createNode,
 		deleteNode,
-		desktopContainerIds,
 		moveNode,
 		removeFromDesktop,
 		renameNode,
-		rootId,
 		getChildren,
 		getPath,
 	} = useFileSystemStore();
-	const { apps, openApp } = useWindowStore();
+	const { openApp } = useWindowStore();
 	const { tabs, selectTab, addTab } = useNoteStore();
 	const { launchables, launch } = useLauncherStore();
 
@@ -52,12 +203,10 @@ function Froxplorer({ windowId }: { windowId: string }) {
 	const children = getChildren(currentFolderId);
 	const currentFolder = nodes[currentFolderId];
 
-	const navigateTo = (id: string) => setCurrentFolderId(id);
+	const navigateTo = useCallback((id: string) => setCurrentFolderId(id), []);
 
 	const goUp = () => {
-		if (currentFolder.parentId) {
-			navigateTo(currentFolder.parentId);
-		}
+		if (currentFolder.parentId) navigateTo(currentFolder.parentId);
 	};
 
 	const handleOpen = (node: FileNode) => {
@@ -66,52 +215,168 @@ function Froxplorer({ windowId }: { windowId: string }) {
 		} else {
 			const { name, extension } = parseFileName(node.name);
 			const { key } = searchFileAssociatesThroughExtension(extension);
+
 			const app = Apps[key];
 
 			if (!app) {
-				const launchable = launchables.app_not_found;
-				launch(launchable);
+				launch(launchables.app_not_found);
 				return;
 			}
 
 			switch (app.id) {
 				case "notes": {
 					const tab = tabs.find((tab) => tab.id === node.id);
-					if (!tab) {
-						addTab(name, node.content, node.id);
-					} else {
-						selectTab(node.id);
-					}
+
+					if (!tab) addTab(name, node.content, node.id);
+					else selectTab(node.id);
+
 					openApp(app.id);
+
 					break;
 				}
-
 				default: {
-					const launchable = Object.entries(launchables).find(([key, value]) =>
+					const launchable = Object.entries(launchables).find(([, value]) =>
 						value.extension?.includes(extension),
 					) || ["app_not_found", launchables.app_not_found];
-					launch(launchable?.[1]);
-					break;
+					
+					launch(launchable[1]);
 				}
 			}
 		}
 	};
 
+	const draggedNodeIdReference = useRef<string | null>(null);
+	const [draggedNodeId, setDraggedNodeId] = useState<string | null>(null);
+
+	const handleDragStart = useCallback((nodeId: string) => {
+		draggedNodeIdReference.current = nodeId;
+		setDraggedNodeId(nodeId);
+	}, []);
+
+	useEffect(() => {
+		const onDragEnd = () => {
+			draggedNodeIdReference.current = null;
+			setDraggedNodeId(null);
+		};
+		window.addEventListener("dragend", onDragEnd);
+		return () => window.removeEventListener("dragend", onDragEnd);
+	}, []);
+
+	const readFileContent = async (file: File): Promise<string> => {
+		const isText =
+			file.type.startsWith("text/") ||
+			[
+				"application/json",
+				"application/javascript",
+				"application/xml",
+			].includes(file.type);
+		if (isText) return file.text();
+		return new Promise<string>((resolve) => {
+			const reader = new FileReader();
+			reader.onload = () => resolve(reader.result as string);
+			reader.readAsDataURL(file);
+		});
+	};
+
+	const handleDirectoryUpload = async (
+		entry: FileSystemDirectoryEntry,
+		parentId: string,
+	) => {
+		const folderId = createNode(parentId, entry.name, "folder");
+		if (!folderId) return;
+		const reader = entry.createReader();
+		const readAllEntries = (): Promise<FileSystemEntry[]> =>
+			new Promise((resolve) => reader.readEntries(resolve));
+		const entries = await readAllEntries();
+		for (const child of entries) {
+			if (child.isDirectory) {
+				await handleDirectoryUpload(
+					child as FileSystemDirectoryEntry,
+					folderId,
+				);
+			} else {
+				const fileEntry = child as FileSystemFileEntry;
+				const file = await new Promise<File>((resolve) =>
+					fileEntry.file(resolve),
+				);
+				const content = await readFileContent(file);
+				createNode(folderId, file.name, "file", content);
+			}
+		}
+	};
+
+	const onDropExternal = useCallback(
+		async (acceptedFiles: File[]) => {
+			for (const file of acceptedFiles) {
+				if ((file as any).webkitGetAsEntry) {
+					const entry = (file as any).webkitGetAsEntry();
+					if (entry?.isDirectory) {
+						await handleDirectoryUpload(entry, currentFolderId);
+						continue;
+					}
+				}
+				const content = await readFileContent(file);
+				createNode(currentFolderId, file.name, "file", content);
+			}
+		},
+		[currentFolderId, createNode],
+	);
+
+	const { getRootProps, getInputProps } = useDropzone({
+		onDrop: onDropExternal,
+		noClick: true,
+		noKeyboard: true,
+	});
+
+	const rootProps = getRootProps();
+	const containerReference = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const container = containerReference.current;
+		if (!container) return;
+
+		const onContainerDragOver = (event: DragEvent) => {
+			event.preventDefault();
+		};
+
+		const onContainerDrop = (event: DragEvent) => {
+			if (event.dataTransfer?.files && event.dataTransfer.files.length > 0)
+				return;
+
+			event.preventDefault();
+			const nodeId =
+				draggedNodeIdReference.current ||
+				event.dataTransfer?.getData("text/plain");
+			if (nodeId) {
+				moveNode(nodeId, currentFolderId);
+				draggedNodeIdReference.current = null;
+				setDraggedNodeId(null);
+			}
+		};
+
+		container.addEventListener("dragover", onContainerDragOver);
+		container.addEventListener("drop", onContainerDrop);
+
+		return () => {
+			container.removeEventListener("dragover", onContainerDragOver);
+			container.removeEventListener("drop", onContainerDrop);
+		};
+	}, [currentFolderId, moveNode]);
+
+	const pathIds = getPath(currentFolderId);
+
 	const handleNewFolder = () => {
 		const name = prompt("Enter the folder name");
-		if (name) {
-			createNode(currentFolderId, name, "folder");
-		}
+		if (name) createNode(currentFolderId, name, "folder");
 	};
 
 	const handleNewFile = () => {
 		const name = prompt("Enter the file name");
 		if (name) {
 			const { name: fileName, extension } = parseFileName(name);
-
 			createNode(
 				currentFolderId,
-				`${fileName}.${extension ? extension : "frote"}`,
+				`${fileName}.${extension || "frote"}`,
 				"file",
 			);
 		}
@@ -123,25 +388,20 @@ function Froxplorer({ windowId }: { windowId: string }) {
 	};
 
 	const handleRenameSubmit = () => {
-		if (renameTarget?.id && newName.trim().length > 0) {
+		if (renameTarget?.id && newName.trim()) {
 			if (renameTarget.type === "folder") {
 				renameNode(renameTarget.id, newName.trim());
-			} else if (renameTarget.type === "file") {
+			} else {
 				const { name: fileName, extension } = parseFileName(newName);
-				renameNode(
-					renameTarget.id,
-					`${fileName}.${extension ? extension : "frote"}`,
-				);
+				renameNode(renameTarget.id, `${fileName}.${extension || "frote"}`);
 			}
 			setRenameTarget(null);
 		}
 	};
 
-	const pathIds = getPath(currentFolderId);
-
 	return (
 		<div className="flex flex-col h-full">
-			<div className="flex items-center p-2 gap-2">
+			<div className="flex items-center p-2 gap-2 select-none">
 				<button
 					type="button"
 					onClick={goUp}
@@ -151,32 +411,31 @@ function Froxplorer({ windowId }: { windowId: string }) {
 					<FaArrowUp />
 				</button>
 				<span className="text-sm opacity-80">
-					{pathIds?.map((id, index) => {
+					{pathIds.map((id, index) => {
 						const node = nodes[id];
-						if (!node) {
-							return null;
-						}
+						if (!node) return null;
 						return (
 							<React.Fragment key={`breadcrumb-${id}`}>
-								<span>{` ${index ? "/" : ""} `}</span>
-								<Breadcrumb
-									moveNode={moveNode}
-									navigateTo={navigateTo}
+								<span>{index ? " / " : ""}</span>
+								<BreadcrumbDropTarget
 									node={node}
+									moveNode={moveNode}
+									onNavigate={() => navigateTo(node.id)}
+									draggedNodeId={draggedNodeId}
 								>
 									<button
-										onClick={() => navigateTo(node.id)}
 										type="button"
+										onClick={() => navigateTo(node.id)}
 										className="cursor-pointer"
 									>
 										{node.name}
 									</button>
-								</Breadcrumb>
+								</BreadcrumbDropTarget>
 							</React.Fragment>
 						);
 					})}
 				</span>
-				<div className="flex ml-auto p-2 gap-2">
+				<div className="flex ml-auto gap-2">
 					<button
 						type="button"
 						onClick={handleNewFolder}
@@ -193,7 +452,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 					</button>
 					<button
 						type="button"
-						// onClick={handleNewFile}
+						onClick={() => document.getElementById("upload-input")?.click()}
 						className="text-xs p-1 rounded cursor-pointer"
 					>
 						Upload
@@ -201,22 +460,24 @@ function Froxplorer({ windowId }: { windowId: string }) {
 				</div>
 			</div>
 
-			{/* <Dropzone onDrop={() => {}}>
-				{({ getRootProps, getInputProps }) => {
-					return ( */}
-			<div className="flex-1 overflow-auto p-2">
-				{/* <input {...getInputProps()} /> */}
+			<div
+				{...rootProps}
+				ref={containerReference}
+				className="flex-1 overflow-auto p-2"
+			>
+				<input {...getInputProps()} id="upload-input" className="hidden" />
 				<div className="grid grid-cols-6 p-4 gap-2">
-					{children?.map((node) => (
+					{children.map((node) => (
 						<ContextMenu key={`fs-node-${node.id}`}>
 							<ContextMenuTrigger>
 								{node.type === "folder" ? (
 									<DroppableFolder
-										moveNode={moveNode}
-										navigateTo={navigateTo}
 										node={node}
+										moveNode={moveNode}
+										onNavigate={() => navigateTo(node.id)}
+										draggedNodeId={draggedNodeId}
 									>
-										<DraggableItem node={node}>
+										<DraggableItem node={node} onDragStart={handleDragStart}>
 											<button
 												title={node.name}
 												type="button"
@@ -225,12 +486,13 @@ function Froxplorer({ windowId }: { windowId: string }) {
 											>
 												<img
 													className="w-12 h-12 object-contain select-none"
-													src={"/general/fs/Folder.svg"}
+													src="/general/fs/Folder.svg"
 													alt=""
+													draggable={false}
 												/>
-												{renameTarget && renameTarget.id === node.id ? (
+												{renameTarget?.id === node.id ? (
 													<input
-														autoFocus={true}
+														autoFocus
 														value={newName}
 														onDoubleClick={(e) => e.stopPropagation()}
 														onChange={(e) => setNewName(e.target.value)}
@@ -239,7 +501,6 @@ function Froxplorer({ windowId }: { windowId: string }) {
 															e.key === "Enter" && handleRenameSubmit()
 														}
 														className="mt-1 text-xs text-center bg-white text-black outline-none w-18"
-														type="text"
 													/>
 												) : (
 													<p className="text-xs text-center mt-1 truncate w-18 select-none">
@@ -250,7 +511,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 										</DraggableItem>
 									</DroppableFolder>
 								) : (
-									<DraggableItem node={node}>
+									<DraggableItem node={node} onDragStart={handleDragStart}>
 										<button
 											title={node.name}
 											type="button"
@@ -261,10 +522,11 @@ function Froxplorer({ windowId }: { windowId: string }) {
 												className="w-12 h-12 object-contain select-none"
 												src={`/general/fs/File-${searchFileAssociatesThroughExtension(parseFileName(node.name).extension).file_image}.svg`}
 												alt=""
+												draggable={false}
 											/>
-											{renameTarget && renameTarget.id === node.id ? (
+											{renameTarget?.id === node.id ? (
 												<input
-													autoFocus={true}
+													autoFocus
 													value={newName}
 													onDoubleClick={(e) => e.stopPropagation()}
 													onChange={(e) => setNewName(e.target.value)}
@@ -273,7 +535,6 @@ function Froxplorer({ windowId }: { windowId: string }) {
 														e.key === "Enter" && handleRenameSubmit()
 													}
 													className="mt-1 text-xs text-center bg-white text-black outline-none w-18"
-													type="text"
 												/>
 											) : (
 												<p className="text-xs text-center mt-1 truncate w-18 select-none">
@@ -305,125 +566,8 @@ function Froxplorer({ windowId }: { windowId: string }) {
 					))}
 				</div>
 			</div>
-			{/* );
-				}}
-			</Dropzone> */}
 		</div>
 	);
 }
 
 export default Froxplorer;
-
-function useDropTarget(
-	folderId: string,
-	moveNode: (id: string, newParentId: string) => void,
-	navigateTo: (id: string) => void,
-	hoverDelay = 600,
-) {
-	const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const [{ isOver }, drop] = useDrop(
-		() => ({
-			accept: "FS_NODE",
-			collect: (monitor) => ({ isOver: monitor.isOver() }),
-			hover: () => {
-				if (timeoutRef.current) {
-					clearTimeout(timeoutRef.current);
-				}
-
-				timeoutRef.current = setTimeout(() => {
-					navigateTo(folderId);
-					timeoutRef.current = null;
-				}, hoverDelay);
-			},
-			drop: (item: { id: string }) => {
-				if (timeoutRef.current) {
-					clearTimeout(timeoutRef.current);
-					timeoutRef.current = null;
-				}
-
-				moveNode(item.id, folderId);
-			},
-		}),
-		[folderId, moveNode, navigateTo, hoverDelay],
-	);
-
-	useEffect(() => {
-		if (timeoutRef.current) {
-			clearTimeout(timeoutRef.current);
-		}
-	}, []);
-
-	useEffect(() => {
-		if (!isOver && timeoutRef.current) {
-			clearTimeout(timeoutRef.current);
-			timeoutRef.current = null;
-		}
-	}, [isOver]);
-
-	return { drop, isOver };
-}
-
-const DraggableItem = ({
-	node,
-	children,
-}: {
-	node: FileNode;
-	children: React.ReactNode;
-}) => {
-	const [{ isDragging }, drag] = useDrag(() => ({
-		type: "FS_NODE",
-		item: { id: node.id },
-		collect: (monitor) => ({ isDragging: monitor.isDragging() }),
-	}));
-	return (
-		<div ref={drag} style={{ opacity: isDragging ? 0.8 : 1 }}>
-			{children}
-		</div>
-	);
-};
-
-const DroppableFolder = ({
-	node,
-	moveNode,
-	navigateTo,
-	children,
-}: {
-	node: FileNode;
-	moveNode: (id: string, newParentId: string) => void;
-	navigateTo: (id: string) => void;
-	children: React.ReactNode;
-}) => {
-	const { drop, isOver } = useDropTarget(node.id, moveNode, navigateTo);
-
-	return (
-		<div
-			className={`${isOver ? "ring-2 ring-primary/50 rounded-xl" : ""}`}
-			ref={drop}
-		>
-			{children}
-		</div>
-	);
-};
-
-const Breadcrumb = ({
-	node,
-	moveNode,
-	navigateTo,
-	children,
-}: {
-	node: FileNode;
-	moveNode: (id: string, newParentId: string) => void;
-	navigateTo: (id: string) => void;
-	children: React.ReactNode;
-}) => {
-	const { drop, isOver } = useDropTarget(node.id, moveNode, navigateTo);
-
-	return (
-		<span
-			className={`${isOver ? "text-primary" : ""}`}
-			ref={drop}
-		>
-			{children}
-		</span>
-	);
-};
