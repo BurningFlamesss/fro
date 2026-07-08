@@ -16,6 +16,7 @@ import { useLauncherStore } from "#/store/launcher.tsx";
 import { useNoteStore } from "#/store/note.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import { Apps, type AppId, type WindowInstance } from "../constants";
+import { useCalculatorStore } from "#/store/calculator.tsx";
 
 function useHoverNavigate(onNavigate: () => void, delay = 600) {
 	const timeoutReference = useRef<NodeJS.Timeout | null>(null);
@@ -192,6 +193,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 	const { openApp } = useWindowStore();
 	const { tabs, selectTab, addTab } = useNoteStore();
 	const { launchables, launch } = useLauncherStore();
+	const { setCalculatorExpression } = useCalculatorStore();
 
 	const [currentFolderId, setCurrentFolderId] = useState<string>(folderId);
 	const [renameTarget, setRenameTarget] = useState<{
@@ -209,7 +211,9 @@ function Froxplorer({ windowId }: { windowId: string }) {
 		if (currentFolder.parentId) navigateTo(currentFolder.parentId);
 	};
 
-	const handleOpen = (node: FileNode, openId?: AppId) => {
+	const handleOpen = async (node: FileNode, openId?: AppId) => {
+		await new Promise((resolve, reject) => setTimeout(() => resolve(null), 20)); // Awaiting so that the context menu gets in original position and the z-index order isnot disturbed
+		
 		const { name, extension } = parseFileName(node.name);
 
 		if (openId) {
@@ -242,6 +246,12 @@ function Froxplorer({ windowId }: { windowId: string }) {
 					if (!tab) addTab(name, node.content, node.id);
 					else selectTab(node.id);
 
+					openApp(app.id);
+
+					break;
+				}
+				case "calculator": {
+					setCalculatorExpression(node.content ?? "");
 					openApp(app.id);
 
 					break;
