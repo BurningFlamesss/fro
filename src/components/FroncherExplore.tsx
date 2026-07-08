@@ -12,7 +12,7 @@ function FroncherExplore() {
 	const trueLaunchables = Object.entries(launchables).filter(
 		([key, value]) => value.showInCollections,
 	);
-	const trueRecentLaunchables = Array.from(recentLaunches)
+	const trueRecentLaunchables = Array.from(recentLaunches);
 
 	const submit = (text: string) => {
 		const trimmed = text.trim();
@@ -124,11 +124,21 @@ function FroncherExplore() {
 				/>
 			)}
 
-			<h2 className="mb-4 text-lg font-semibold">Collections</h2>
+			<h2 className="mb-4 text-lg font-semibold">
+				{value.trim() ? "Search Results" : "Collections"}
+			</h2>
 
 			{trueLaunchables.length ? (
 				<div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
 					{trueLaunchables.map(([key, launchable]) => {
+						if (
+							!`${launchable.name} ${launchable.extension?.join(", ")} ${launchable.id} ${launchable.source.type}`
+								.toLowerCase()
+								.includes(value.trim().toLowerCase())
+						) {
+							return null;
+						}
+
 						return (
 							<div
 								key={`launchable-${key}`}
@@ -158,7 +168,9 @@ function FroncherExplore() {
 					})}
 				</div>
 			) : (
-				<div className="text-muted">Browser Frotore and add some launchables</div>
+				<div className="text-gray-300">
+					Browser Frotore and add some launchables
+				</div>
 			)}
 
 			{trueRecentLaunchables.length ? (

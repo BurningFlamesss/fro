@@ -570,7 +570,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 									<ContextMenuItem onClick={() => handleRenameStart(node)}>
 										Rename
 									</ContextMenuItem>
-									{node.type === "file" && node.content !== undefined && key ? (
+									{node.type === "file" && key ? (
 										<ContextMenuItem onClick={() => handleOpen(node, "notes")}>
 											Edit in Frotes
 										</ContextMenuItem>

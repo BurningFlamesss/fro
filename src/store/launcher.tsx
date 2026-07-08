@@ -51,7 +51,7 @@ export const useLauncherStore = create<LauncherStore>()(
 						),
 					},
 					logo: "/apps/Game.svg",
-					showInCollections: false,
+					showInCollections: true,
 				},
 			},
 			recentLaunches: new Map<string, number>(),
