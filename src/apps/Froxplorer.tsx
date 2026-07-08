@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Dropzone from "react-dropzone";
 import { FaArrowUp } from "react-icons/fa6";
 import {
@@ -153,16 +153,25 @@ function Froxplorer({ windowId }: { windowId: string }) {
 				<span className="text-sm opacity-80">
 					{pathIds?.map((id, index) => {
 						const node = nodes[id];
+						if (!node) {
+							return null;
+						}
 						return (
 							<React.Fragment key={`breadcrumb-${id}`}>
 								<span>{` ${index ? "/" : ""} `}</span>
-								<button
-									onClick={() => navigateTo(node.id)}
-									type="button"
-									className="cursor-pointer"
+								<Breadcrumb
+									moveNode={moveNode}
+									navigateTo={navigateTo}
+									node={node}
 								>
-									{node.name}
-								</button>
+									<button
+										onClick={() => navigateTo(node.id)}
+										type="button"
+										className="cursor-pointer"
+									>
+										{node.name}
+									</button>
+								</Breadcrumb>
 							</React.Fragment>
 						);
 					})}
@@ -182,6 +191,13 @@ function Froxplorer({ windowId }: { windowId: string }) {
 					>
 						New File
 					</button>
+					<button
+						type="button"
+						// onClick={handleNewFile}
+						className="text-xs p-1 rounded cursor-pointer"
+					>
+						Upload
+					</button>
 				</div>
 			</div>
 
@@ -195,7 +211,11 @@ function Froxplorer({ windowId }: { windowId: string }) {
 						<ContextMenu key={`fs-node-${node.id}`}>
 							<ContextMenuTrigger>
 								{node.type === "folder" ? (
-									<DroppableFolder node={node}>
+									<DroppableFolder
+										moveNode={moveNode}
+										navigateTo={navigateTo}
+										node={node}
+									>
 										<DraggableItem node={node}>
 											<button
 												title={node.name}
@@ -294,6 +314,55 @@ function Froxplorer({ windowId }: { windowId: string }) {
 
 export default Froxplorer;
 
+function useDropTarget(
+	folderId: string,
+	moveNode: (id: string, newParentId: string) => void,
+	navigateTo: (id: string) => void,
+	hoverDelay = 600,
+) {
+	const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const [{ isOver }, drop] = useDrop(
+		() => ({
+			accept: "FS_NODE",
+			collect: (monitor) => ({ isOver: monitor.isOver() }),
+			hover: () => {
+				if (timeoutRef.current) {
+					clearTimeout(timeoutRef.current);
+				}
+
+				timeoutRef.current = setTimeout(() => {
+					navigateTo(folderId);
+					timeoutRef.current = null;
+				}, hoverDelay);
+			},
+			drop: (item: { id: string }) => {
+				if (timeoutRef.current) {
+					clearTimeout(timeoutRef.current);
+					timeoutRef.current = null;
+				}
+
+				moveNode(item.id, folderId);
+			},
+		}),
+		[folderId, moveNode, navigateTo, hoverDelay],
+	);
+
+	useEffect(() => {
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+		}
+	}, []);
+
+	useEffect(() => {
+		if (!isOver && timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+			timeoutRef.current = null;
+		}
+	}, [isOver]);
+
+	return { drop, isOver };
+}
+
 const DraggableItem = ({
 	node,
 	children,
@@ -315,16 +384,46 @@ const DraggableItem = ({
 
 const DroppableFolder = ({
 	node,
+	moveNode,
+	navigateTo,
 	children,
 }: {
 	node: FileNode;
+	moveNode: (id: string, newParentId: string) => void;
+	navigateTo: (id: string) => void;
 	children: React.ReactNode;
 }) => {
-	const { moveNode } = useFileSystemStore();
+	const { drop, isOver } = useDropTarget(node.id, moveNode, navigateTo);
 
-	const [unknown, drop] = useDrop(() => ({
-		accept: "FS_NODE",
-		drop: (item: { id: string }) => moveNode(item.id, node.id),
-	}));
-	return <div ref={drop}>{children}</div>;
+	return (
+		<div
+			className={`${isOver ? "ring-2 ring-primary/50 rounded-xl" : ""}`}
+			ref={drop}
+		>
+			{children}
+		</div>
+	);
+};
+
+const Breadcrumb = ({
+	node,
+	moveNode,
+	navigateTo,
+	children,
+}: {
+	node: FileNode;
+	moveNode: (id: string, newParentId: string) => void;
+	navigateTo: (id: string) => void;
+	children: React.ReactNode;
+}) => {
+	const { drop, isOver } = useDropTarget(node.id, moveNode, navigateTo);
+
+	return (
+		<span
+			className={`${isOver ? "text-primary" : ""}`}
+			ref={drop}
+		>
+			{children}
+		</span>
+	);
 };
