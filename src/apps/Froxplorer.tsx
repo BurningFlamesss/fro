@@ -241,11 +241,10 @@ function Froxplorer({ windowId }: { windowId: string }) {
 				},
 			});
 
-			
 			switch (key) {
 				case "notes": {
 					const tab = tabs.find((tab) => tab.id === node.id);
-					
+
 					if (!tab) addTab(name, node.content, node.id);
 					else selectTab(node.id);
 
@@ -256,11 +255,11 @@ function Froxplorer({ windowId }: { windowId: string }) {
 				case "calculator": {
 					setCalculatorExpression(node.content ?? "");
 					openApp(key);
-					
+
 					break;
 				}
 				case "terminal": {
-					console.log("Key", "Terminal")
+					console.log("Key", "Terminal");
 					setCommandExpression(node.content ?? "");
 					openApp(key);
 

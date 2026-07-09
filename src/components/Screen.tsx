@@ -8,7 +8,7 @@ import {
 } from "#/lib/utils.ts";
 import { useFileSystemStore, type FileNode } from "#/store/fs.tsx";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
-import type { AppInstance, WindowInstance } from "../constants";
+import type { AppId, AppInstance, WindowInstance } from "../constants";
 import {
 	ContextMenu,
 	ContextMenuContent,
@@ -19,7 +19,12 @@ import {
 	ContextMenuSubTrigger,
 	ContextMenuTrigger,
 } from "./ui/context-menu";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useNoteStore } from "#/store/note.tsx";
+import { useLauncherStore } from "#/store/launcher.tsx";
+import { useCalculatorStore } from "#/store/calculator.tsx";
+import { useTerminalStore } from "#/store/terminal.tsx";
+import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
 
 function Screen() {
 	const { apps, openApp, windows, focusWindow, pinApp } = useWindowStore();
@@ -121,6 +126,99 @@ function Screen() {
 		}
 	};
 
+
+	// The below logic till handleOpen function (incl.) is repeating logic, meaning I shall change that in future patch
+	const { tabs, selectTab, addTab } = useNoteStore();
+	const { launchables, launch } = useLauncherStore();
+	const { setCalculatorExpression } = useCalculatorStore();
+	const { setCommandExpression } = useTerminalStore();
+
+	const handleOpen = async (node: FileNode, openId?: AppId) => {
+		await new Promise((resolve, reject) => setTimeout(() => resolve(null), 20)); // Awaiting so that the context menu gets in original position and the z-index order isnot disturbed
+
+		const { name, extension } = parseFileName(node.name);
+
+		if (openId) {
+			const tab = tabs.find((tab) => tab.id === node.id);
+
+			if (!tab) addTab(name, node.content, node.id);
+			else selectTab(node.id);
+
+			openApp(openId);
+
+			return;
+		}
+
+		if (node.type === "folder") {
+			openApp("file_explorer", undefined, {
+				containerId: node.id,
+			});
+		} else {
+			const { key } = searchFileAssociatesThroughExtension(extension, {
+				...FILE_ASSOCIATIONS,
+				app_view: {
+					file_image: "view",
+					extension: ["png", "jpg", "jpeg", "svg"],
+				},
+			});
+
+			switch (key) {
+				case "notes": {
+					const tab = tabs.find((tab) => tab.id === node.id);
+
+					if (!tab) addTab(name, node.content, node.id);
+					else selectTab(node.id);
+
+					openApp(key);
+
+					break;
+				}
+				case "calculator": {
+					setCalculatorExpression(node.content ?? "");
+					openApp(key);
+
+					break;
+				}
+				case "terminal": {
+					console.log("Key", "Terminal");
+					setCommandExpression(node.content ?? "");
+					openApp(key);
+
+					break;
+				}
+				case "app_view": {
+					launch({
+						id: "app_froview",
+						name: "App_froview",
+						source: {
+							type: "fromponent",
+							code: (
+								<>
+									<img src={node.content} alt="" />
+								</>
+							),
+						},
+						logo: "/apps/Game.svg",
+						showInCollections: true,
+					});
+					break;
+				}
+				default: {
+					const launchable = Object.entries(launchables).find(([, value]) =>
+						value.extension?.includes(extension),
+					) || ["app_not_found", launchables.app_not_found];
+
+					launch(launchable[1]);
+				}
+			}
+
+			if (!key) {
+				launch(launchables.app_not_found);
+				return;
+			}
+		}
+	};
+
 	return (
 		<ContextMenu modal={false}>
 			<ContextMenuTrigger>
@@ -181,11 +279,7 @@ function Screen() {
 								<ContextMenuTrigger>
 									<button
 										type="button"
-										onDoubleClick={() =>
-											openApp("file_explorer", undefined, {
-												containerId: container.id,
-											})
-										}
+										onDoubleClick={() => handleOpen(container)}
 										className={cn(
 											"w-24 h-24 group p-2 rounded-xl transition-all duration-150 cursor-pointer flex flex-col items-center justify-center shrink-0",
 										)}
