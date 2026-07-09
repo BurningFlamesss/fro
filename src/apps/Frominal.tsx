@@ -20,6 +20,7 @@ import type { AppInstance, WindowInstance } from "../constants";
 import { EVENT_COLORS } from "./Frolendar";
 import { useFileSystemStore } from "#/store/fs.tsx";
 import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
+import { useTerminalStore } from "#/store/terminal.tsx";
 
 type TerminalResponse = React.ReactNode | string;
 
@@ -44,10 +45,11 @@ function parseCommand(input: string) {
 function Frominal() {
 	const { apps, openApp, windows, closeWindow, pinApp, unpinApp } =
 		useWindowStore();
+	const { commandExpression, setCommandExpression } = useTerminalStore();
 	const terminalRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [terminalLines, setTerminalLines] = useState<Array<TerminalLine>>([]);
-	const [command, setCommand] = useState<string>("");
+	const [command, setCommand] = useState<string>(commandExpression);
 	const [isProcessing, setIsProcessing] = useState(false);
 	const { addTab, tabs, closeTab } = useNoteStore();
 	const { createNode, updateNode, deleteNode, nodes } = useFileSystemStore();
@@ -596,11 +598,10 @@ function Frominal() {
 		},
 
 		"task.read": () => {
-			const taskTabs = Object.entries(nodes)
-				.filter(([key, value]) => {
-					const { extension } = parseFileName(value.name);
-					return ["todo", "task"].includes(extension.toLowerCase());
-				})
+			const taskTabs = Object.entries(nodes).filter(([key, value]) => {
+				const { extension } = parseFileName(value.name);
+				return ["todo", "task"].includes(extension.toLowerCase());
+			});
 
 			return (
 				<ul>
@@ -783,9 +784,12 @@ function Frominal() {
 		},
 	};
 
-	const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-		if (e.key === "Enter") {
-			e.preventDefault();
+	const handleKeyDown = async (
+		e?: React.KeyboardEvent<HTMLInputElement>,
+		bypass?: boolean,
+	) => {
+		if (e?.key === "Enter" || bypass) {
+			e?.preventDefault();
 
 			setIsProcessing(true);
 
@@ -843,6 +847,10 @@ function Frominal() {
 			terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
 		}
 	}, [terminalLines]);
+
+	useEffect(() => {
+		handleKeyDown(undefined, true);
+	}, [commandExpression]);
 
 	return (
 		<div

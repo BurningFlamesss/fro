@@ -42,7 +42,7 @@ export const FILE_ASSOCIATIONS: Record<
 	},
 	terminal: {
 		file_image: "fromine",
-		extension: [],
+		extension: ["script"],
 	},
 	app_not_found: {
 		file_image: "default",
