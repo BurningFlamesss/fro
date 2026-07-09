@@ -362,7 +362,6 @@ function Screen() {
 							<ContextMenuItem onClick={() => handleNewFile()}>
 								File
 							</ContextMenuItem>
-							<ContextMenuItem>Fro File</ContextMenuItem>
 						</ContextMenuSubContent>
 					</ContextMenuSub>
 				</ContextMenuGroup>

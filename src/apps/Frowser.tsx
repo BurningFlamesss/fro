@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { IconType } from "react-icons";
-import { FaPenFancy, FaWikipediaW } from "react-icons/fa6";
 import {
 	PiArrowUpRight,
-	PiChatCircleText,
 	PiCompassDuotone,
 	PiGlobeDuotone,
 	PiGlobeSimple,
@@ -15,93 +13,15 @@ import {
 	PiWarningOctagonDuotone,
 	PiX,
 } from "react-icons/pi";
-import { SiExcalidraw, SiGutenberg } from "react-icons/si";
-import { TbMathMaxMin } from "react-icons/tb";
 import { cn } from "#/lib/utils.ts";
 import { checkEmbeddable } from "#/server/checkEmbeddable.tsx";
 import { getSearchResults } from "#/server/getSearchResults.tsx";
-
-type TabState =
-	| "search"
-	| "loading"
-	| "results"
-	| "surfing"
-	| "error"
-	| "warning";
-
-interface Tab {
-	id: string;
-	title: string;
-	state: TabState;
-	url?: string;
-	query?: string;
-	searchResponse?: {
-		results?: Array<{
-			title: string;
-			url: string;
-			content: string;
-			rawContent?: string;
-			score: number;
-			publishedDate: string;
-			favicon?: string;
-		}>;
-		images?: Array<{
-			url: string;
-			description?: string;
-		}>;
-		answer?: string;
-	};
-}
-
-interface PinnedSite {
-	name: string;
-	url: string;
-	icon: IconType;
-	color: string;
-}
-
-interface Suggestion {
-	icon: IconType;
-	text: string;
-}
-
-const PINNED_SITES: PinnedSite[] = [
-	{
-		name: "Wikipedia",
-		url: "https://www.wikipedia.org/",
-		icon: FaWikipediaW,
-		color: "#ffffff",
-	},
-	{
-		name: "Excalidraw",
-		url: "https://excalidraw.com/",
-		icon: SiExcalidraw,
-		color: "#5865f2",
-	},
-	{
-		name: "Desmos",
-		url: "https://www.desmos.com/calculator",
-		icon: TbMathMaxMin,
-		color: "#00ff00",
-	},
-	{
-		name: "Zenpen",
-		url: "https://zenpen.io/",
-		icon: FaPenFancy,
-		color: "#00ffff",
-	},
-	{
-		name: "Gutenberg",
-		url: "https://www.gutenberg.org/",
-		icon: SiGutenberg,
-		color: "ff0000",
-	},
-];
-
-const SUGGESTIONS: Suggestion[] = [
-	{ icon: PiGlobeDuotone, text: "frocus.tech" },
-	{ icon: PiGlobeDuotone, text: "time.is" },
-];
+import {
+	type PinnedSite,
+	type Tab,
+	type TabState,
+	useBrowserStore,
+} from "#/store/browser.tsx";
 
 const STATE_META: Record<
 	TabState,
@@ -158,6 +78,7 @@ function SearchBar({
 	setFocused: (value: boolean) => void;
 	onSubmit: (query: string) => void;
 }) {
+	const SUGGESTIONS = useBrowserStore((state) => state.suggestions);
 	const [value, setValue] = useState("");
 	const inputRef = useRef<HTMLInputElement>(null);
 
@@ -262,6 +183,7 @@ function SearchBar({
 }
 
 function PinnedSites({ onSelect }: { onSelect: (site: PinnedSite) => void }) {
+	const PINNED_SITES = useBrowserStore((state) => state.pinned_sites);
 	return (
 		<div className="flex flex-wrap items-start justify-center gap-4 sm:gap-5">
 			{PINNED_SITES.map((site) => (
@@ -656,9 +578,8 @@ function TabBar({
 }
 
 function Frowser() {
-	const [tabs, setTabs] = useState<Tab[]>([
-		{ id: "1", title: "New Tab", state: "search" },
-	]);
+	const default_tabs = useBrowserStore((state) => state.tabs);
+	const [tabs, setTabs] = useState<Tab[]>(default_tabs);
 	const [currentTabId, setCurrentTabId] = useState("1");
 
 	const currentTab = tabs.find((tab) => tab.id === currentTabId) ?? tabs[0];
