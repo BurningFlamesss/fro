@@ -19,6 +19,7 @@ import { Apps, type AppId, type WindowInstance } from "../constants";
 import { useCalculatorStore } from "#/store/calculator.tsx";
 import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
 import { useTerminalStore } from "#/store/terminal.tsx";
+import { useBrowserStore } from "#/store/browser.tsx";
 
 function useHoverNavigate(onNavigate: () => void, delay = 600) {
 	const timeoutReference = useRef<NodeJS.Timeout | null>(null);
@@ -197,6 +198,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 	const { launchables, launch } = useLauncherStore();
 	const { setCalculatorExpression } = useCalculatorStore();
 	const { setCommandExpression } = useTerminalStore();
+	const { editTabs } = useBrowserStore()
 
 	const [currentFolderId, setCurrentFolderId] = useState<string>(folderId);
 	const [renameTarget, setRenameTarget] = useState<{
@@ -259,9 +261,17 @@ function Froxplorer({ windowId }: { windowId: string }) {
 					break;
 				}
 				case "terminal": {
-					console.log("Key", "Terminal");
 					setCommandExpression(node.content ?? "");
 					openApp(key);
+
+					break;
+				}
+				case "browser": {
+					editTabs("1", {
+						query: node.content ?? ""
+					})
+					openApp(key)
+
 
 					break;
 				}

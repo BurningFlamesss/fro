@@ -578,9 +578,10 @@ function TabBar({
 }
 
 function Frowser() {
-	const default_tabs = useBrowserStore((state) => state.tabs);
+	const { tabs: default_tabs, deleteTab } = useBrowserStore();
 	const [tabs, setTabs] = useState<Tab[]>(default_tabs);
 	const [currentTabId, setCurrentTabId] = useState("1");
+	console.log("Tabs: ", tabs);
 
 	const currentTab = tabs.find((tab) => tab.id === currentTabId) ?? tabs[0];
 
@@ -612,6 +613,7 @@ function Frowser() {
 						state: "search",
 					};
 					setCurrentTabId(fresh.id);
+					deleteTab(fresh.id);
 					return [fresh];
 				}
 				const index = prev.findIndex((tab) => tab.id === id);
@@ -701,6 +703,13 @@ function Frowser() {
 			query: undefined,
 		});
 	}, [currentTabId, updateTab]);
+
+	useEffect(() => {
+		const query = default_tabs?.[0]?.query;
+		if (query) {
+			handleSearch(query);
+		}
+	}, [default_tabs]);
 
 	return (
 		<div className="relative flex h-full w-full flex-col overflow-hidden text-background">

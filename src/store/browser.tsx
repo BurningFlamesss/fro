@@ -54,6 +54,8 @@ interface BrowserStore {
 	pinned_sites: Array<PinnedSite>;
 	suggestions: Array<Suggestion>;
 	tabs: Array<Tab>;
+	editTabs: (id: string, payload: Partial<Omit<Tab, "id">>) => void;
+	deleteTab: (id: string) => void;
 }
 
 export const useBrowserStore = create<BrowserStore>()(
@@ -87,7 +89,7 @@ export const useBrowserStore = create<BrowserStore>()(
 				name: "Gutenberg",
 				url: "https://www.gutenberg.org/",
 				icon: SiGutenberg,
-				color: "ff0000",
+				color: "#ff0000",
 			},
 		],
 		suggestions: [
@@ -95,5 +97,21 @@ export const useBrowserStore = create<BrowserStore>()(
 			{ icon: PiGlobeDuotone, text: "time.is" },
 		],
 		tabs: [{ id: "1", title: "New Tab", state: "search" }],
+		editTabs: (id, payload) =>
+			set((state) => {
+				const tab = state.tabs.find((tab) => tab.id === id);
+
+				if (tab) {
+					Object.assign(tab, payload);
+				}
+			}),
+		deleteTab: (id) =>
+			set((state) => {
+				const index = state.tabs.findIndex((tab) => tab.id === id);
+                
+				if (index !== -1) {
+					state.tabs.splice(index, 1);
+				}
+			}),
 	})),
 );
