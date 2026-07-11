@@ -50,13 +50,25 @@ export interface Suggestion {
 	text: string;
 }
 
+const default_tab = { id: "1", title: "New Tab", state: "search" } as const;
+
 interface BrowserStore {
 	pinned_sites: Array<PinnedSite>;
 	suggestions: Array<Suggestion>;
 	tabs: Array<Tab>;
-	editTabs: (id: string, payload: Partial<Omit<Tab, "id">>) => void;
+	currentTabId: string;
+	setCurrentTabId: (id: string) => void;
+	editTab: (id: string, payload: Partial<Omit<Tab, "id">>) => void;
+	closeTab: (id: string) => void;
 	deleteTab: (id: string) => void;
+	addTab: () => Tab;
+	addAndUpdateTab: (patch: Partial<Tab>) => Tab;
 }
+
+const createNewTab = (): Tab => ({
+	...default_tab,
+	id: crypto.randomUUID(),
+});
 
 export const useBrowserStore = create<BrowserStore>()(
 	immer((set) => ({
@@ -96,8 +108,13 @@ export const useBrowserStore = create<BrowserStore>()(
 			{ icon: PiGlobeDuotone, text: "frocus.tech" },
 			{ icon: PiGlobeDuotone, text: "time.is" },
 		],
-		tabs: [{ id: "1", title: "New Tab", state: "search" }],
-		editTabs: (id, payload) =>
+		tabs: [default_tab],
+		currentTabId: "1",
+		setCurrentTabId: (id) =>
+			set((state) => {
+				state.currentTabId = id;
+			}),
+		editTab: (id, payload) =>
 			set((state) => {
 				const tab = state.tabs.find((tab) => tab.id === id);
 
@@ -105,13 +122,55 @@ export const useBrowserStore = create<BrowserStore>()(
 					Object.assign(tab, payload);
 				}
 			}),
+		closeTab: (id) =>
+            set((state) => {
+                if (state.tabs.length === 1) {
+                    const fresh = createNewTab();
+
+                    state.tabs = [fresh];
+                    state.currentTabId = fresh.id;
+
+                    return;
+                }
+
+                const index = state.tabs.findIndex((tab) => tab.id === id);
+
+                if (index === -1) return;
+
+                state.tabs.splice(index, 1);
+
+                if (id === state.currentTabId) {
+                    const nextIndex = index > 0 ? index - 1 : 0;
+                    state.currentTabId = state.tabs[nextIndex].id;
+                }
+            }),
 		deleteTab: (id) =>
+            set((state) => {
+                const index = state.tabs.findIndex((tab) => tab.id === id);
+
+                if (index !== -1) {
+					state.tabs.splice(index, 1)
+				};
+            }),
+		addTab: () => {
+			const newTab = createNewTab();
+
 			set((state) => {
-				const index = state.tabs.findIndex((tab) => tab.id === id);
-                
-				if (index !== -1) {
-					state.tabs.splice(index, 1);
-				}
-			}),
+				state.tabs.push(newTab);
+				state.currentTabId = newTab.id;
+			});
+
+			return newTab;
+		},
+		addAndUpdateTab:  (patch) => {
+            const newTab = { ...createNewTab(), ...patch };
+
+            set((state) => {
+                state.tabs.push(newTab);
+                state.currentTabId = newTab.id;
+            });
+
+            return newTab;
+        },,
 	})),
 );

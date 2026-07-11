@@ -578,54 +578,61 @@ function TabBar({
 }
 
 function Frowser() {
-	const { tabs: default_tabs, deleteTab } = useBrowserStore();
-	const [tabs, setTabs] = useState<Tab[]>(default_tabs);
-	const [currentTabId, setCurrentTabId] = useState("1");
-	console.log("Tabs: ", tabs);
+	const {
+		tabs,
+		addAndUpdateTab,
+		addTab,
+		closeTab,
+		currentTabId,
+		editTab: updateTab,
+		setCurrentTabId
+	} = useBrowserStore();
+	// const [tabs, setTabs] = useState<Tab[]>(default_tabs);
+	// const [currentTabId, setCurrentTabId] = useState("1");
+	// console.log("Tabs: ", tabs);
 
 	const currentTab = tabs.find((tab) => tab.id === currentTabId) ?? tabs[0];
 
-	const updateTab = useCallback((id: string, patch: Partial<Tab>) => {
-		setTabs((prev) =>
-			prev.map((tab) => (tab.id === id ? { ...tab, ...patch } : tab)),
-		);
-	}, []);
+	// const updateTab = useCallback((id: string, patch: Partial<Tab>) => {
+	// 	setTabs((prev) =>
+	// 		prev.map((tab) => (tab.id === id ? { ...tab, ...patch } : tab)),
+	// 	);
+	// }, []);
 
-	const addAndUpdateTab = useCallback((patch: Partial<Tab>) => {
-		const id = crypto.randomUUID();
-		setTabs((prev) => [...prev, { id, title: "", state: "surfing", ...patch }]); // defaults will eventually get override
-		setCurrentTabId(id);
-	}, []);
+	// const addAndUpdateTab = useCallback((patch: Partial<Tab>) => {
+	// 	const id = crypto.randomUUID();
+	// 	setTabs((prev) => [...prev, { id, title: "", state: "surfing", ...patch }]); // defaults will eventually get override
+	// 	setCurrentTabId(id);
+	// }, []);
 
-	const addTab = useCallback(() => {
-		const id = crypto.randomUUID();
-		setTabs((prev) => [...prev, { id, title: "New Tab", state: "search" }]);
-		setCurrentTabId(id);
-	}, []);
+	// const addTab = useCallback(() => {
+	// 	const id = crypto.randomUUID();
+	// 	setTabs((prev) => [...prev, { id, title: "New Tab", state: "search" }]);
+	// 	setCurrentTabId(id);
+	// }, []);
 
-	const closeTab = useCallback(
-		(id: string) => {
-			setTabs((prev) => {
-				if (prev.length === 1) {
-					const fresh: Tab = {
-						id: crypto.randomUUID(),
-						title: "New Tab",
-						state: "search",
-					};
-					setCurrentTabId(fresh.id);
-					deleteTab(fresh.id);
-					return [fresh];
-				}
-				const index = prev.findIndex((tab) => tab.id === id);
-				const next = prev.filter((tab) => tab.id !== id);
-				if (id === currentTabId) {
-					setCurrentTabId((next[index - 1] ?? next[index] ?? next[0]).id);
-				}
-				return next;
-			});
-		},
-		[currentTabId],
-	);
+	// const closeTab = useCallback(
+	// 	(id: string) => {
+	// 		setTabs((prev) => {
+	// 			if (prev.length === 1) {
+	// 				const fresh: Tab = {
+	// 					id: crypto.randomUUID(),
+	// 					title: "New Tab",
+	// 					state: "search",
+	// 				};
+	// 				setCurrentTabId(fresh.id);
+	// 				return [fresh];
+	// 			}
+	// 			const index = prev.findIndex((tab) => tab.id === id);
+	// 			const next = prev.filter((tab) => tab.id !== id);
+	// 			if (id === currentTabId) {
+	// 				setCurrentTabId((next[index - 1] ?? next[index] ?? next[0]).id);
+	// 			}
+	// 			return next;
+	// 		});
+	// 	},
+	// 	[currentTabId],
+	// );
 
 	const handleSearch = useCallback(
 		async (query: string) => {
@@ -703,13 +710,6 @@ function Frowser() {
 			query: undefined,
 		});
 	}, [currentTabId, updateTab]);
-
-	useEffect(() => {
-		const query = default_tabs?.[0]?.query;
-		if (query) {
-			handleSearch(query);
-		}
-	}, [default_tabs]);
 
 	return (
 		<div className="relative flex h-full w-full flex-col overflow-hidden text-background">
