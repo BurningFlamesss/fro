@@ -585,8 +585,10 @@ function Frowser() {
 		closeTab,
 		currentTabId,
 		editTab: updateTab,
-		setCurrentTabId
+		setCurrentTabId,
 	} = useBrowserStore();
+
+	console.log("Tabs: ", tabs);
 
 	const currentTab = tabs.find((tab) => tab.id === currentTabId) ?? tabs[0];
 
@@ -666,6 +668,12 @@ function Frowser() {
 			query: undefined,
 		});
 	}, [currentTabId, updateTab]);
+
+	useEffect(() => {
+		if (currentTab?.state === "search" && currentTab.query) {
+			handleSearch(currentTab.query);
+		}
+	}, [currentTab?.id, currentTab?.query, currentTab?.state, handleSearch]);
 
 	return (
 		<div className="relative flex h-full w-full flex-col overflow-hidden text-background">

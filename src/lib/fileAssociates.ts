@@ -6,7 +6,7 @@ export const FILE_ASSOCIATIONS: Record<
 > = {
 	browser: {
 		file_image: "frowse",
-		extension: ["html", "htm"],
+		extension: ["frowse"],
 	},
 	calculator: {
 		file_image: "froculate",

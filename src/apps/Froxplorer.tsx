@@ -198,7 +198,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 	const { launchables, launch } = useLauncherStore();
 	const { setCalculatorExpression } = useCalculatorStore();
 	const { setCommandExpression } = useTerminalStore();
-	const { editTabs } = useBrowserStore()
+	const { addAndUpdateTab } = useBrowserStore();
 
 	const [currentFolderId, setCurrentFolderId] = useState<string>(folderId);
 	const [renameTarget, setRenameTarget] = useState<{
@@ -241,6 +241,10 @@ function Froxplorer({ windowId }: { windowId: string }) {
 					file_image: "view",
 					extension: ["png", "jpg", "jpeg", "svg"],
 				},
+				app_web_view: {
+					file_image: "",
+					extension: ["ftml", "ftm"],
+				},
 			});
 
 			switch (key) {
@@ -267,11 +271,10 @@ function Froxplorer({ windowId }: { windowId: string }) {
 					break;
 				}
 				case "browser": {
-					editTabs("1", {
-						query: node.content ?? ""
-					})
-					openApp(key)
-
+					addAndUpdateTab({
+						query: node.content ?? "",
+					});
+					openApp(key);
 
 					break;
 				}
@@ -286,6 +289,19 @@ function Froxplorer({ windowId }: { windowId: string }) {
 									<img src={node.content} alt="" />
 								</>
 							),
+						},
+						logo: "/apps/Game.svg",
+						showInCollections: true,
+					});
+					break;
+				}
+				case "app_web_view": {
+					launch({
+						id: "app_froview",
+						name: "App_froview",
+						source: {
+							type: "ftml",
+							code: node.content,
 						},
 						logo: "/apps/Game.svg",
 						showInCollections: true,
