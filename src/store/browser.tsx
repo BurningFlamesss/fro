@@ -171,6 +171,6 @@ export const useBrowserStore = create<BrowserStore>()(
             });
 
             return newTab;
-        },,
+        },
 	})),
 );
