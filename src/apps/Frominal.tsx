@@ -204,15 +204,13 @@ function Frominal() {
 			}
 
 			params.forEach((param) => {
-				const { name, extension } = parseFileName(param);
-
-				if (extension) {
-					createNode(currentPath, param, "file");
-				} else {
-					createNode(currentPath, name, "folder");
-				}
+				let { name, extension } = parseFileName(param);
+				extension = extension ? extension : "frote";
+				createNode(currentPath, `${name}.${extension}`, "file");
 			});
 		},
+
+		
 
 		append: (params) => {
 			const [filename, ...content] = params;
@@ -258,7 +256,7 @@ function Frominal() {
 			const node = nodes.find((node) => node.name.toLowerCase() === pathname);
 
 			if (node && node.type === "file") {
-				return node.content
+				return node.content;
 			}
 		},
 
