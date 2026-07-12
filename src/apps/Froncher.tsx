@@ -23,10 +23,28 @@ function Froncher({ windowId }: { windowId: string }) {
 	};
 
 	if (source.type === "ftml" && typeof source.code === "string") {
-		return <div dangerouslySetInnerHTML={{ __html: source.code }} />;
+		const injectableCode = `
+		<style>
+			body {
+				font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+			}
+		</style>
+		<main>
+			${source.code}
+		</main>
+		`;
+
+		return (
+			<iframe
+				srcDoc={injectableCode}
+				title={name}
+				className="w-full h-full border-0"
+				sandbox="allow-scripts allow-forms allow-modals allow-popups"
+			/>
+		);
 	}
 
-	return source.code;
+	return source.code as React.ReactNode;
 }
 
 export default Froncher;

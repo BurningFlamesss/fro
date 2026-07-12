@@ -588,8 +588,6 @@ function Frowser() {
 		setCurrentTabId,
 	} = useBrowserStore();
 
-	console.log("Tabs: ", tabs);
-
 	const currentTab = tabs.find((tab) => tab.id === currentTabId) ?? tabs[0];
 
 	const handleSearch = useCallback(
