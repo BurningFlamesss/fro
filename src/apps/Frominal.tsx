@@ -221,6 +221,40 @@ function Frominal() {
 			});
 		},
 
+		rm: (params) => {
+			if (!params.length) {
+				return;
+			}
+
+			const nodes = getChildren(currentPath);
+
+			params.forEach((param) => {
+				param = param.toLowerCase()
+				const node = nodes.find((node) => node.name.toLowerCase() === param);
+
+				if (node && node.type === "file") {
+					deleteNode(node.id);
+				}
+			});
+		},
+
+		rmdir: (params) => {
+			if (!params.length) {
+				return;
+			}
+
+			const nodes = getChildren(currentPath);
+
+			params.forEach((param) => {
+				param = param.toLowerCase()
+				const node = nodes.find((node) => node.name.toLowerCase() === param);
+
+				if (node && node.type === "folder") {
+					deleteNode(node.id); // Since, this is already recursive, I don't need to implement it again
+				}
+			});
+		},
+
 		append: (params) => {
 			const [filename, ...content] = params;
 			const pathname = filename.toLowerCase();
