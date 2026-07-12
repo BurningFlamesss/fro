@@ -18,6 +18,7 @@ import { useTerminalStore } from "#/store/terminal.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
 import { EVENT_COLORS } from "./Frolendar";
+import { e } from "mathjs";
 
 type TerminalResponse = React.ReactNode | string;
 
@@ -48,7 +49,7 @@ function Frominal() {
 	const [terminalLines, setTerminalLines] = useState<Array<TerminalLine>>([]);
 	const [command, setCommand] = useState<string>(commandExpression);
 	const [isProcessing, setIsProcessing] = useState(false);
-	const { addTab, tabs, closeTab } = useNoteStore();
+	const { addTab, tabs, closeTab, selectTab } = useNoteStore();
 	const {
 		createNode,
 		updateNode,
@@ -147,7 +148,9 @@ function Frominal() {
 
 			return (
 				<>
-					<p className="text-yellow-500 pb-4">Directory: {pathname.join(" / ")}</p>
+					<p className="text-yellow-500 pb-4">
+						Directory: {pathname.join(" / ")}
+					</p>
 					<table className="border-collapse">
 						<thead>
 							<tr>
@@ -194,6 +197,51 @@ function Frominal() {
 
 			setCurrentPath(node?.id ?? currentPath);
 		},
+
+		touch: (params) => {
+			if (!params.length) {
+				return;
+			}
+
+			params.forEach((param) => {
+				const { name, extension } = parseFileName(param);
+
+				if (extension) {
+					createNode(currentPath, param, "file");
+				} else {
+					createNode(currentPath, name, "folder");
+				}
+			});
+		},
+
+		append: (params) => {
+			const pathname = params[0].toLowerCase();
+			const nodes = getChildren(currentPath);
+			const node = nodes.find((node) => node.name.toLowerCase() === pathname);
+
+			params.shift();
+
+			if (node && node.type === "file") {
+				node.content += params.join(" ");
+			}
+		},
+		edit: (param) => {
+			const pathname = param[0].toLowerCase();
+			const nodes = getChildren(currentPath);
+			const node = nodes.find((node) => node.name.toLowerCase() === pathname);
+
+			if (node && node.type === "file") {
+				const tab = tabs.find((tab) => tab.id === node.id);
+				const { name, extension } = parseFileName(node.name)
+
+				if (!tab) addTab(name, node.content, node.id);
+				else selectTab(node.id);
+
+
+				openApp("notes");
+			}
+		},
+		write: (params) => {},
 
 		echo: (params) => params.join(" "),
 
