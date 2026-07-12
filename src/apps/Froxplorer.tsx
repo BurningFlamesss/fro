@@ -270,9 +270,14 @@ function Froxplorer({ windowId }: { windowId: string }) {
 					break;
 				}
 				case "browser": {
-					addAndUpdateTab({
-						query: node.content ?? "",
-					});
+					const content = node?.content ?? "";
+					const queries = content.split("\n").filter(Boolean);
+
+					queries.map((query) =>
+						addAndUpdateTab({
+							query: query,
+						}),
+					);
 					openApp(key);
 
 					break;
