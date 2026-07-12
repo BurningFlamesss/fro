@@ -48,6 +48,17 @@ export const FILE_ASSOCIATIONS: Record<
 		file_image: "default",
 		extension: [],
 	},
+
+	// Miscellaneous Apps that is launched in launcher
+
+	app_view: {
+		file_image: "froview",
+		extension: ["png", "jpg", "jpeg", "svg"],
+	},
+	app_web_view: {
+		file_image: "frowebview",
+		extension: ["ftml", "ftm", "htm", "html"],
+	},
 };
 
 export const DEFAULT_APP_FOR_UNKNOWN_TYPE: AppId = "app_not_found";

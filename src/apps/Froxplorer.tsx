@@ -237,14 +237,6 @@ function Froxplorer({ windowId }: { windowId: string }) {
 		} else {
 			const { key } = searchFileAssociatesThroughExtension(extension, {
 				...FILE_ASSOCIATIONS,
-				app_view: {
-					file_image: "view",
-					extension: ["png", "jpg", "jpeg", "svg"],
-				},
-				app_web_view: {
-					file_image: "",
-					extension: ["ftml", "ftm"],
-				},
 			});
 
 			switch (key) {
