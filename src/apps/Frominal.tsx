@@ -222,7 +222,7 @@ function Frominal() {
 			params.shift();
 
 			if (node && node.type === "file") {
-				node.content += params.join(" ");
+				updateNode(node.id, node?.content + params.join(" "))
 			}
 		},
 		edit: (param) => {
@@ -241,7 +241,17 @@ function Frominal() {
 				openApp("notes");
 			}
 		},
-		write: (params) => {},
+		write: (params) => {
+			const pathname = params[0].toLowerCase();
+			const nodes = getChildren(currentPath);
+			const node = nodes.find((node) => node.name.toLowerCase() === pathname);
+
+			params.shift();
+
+			if (node && node.type === "file") {
+				updateNode(node.id, params.join(" "))
+			}
+		},
 
 		echo: (params) => params.join(" "),
 
