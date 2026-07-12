@@ -1,26 +1,23 @@
-import { formatDate, formatRelative } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import React, { type Ref, useEffect, useRef, useState } from "react";
 import {
-	formatBytes,
 	formatEventRange,
 	matchFlag,
 	normalizeUrl,
 	parseDate,
 	parseDuration,
 	parseFileName,
-	searchFileAssociatesThroughExtension,
 	splitEvent,
 } from "#/lib/utils.ts";
 import { fetchResponse, pingUrl } from "#/server/fetchResponses.tsx";
 import { useCalculatorStore } from "#/store/calculator.tsx";
 import { useCalendarStore } from "#/store/calendar.tsx";
+import { useFileSystemStore } from "#/store/fs.tsx";
 import { useNoteStore } from "#/store/note.tsx";
+import { useTerminalStore } from "#/store/terminal.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
 import { EVENT_COLORS } from "./Frolendar";
-import { useFileSystemStore } from "#/store/fs.tsx";
-import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
-import { useTerminalStore } from "#/store/terminal.tsx";
 
 type TerminalResponse = React.ReactNode | string;
 
@@ -52,12 +49,22 @@ function Frominal() {
 	const [command, setCommand] = useState<string>(commandExpression);
 	const [isProcessing, setIsProcessing] = useState(false);
 	const { addTab, tabs, closeTab } = useNoteStore();
-	const { createNode, updateNode, deleteNode, nodes } = useFileSystemStore();
+	const {
+		createNode,
+		updateNode,
+		deleteNode,
+		nodes,
+		getChildren,
+		rootId,
+		getPath,
+	} = useFileSystemStore();
 	const { setCalculatorExpression } = useCalculatorStore();
 	const { events, addEvent } = useCalendarStore();
+	const [currentPath, setCurrentPath] = useState(rootId);
 
 	const username = "FRO";
 	const hostname = "CUS";
+	const pathname = getPath(currentPath);
 
 	async function executeCommand(input: string): Promise<TerminalResponse> {
 		const { primaryCommand, params } = parseCommand(input);
@@ -75,6 +82,8 @@ function Frominal() {
 
 	const helpRegistry: Record<string, string> = {
 		help: "Display all available command with their usage.",
+		ls: "List all the folders and files with in the scope.",
+		cd: "Navigate to the children path.",
 		echo: "Print text to the terminal. Usage: `echo <TEXT>`",
 		ping: "Measure response time of the URL. Usage: `ping <URL>`",
 		clear: "Clear terminal history",
@@ -131,6 +140,59 @@ function Frominal() {
 					</table>
 				</>
 			);
+		},
+
+		ls: () => {
+			const nodes = getChildren(currentPath);
+
+			return (
+				<>
+					<p className="text-yellow-500 pb-4">Directory: {pathname.join(" / ")}</p>
+					<table className="border-collapse">
+						<thead>
+							<tr>
+								<th className="text-left pr-8 pb-2 text-yellow-500">Name</th>
+								<th className="text-left pr-8 pb-2 text-yellow-500">
+									CreatedAt
+								</th>
+								<th className="text-left pb-2 text-yellow-500">ModifiedAt</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							{nodes.map((node) => (
+								<tr key={node.id}>
+									<td className="pr-8 py-1 text-blue-400">{node.name}</td>
+
+									<td className="pr-8 py-1">
+										{formatDistanceToNow(new Date(node.createdAt), {
+											addSuffix: true,
+										})}
+									</td>
+
+									<td className="py-1">
+										{formatDistanceToNow(new Date(node.modifiedAt), {
+											addSuffix: true,
+										})}
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</>
+			);
+		},
+
+		cd: (param) => {
+			if (!param.length) {
+				return;
+			}
+
+			const pathname = param[0].toLowerCase();
+			const nodes = getChildren(currentPath);
+			const node = nodes.find((node) => node.name.toLowerCase() === pathname);
+
+			setCurrentPath(node?.id ?? currentPath);
 		},
 
 		echo: (params) => params.join(" "),
@@ -866,6 +928,7 @@ function Frominal() {
 							<FrominalInputSection
 								username={username}
 								hostname={hostname}
+								pathname={pathname}
 								inputRef={null}
 								command={lines.input}
 								setCommand={setCommand}
@@ -882,6 +945,7 @@ function Frominal() {
 				<FrominalInputSection
 					username={username}
 					hostname={hostname}
+					pathname={pathname}
 					inputRef={inputRef}
 					command={command}
 					setCommand={setCommand}
@@ -899,6 +963,7 @@ export default Frominal;
 function FrominalInputSection({
 	username,
 	hostname,
+	pathname,
 	inputRef,
 	command,
 	setCommand,
@@ -908,6 +973,7 @@ function FrominalInputSection({
 }: {
 	username: string;
 	hostname: string;
+	pathname: Array<string>;
 	inputRef: Ref<HTMLInputElement>;
 	command: string;
 	setCommand: (value: string) => void;
@@ -918,7 +984,10 @@ function FrominalInputSection({
 	return (
 		<div className="my-4 p-0 wrap-break-word leading-none block w-full">
 			<div className="flex items-baseline flex-nowrap my-4 p-0 w-full">
-				<span className="shrink-0 mr-0">
+				<span
+					title={`Current Path: ${pathname.join(" / ")}`}
+					className="shrink-0 mr-0"
+				>
 					<span className="text-green-400 font-bold">{username}</span>
 					<span className="text-background">@</span>
 					<span className="text-blue-400 font-bold">{hostname}</span>
