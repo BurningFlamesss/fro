@@ -7,19 +7,19 @@ import {
 	ContextMenuItem,
 	ContextMenuTrigger,
 } from "#/components/ui/context-menu.tsx";
+import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
 import {
 	parseFileName,
 	searchFileAssociatesThroughExtension,
 } from "#/lib/utils.ts";
+import { useBrowserStore } from "#/store/browser.tsx";
+import { useCalculatorStore } from "#/store/calculator.tsx";
 import { type FileNode, useFileSystemStore } from "#/store/fs.tsx";
 import { useLauncherStore } from "#/store/launcher.tsx";
 import { useNoteStore } from "#/store/note.tsx";
-import { useWindowStore } from "#/store/window.tsx";
-import { Apps, type AppId, type WindowInstance } from "../constants";
-import { useCalculatorStore } from "#/store/calculator.tsx";
-import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
 import { useTerminalStore } from "#/store/terminal.tsx";
-import { useBrowserStore } from "#/store/browser.tsx";
+import { useWindowStore } from "#/store/window.tsx";
+import { type AppId, Apps, type WindowInstance } from "../constants";
 
 function useHoverNavigate(onNavigate: () => void, delay = 600) {
 	const timeoutReference = useRef<NodeJS.Timeout | null>(null);
@@ -84,7 +84,14 @@ const DraggableItem = ({
 		onDragStart(node.id);
 
 		const emptyImage = new Image();
-		emptyImage.src = "/logo.png";
+
+		if (node.type === "folder") {
+			emptyImage.src = "/general/fs/Folder.svg";
+		} else {
+			const { name, extension } = parseFileName(node.name);
+			const { file_image } = searchFileAssociatesThroughExtension(extension);
+			emptyImage.src = `/general/fs/File-${file_image}.svg`;
+		}
 		event.dataTransfer.setDragImage(emptyImage, 0, 0);
 	};
 
@@ -170,7 +177,7 @@ const BreadcrumbDropTarget = ({
 			onDragOver={onDragOver}
 			onDragLeave={onDragLeave}
 			onDrop={handleDrop}
-			className={isHovering ? "bg-primary" : ""}
+			className={isHovering ? "text-primary" : ""}
 		>
 			{children}
 		</span>
