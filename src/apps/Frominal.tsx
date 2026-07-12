@@ -49,7 +49,7 @@ function Frominal() {
 	const [terminalLines, setTerminalLines] = useState<Array<TerminalLine>>([]);
 	const [command, setCommand] = useState<string>(commandExpression);
 	const [isProcessing, setIsProcessing] = useState(false);
-	const { addTab, tabs, closeTab, selectTab } = useNoteStore();
+	const { addTab, tabs, closeTab, selectTab, updateContent } = useNoteStore();
 	const {
 		createNode,
 		updateNode,
@@ -215,14 +215,13 @@ function Frominal() {
 		},
 
 		append: (params) => {
-			const pathname = params[0].toLowerCase();
+			const [filename, ...content] = params;
+			const pathname = filename.toLowerCase();
 			const nodes = getChildren(currentPath);
 			const node = nodes.find((node) => node.name.toLowerCase() === pathname);
 
-			params.shift();
-
 			if (node && node.type === "file") {
-				updateNode(node.id, node?.content + params.join(" "))
+				updateContent(node.id, node?.content + content.join(" "));
 			}
 		},
 		edit: (param) => {
@@ -232,24 +231,22 @@ function Frominal() {
 
 			if (node && node.type === "file") {
 				const tab = tabs.find((tab) => tab.id === node.id);
-				const { name, extension } = parseFileName(node.name)
+				const { name } = parseFileName(node.name);
 
 				if (!tab) addTab(name, node.content, node.id);
 				else selectTab(node.id);
-
 
 				openApp("notes");
 			}
 		},
 		write: (params) => {
-			const pathname = params[0].toLowerCase();
+			const [filename, ...content] = params;
+			const pathname = filename.toLowerCase();
 			const nodes = getChildren(currentPath);
 			const node = nodes.find((node) => node.name.toLowerCase() === pathname);
 
-			params.shift();
-
 			if (node && node.type === "file") {
-				updateNode(node.id, params.join(" "))
+				updateContent(node.id, content.join(" "))
 			}
 		},
 
