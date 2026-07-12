@@ -1,5 +1,7 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import { createDebouncedStorage } from "#/lib/debounced-storage.ts";
 
 interface SettingStore {
 	backgroundImage: Record<"url" | "position", string>;
@@ -7,23 +9,22 @@ interface SettingStore {
 }
 
 export const useSettingStore = create<SettingStore>()(
-	immer((set) => ({
-		backgroundImage: {
-			url: window
-				? (localStorage?.getItem("backgroundImage:url") ??
-					"/backgrounds/forest.gif")
-				: "/backgrounds/forest.gif",
-			position: window
-				? (localStorage?.getItem("backgroundImage:position") ?? "center")
-				: "center",
-		},
+	persist(
+		immer((set) => ({
+			backgroundImage: {
+				url: "/backgrounds/forest.gif",
+				position: "center",
+			},
 
-		setBackgroundImage: (imageUrl, position) =>
-			set((state) => {
-				state.backgroundImage.url = imageUrl;
-				state.backgroundImage.position = position;
-				localStorage?.setItem("backgroundImage:url", imageUrl);
-				localStorage?.setItem("backgroundImage:position", position);
-			}),
-	})),
+			setBackgroundImage: (imageUrl, position) =>
+				set((state) => {
+					state.backgroundImage.url = imageUrl;
+					state.backgroundImage.position = position;
+				}),
+		})),
+		{
+			name: "frottings-storage",
+			storage: createDebouncedStorage(1000),
+		},
+	),
 );
