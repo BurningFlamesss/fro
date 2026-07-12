@@ -210,7 +210,16 @@ function Frominal() {
 			});
 		},
 
-		
+		mkdir: (params) => {
+			if (!params.length) {
+				return;
+			}
+
+			params.forEach((param) => {
+				const { name } = parseFileName(param);
+				createNode(currentPath, name, "folder");
+			});
+		},
 
 		append: (params) => {
 			const [filename, ...content] = params;
