@@ -83,8 +83,16 @@ function Frominal() {
 
 	const helpRegistry: Record<string, string> = {
 		help: "Display all available command with their usage.",
-		ls: "List all the folders and files with in the scope.",
-		cd: "Navigate to the children path.",
+		ls: "List folders and files in the current directory. Usage: `ls`",
+		cd: "Change current working directory. Usage: `cd <DIRECTORY>`",
+		touch: "Create one or more files. Usage: `touch <*FILES>`",
+		mkdir: "Create one or more directories. Usage: `mkdir <*DIRECTORIES>`",
+		rm: "Delete one or more files. Usage: `rm <*FILES>`",
+		rmdir: "Delete one or more directories. Usage: `rmdir <*DIRECTORIES>`",
+		read: "Displays the content of a file. Usage: `read <FILE>`",
+		edit: "Opens a file in the Frotes editor. Usage: `edit <FILE>`",
+		write: "Overwrite the contents of a file. Usage: `write <FILE> <CONTENT>`",
+		append: "Append content to the end of the file. Usage `append <FILE> <CONTENT>`",
 		echo: "Print text to the terminal. Usage: `echo <TEXT>`",
 		ping: "Measure response time of the URL. Usage: `ping <URL>`",
 		clear: "Clear terminal history",
@@ -229,7 +237,7 @@ function Frominal() {
 			const nodes = getChildren(currentPath);
 
 			params.forEach((param) => {
-				param = param.toLowerCase()
+				param = param.toLowerCase();
 				const node = nodes.find((node) => node.name.toLowerCase() === param);
 
 				if (node && node.type === "file") {
@@ -246,7 +254,7 @@ function Frominal() {
 			const nodes = getChildren(currentPath);
 
 			params.forEach((param) => {
-				param = param.toLowerCase()
+				param = param.toLowerCase();
 				const node = nodes.find((node) => node.name.toLowerCase() === param);
 
 				if (node && node.type === "folder") {
