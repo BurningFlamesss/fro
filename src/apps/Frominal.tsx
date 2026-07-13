@@ -19,6 +19,7 @@ import { useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
 import { EVENT_COLORS } from "./Frolendar";
 import { e } from "mathjs";
+import { useLauncherStore } from "#/store/launcher.tsx";
 
 type TerminalResponse = React.ReactNode | string;
 
@@ -62,6 +63,7 @@ function Frominal() {
 	const { setCalculatorExpression } = useCalculatorStore();
 	const { events, addEvent } = useCalendarStore();
 	const [currentPath, setCurrentPath] = useState(rootId);
+	const { launch } = useLauncherStore();
 
 	const username = "FRO";
 	const hostname = "CUS";
@@ -968,53 +970,71 @@ function Frominal() {
 		// Full productive mode
 
 		type: (param) => {
-			const specialCharacters = `!@#$%^&*()_-+=/.,?'";:|\``;
-			const alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-			const numbers = "0123456789";
-			const spaces = " ";
+			launch({
+				id: "app_type",
+				logo: "/apps/Game.svg",
+				name: "Type",
+				source: {
+					type: "fromponent",
+					code: function Type() {
+						const specialCharacters = `!@#$%^&*()_-+=/.,?'";:|\``;
+						const alphabet =
+							"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+						const numbers = "0123456789";
+						const spaces = " ";
 
-			const weight = {
-				specialCharacters: 1,
-				numbers: 2,
-				alphabet: 5,
-				spaces: 80,
-			};
+						const weight = {
+							specialCharacters: 1,
+							numbers: 2,
+							alphabet: 5,
+							spaces: 80,
+						};
 
-			const supportedCharacters =
-				specialCharacters.repeat(weight.specialCharacters) +
-				numbers.repeat(weight.numbers) +
-				alphabet.repeat(weight.alphabet) +
-				spaces.repeat(weight.spaces);
+						const supportedCharacters =
+							specialCharacters.repeat(weight.specialCharacters) +
+							numbers.repeat(weight.numbers) +
+							alphabet.repeat(weight.alphabet) +
+							spaces.repeat(weight.spaces);
 
-			const length = supportedCharacters.length;
+						const length = supportedCharacters.length;
 
-			const requestedLength = Number(param[0]);
+						const requestedLength = Number(param[0]);
 
-			const typingParagraphLength =
-				Number.isFinite(requestedLength) && requestedLength > 0
-					? requestedLength
-					: 100;
+						const typingParagraphLength =
+							Number.isFinite(requestedLength) && requestedLength > 0
+								? requestedLength
+								: 100;
 
-			let typingParagraph = "";
+						const [typingParagraph] = useState(() => {
+							let text = "";
 
-			for (let i = 0; i < typingParagraphLength; i++) {
-				const randomIndex = Math.floor(Math.random() * length);
-				typingParagraph += supportedCharacters[randomIndex];
-			}
+							for (let i = 0; i < typingParagraphLength; i++) {
+								const randomIndex = Math.floor(Math.random() * length);
+								text += supportedCharacters[randomIndex];
+							}
 
-			return (
-				<div className="flex flex-col items-center justify-center gap-y-3">
-					<p>{typingParagraph}</p>
+							return text;
+						});
+						const [userWrittenText, setUserWrittenText] = useState("");
 
-					<textarea
-						placeholder="Start writing..."
-						className="w-full h-full resize-none bg-transparent outline-none text-sm"
-						rows={3}
-						name=""
-						id=""
-					></textarea>
-				</div>
-			);
+						return (
+							<div className="flex flex-col items-center justify-center gap-y-3">
+								<p>{typingParagraph}</p>
+
+								<textarea
+									placeholder="Start writing..."
+									className="w-full h-full resize-none bg-transparent outline-none text-sm"
+									rows={3}
+									value={userWrittenText}
+									onChange={(e) => setUserWrittenText(e.target.value)}
+									name="typingBox"
+									id="typingBox"
+								></textarea>
+							</div>
+						);
+					},
+				},
+			});
 		},
 	};
 
