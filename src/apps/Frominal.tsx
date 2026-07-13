@@ -92,7 +92,8 @@ function Frominal() {
 		read: "Displays the content of a file. Usage: `read <FILE>`",
 		edit: "Opens a file in the Frotes editor. Usage: `edit <FILE>`",
 		write: "Overwrite the contents of a file. Usage: `write <FILE> <CONTENT>`",
-		append: "Append content to the end of the file. Usage `append <FILE> <CONTENT>`",
+		append:
+			"Append content to the end of the file. Usage `append <FILE> <CONTENT>`",
 		echo: "Print text to the terminal. Usage: `echo <TEXT>`",
 		ping: "Measure response time of the URL. Usage: `ping <URL>`",
 		clear: "Clear terminal history",
@@ -117,6 +118,9 @@ function Frominal() {
 		"task.create": "Create a TASK. Usage: `task.create <TASK>`",
 		"task.read": "List all the TASK items",
 		"task.done": "Mark TASK as completed. Usage: `task.done <*INDICES>`",
+		"event.add":
+			"Create an event. Usage: `event.add <TITLE> [@START] [--end@END] [+DURATION]`",
+		"event.read": "List all calendar events.",
 	};
 
 	const commands: Record<string, CommandHandler> = {
