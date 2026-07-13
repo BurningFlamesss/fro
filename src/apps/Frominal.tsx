@@ -964,6 +964,58 @@ function Frominal() {
 				</ul>
 			);
 		},
+
+		// Full productive mode
+
+		type: (param) => {
+			const specialCharacters = `!@#$%^&*()_-+=/.,?'";:|\``;
+			const alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			const numbers = "0123456789";
+			const spaces = " ";
+
+			const weight = {
+				specialCharacters: 1,
+				numbers: 2,
+				alphabet: 5,
+				spaces: 80,
+			};
+
+			const supportedCharacters =
+				specialCharacters.repeat(weight.specialCharacters) +
+				numbers.repeat(weight.numbers) +
+				alphabet.repeat(weight.alphabet) +
+				spaces.repeat(weight.spaces);
+
+			const length = supportedCharacters.length;
+
+			const requestedLength = Number(param[0]);
+
+			const typingParagraphLength =
+				Number.isFinite(requestedLength) && requestedLength > 0
+					? requestedLength
+					: 100;
+
+			let typingParagraph = "";
+
+			for (let i = 0; i < typingParagraphLength; i++) {
+				const randomIndex = Math.floor(Math.random() * length);
+				typingParagraph += supportedCharacters[randomIndex];
+			}
+
+			return (
+				<div className="flex flex-col items-center justify-center gap-y-3">
+					<p>{typingParagraph}</p>
+
+					<textarea
+						placeholder="Start writing..."
+						className="w-full h-full resize-none bg-transparent outline-none text-sm"
+						rows={3}
+						name=""
+						id=""
+					></textarea>
+				</div>
+			);
+		},
 	};
 
 	const handleKeyDown = async (
