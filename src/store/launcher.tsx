@@ -1,15 +1,25 @@
 import type React from "react";
+import type { ComponentType } from "react";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { useWindowStore } from "./window";
 
+export type LaunchProps = {
+	windowId?: string;
+};
+
 export interface Launchable {
 	id: string;
 	name: string;
-	source: {
-		type: "ftml" | "fromponent";
-		code: string | React.ReactNode;
-	};
+	source:
+		| {
+				type: "ftml";
+				code: string;
+		  }
+		| {
+				type: "fromponent";
+				code: ComponentType<LaunchProps>;
+		  };
 	shortcut?:
 		| {
 				name: string;
@@ -35,20 +45,25 @@ export const useLauncherStore = create<LauncherStore>()(
 					name: "App not found",
 					source: {
 						type: "fromponent",
-						code: (
-							<main className="min-h-full w-full flex flex-col items-center justify-center overflow-hidden">
-								<div className="min-h-full w-full flex flex-row items-center justify-center text-8xl font-black tracking-tight text-[#69C242]">
-									4<img src="/logo.png" className="w-32 h-32" alt="" />4
-								</div>
-								<p className="text-xl font-semibold text-primary">
-									Are you f*#king kidding me?
-								</p>
-								<p>
-									Uh-oh! App not found. (*I meant*{" "}
-									<span className="text-primary font-semibold">"Froking"</span>)
-								</p>
-							</main>
-						),
+						code: function AppNotFound() {
+							return (
+								<main className="min-h-full w-full flex flex-col items-center justify-center overflow-hidden">
+									<div className="min-h-full w-full flex flex-row items-center justify-center text-8xl font-black tracking-tight text-[#69C242]">
+										4<img src="/logo.png" className="w-32 h-32" alt="" />4
+									</div>
+									<p className="text-xl font-semibold text-primary">
+										Are you f*#king kidding me?
+									</p>
+									<p>
+										Uh-oh! App not found. (*I meant*{" "}
+										<span className="text-primary font-semibold">
+											"Froking"
+										</span>
+										)
+									</p>
+								</main>
+							);
+						},
 					},
 					logo: "/apps/Game.svg",
 					showInCollections: true,
@@ -57,7 +72,7 @@ export const useLauncherStore = create<LauncherStore>()(
 			recentLaunches: new Map<string, number>(),
 			launch: (data) =>
 				set((state) => {
-					state.launchables[data.id] = data
+					state.launchables[data.id] = data;
 					state.recentLaunches.set(data.id, Date.now());
 
 					useWindowStore.getState().openApp("launcher", undefined, {

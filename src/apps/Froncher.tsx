@@ -1,11 +1,20 @@
-import type React from "react";
+import type { ComponentType } from "react";
 import FroncherExplore from "#/components/FroncherExplore.tsx";
+import type { LaunchProps } from "#/store/launcher.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { WindowInstance } from "../constants";
 
 export interface LaunchSpecification {
 	name: string;
-	source: { type: "ftml" | "fromponent"; code: string | React.ReactNode };
+	source:
+		| {
+				type: "ftml";
+				code: string;
+		  }
+		| {
+				type: "fromponent";
+				code: ComponentType<LaunchProps>;
+		  };
 }
 
 function Froncher({ windowId }: { windowId: string }) {
@@ -18,7 +27,7 @@ function Froncher({ windowId }: { windowId: string }) {
 		name: "search",
 		source: {
 			type: "fromponent",
-			code: <FroncherExplore />,
+			code: FroncherExplore,
 		},
 	};
 
@@ -44,7 +53,8 @@ function Froncher({ windowId }: { windowId: string }) {
 		);
 	}
 
-	return source.code as React.ReactNode;
+	const Component = source.code;
+	return <Component windowId={windowId} />;
 }
 
 export default Froncher;
