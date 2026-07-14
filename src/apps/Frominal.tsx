@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
-import React, { type Ref, useEffect, useRef, useState } from "react";
+import React, { type Ref, useEffect, useMemo, useRef, useState } from "react";
 import {
 	cn,
 	formatEventRange,
@@ -1016,14 +1016,73 @@ function Frominal() {
 
 							return text;
 						});
+
+						const characters: Array<string> = useMemo(
+							() => [...typingParagraph],
+							[typingParagraph],
+						);
+
+						const startedAt = useRef<number | null>(null);
+						const inputRef = useRef<HTMLInputElement>(null);
+
 						const [typedText, setTypedText] = useState("");
 
-						const inputRef = useRef<HTMLInputElement>(null);
+						const [stats, setStats] = useState<{
+							wpm: number;
+							accuracy: number;
+							time: number;
+							correct: number;
+							incorrect: number;
+						} | null>(null);
+
+						const completed = stats !== null;
+
+						const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+							if (completed) return;
+
+							const value = e.target.value;
+
+							if (value.length > typingParagraph.length) {
+								return;
+							}
+
+							if (startedAt.current === null && value.length > 0) {
+								startedAt.current = performance.now();
+							}
+
+							setTypedText(value);
+
+							if (value.length !== typingParagraph.length) {
+								return;
+							}
+
+							const endedAt = performance.now();
+
+							const elapsedMinutes = (endedAt - startedAt.current!) / 60000;
+
+							let correct = 0;
+
+							for (let i = 0; i < value.length; i++) {
+								if (value[i] === typingParagraph[i]) {
+									correct++;
+								}
+							}
+
+							const incorrect = value.length - correct;
+
+							setStats({
+								time: elapsedMinutes * 60,
+								wpm: correct / 5 / elapsedMinutes,
+								accuracy: (correct / value.length) * 100,
+								correct,
+								incorrect,
+							});
+						};
 
 						return (
 							<div
 								className="relative h-full w-full p-8 flex items-center justify-center"
-								onClick={() => inputRef.current.focus()}
+								onClick={() => inputRef?.current?.focus()}
 							>
 								<input
 									ref={inputRef}
@@ -1033,11 +1092,11 @@ function Frominal() {
 									autoCapitalize="off"
 									className="absolute pointer-events-none opacity-0"
 									value={typedText}
-									onChange={(e) => setTypedText(e.target.value)}
+									onChange={handleChange}
 								/>
 
 								<p className="font-mono text-2xl leading-relaxed whitespace-pre-wrap wrap-break-word select-none">
-									{typingParagraph.split("").map((char, index) => {
+									{characters.map((char, index) => {
 										const typed = typedText[index];
 
 										let className = "text-gray-300";
@@ -1058,7 +1117,7 @@ function Frominal() {
 													<span className="absolute left-0 top-2 bottom-0 h-6 w-0.5 bg-primary animate-caret-blink delay-100" />
 												)}
 
-												{char}
+												{char === " " ? "\u00A0" : char}
 											</span>
 										);
 									})}
