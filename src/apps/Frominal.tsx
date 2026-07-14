@@ -1055,7 +1055,7 @@ function Frominal() {
 												className={cn("relative inline-block", className)}
 											>
 												{isCurrent && (
-													<span className="absolute left-0 top-2 bottom-0 h-6 w-0.5 bg-primary animate-caret-blink" />
+													<span className="absolute left-0 top-2 bottom-0 h-6 w-0.5 bg-primary animate-caret-blink delay-100" />
 												)}
 
 												{char}
