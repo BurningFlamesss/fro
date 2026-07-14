@@ -1,6 +1,7 @@
 import { formatDistanceToNow } from "date-fns";
 import React, { type Ref, useEffect, useRef, useState } from "react";
 import {
+	cn,
 	formatEventRange,
 	matchFlag,
 	normalizeUrl,
@@ -1015,21 +1016,54 @@ function Frominal() {
 
 							return text;
 						});
-						const [userWrittenText, setUserWrittenText] = useState("");
+						const [typedText, setTypedText] = useState("");
+
+						const inputRef = useRef<HTMLInputElement>(null);
 
 						return (
-							<div className="p-4 relative flex flex-col items-center justify-center gap-y-3 text-xl font-extrabold">
-								<p className="text-gray-600">{typingParagraph}</p>
+							<div
+								className="relative h-full w-full p-8 flex items-center justify-center"
+								onClick={() => inputRef.current.focus()}
+							>
+								<input
+									ref={inputRef}
+									autoFocus
+									spellCheck={false}
+									autoCorrect="off"
+									autoCapitalize="off"
+									className="absolute pointer-events-none opacity-0"
+									value={typedText}
+									onChange={(e) => setTypedText(e.target.value)}
+								/>
 
-								<textarea
-									placeholder=""
-									className="absolute p-4 w-full h-full resize-none bg-transparent outline-none"
-									rows={3}
-									value={userWrittenText}
-									onChange={(e) => setUserWrittenText(e.target.value)}
-									name="typingBox"
-									id="typingBox"
-								></textarea>
+								<p className="font-mono text-2xl leading-relaxed whitespace-pre-wrap wrap-break-word select-none">
+									{typingParagraph.split("").map((char, index) => {
+										const typed = typedText[index];
+
+										let className = "text-gray-300";
+
+										if (typed !== undefined) {
+											className =
+												typed === char ? "text-green-500" : "text-red-500";
+										}
+
+										const isCurrent = index === typedText.length;
+
+										return (
+											<span
+												key={`typed-character-${index}-${char}`}
+												className={cn(
+													className,
+													isCurrent
+														? "bg-primary/5 border-l border-primary"
+														: "",
+												)}
+											>
+												{char}
+											</span>
+										);
+									})}
+								</p>
 							</div>
 						);
 					},
