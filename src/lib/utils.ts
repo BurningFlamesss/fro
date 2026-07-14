@@ -257,3 +257,34 @@ export const searchFileAssociatesThroughExtension = (
 		extension: extension,
 	};
 };
+
+export function generateTypingParagraph(length: number) {
+	const specialCharacters = `!@#$%^&*()_-+=/.,?'";:|\``;
+	const alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	const numbers = "0123456789";
+	const spaces = " ";
+
+	const weight = {
+		specialCharacters: 1,
+		numbers: 2,
+		alphabet: 5,
+		spaces: 80,
+	};
+
+	const supportedCharacters =
+		specialCharacters.repeat(weight.specialCharacters) +
+		numbers.repeat(weight.numbers) +
+		alphabet.repeat(weight.alphabet) +
+		spaces.repeat(weight.spaces);
+
+	let text = "";
+
+	for (let i = 0; i < length; i++) {
+		text +=
+			supportedCharacters[
+				Math.floor(Math.random() * supportedCharacters.length)
+			];
+	}
+
+	return text;
+}

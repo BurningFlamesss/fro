@@ -1,8 +1,10 @@
 import { formatDistanceToNow } from "date-fns";
+import { e } from "mathjs";
 import React, { type Ref, useEffect, useMemo, useRef, useState } from "react";
 import {
 	cn,
 	formatEventRange,
+	generateTypingParagraph,
 	matchFlag,
 	normalizeUrl,
 	parseDate,
@@ -14,13 +16,12 @@ import { fetchResponse, pingUrl } from "#/server/fetchResponses.tsx";
 import { useCalculatorStore } from "#/store/calculator.tsx";
 import { useCalendarStore } from "#/store/calendar.tsx";
 import { useFileSystemStore } from "#/store/fs.tsx";
+import { useLauncherStore } from "#/store/launcher.tsx";
 import { useNoteStore } from "#/store/note.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants";
 import { EVENT_COLORS } from "./Frolendar";
-import { e } from "mathjs";
-import { useLauncherStore } from "#/store/launcher.tsx";
 
 type TerminalResponse = React.ReactNode | string;
 
@@ -978,27 +979,6 @@ function Frominal() {
 				source: {
 					type: "fromponent",
 					code: function Type() {
-						const specialCharacters = `!@#$%^&*()_-+=/.,?'";:|\``;
-						const alphabet =
-							"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-						const numbers = "0123456789";
-						const spaces = " ";
-
-						const weight = {
-							specialCharacters: 1,
-							numbers: 2,
-							alphabet: 5,
-							spaces: 80,
-						};
-
-						const supportedCharacters =
-							specialCharacters.repeat(weight.specialCharacters) +
-							numbers.repeat(weight.numbers) +
-							alphabet.repeat(weight.alphabet) +
-							spaces.repeat(weight.spaces);
-
-						const length = supportedCharacters.length;
-
 						const requestedLength = Number(param[0]);
 
 						const typingParagraphLength =
@@ -1006,18 +986,11 @@ function Frominal() {
 								? requestedLength
 								: 100;
 
-						const [typingParagraph] = useState(() => {
-							let text = "";
+						const [typingParagraph, setTypingParagraph] = useState(() =>
+							generateTypingParagraph(typingParagraphLength),
+						);
 
-							for (let i = 0; i < typingParagraphLength; i++) {
-								const randomIndex = Math.floor(Math.random() * length);
-								text += supportedCharacters[randomIndex];
-							}
-
-							return text;
-						});
-
-						const characters: Array<string> = useMemo(
+						const characters = useMemo(
 							() => [...typingParagraph],
 							[typingParagraph],
 						);
@@ -1119,6 +1092,14 @@ function Frominal() {
 												type="button"
 												onClick={() => {
 													setStats(null);
+													setTypedText("");
+													startedAt.current = null;
+
+													setTypingParagraph(
+														generateTypingParagraph(typingParagraphLength),
+													);
+
+													inputRef.current?.focus();
 												}}
 												className="rounded-md bg-primary px-4 py-2 text-primary-foreground cursor-pointer"
 											>
