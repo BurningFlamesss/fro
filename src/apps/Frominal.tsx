@@ -1052,13 +1052,12 @@ function Frominal() {
 										return (
 											<span
 												key={`typed-character-${index}-${char}`}
-												className={cn(
-													className,
-													isCurrent
-														? "bg-primary/5 border-l border-primary"
-														: "",
-												)}
+												className={cn("relative inline-block", className)}
 											>
+												{isCurrent && (
+													<span className="absolute left-0 top-2 bottom-0 h-6 w-0.5 bg-primary animate-caret-blink" />
+												)}
+
 												{char}
 											</span>
 										);
