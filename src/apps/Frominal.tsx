@@ -1079,6 +1079,57 @@ function Frominal() {
 							});
 						};
 
+						if (completed) {
+							return (
+								<div className="flex h-full items-center justify-center">
+									<div className="w-120 rounded-xl p-6">
+										<h1 className="text-3xl font-bold">Typing Complete</h1>
+
+										<div className="mt-8 grid grid-cols-2 gap-6">
+											<div>
+												<p className="text-muted-foreground">Speed</p>
+												<p className="text-3xl font-bold">
+													{stats.wpm.toFixed(1)}
+												</p>
+												<p>WPM</p>
+											</div>
+
+											<div>
+												<p className="text-muted-foreground">Accuracy</p>
+												<p className="text-3xl font-bold">
+													{stats.accuracy.toFixed(1)}%
+												</p>
+											</div>
+
+											<div>
+												<p className="text-muted-foreground">Time</p>
+												<p className="text-3xl font-bold">
+													{stats.time.toFixed(2)}s
+												</p>
+											</div>
+
+											<div>
+												<p className="text-muted-foreground">Mistakes</p>
+												<p className="text-3xl font-bold">{stats.incorrect}</p>
+											</div>
+										</div>
+
+										<div className="mt-8 flex justify-end gap-3">
+											<button
+												type="button"
+												onClick={() => {
+													setStats(null);
+												}}
+												className="rounded-md bg-primary px-4 py-2 text-primary-foreground cursor-pointer"
+											>
+												Restart
+											</button>
+										</div>
+									</div>
+								</div>
+							);
+						}
+
 						return (
 							<div
 								className="relative h-full w-full p-8 flex items-center justify-center"
