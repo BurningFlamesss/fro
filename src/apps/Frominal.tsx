@@ -1018,12 +1018,12 @@ function Frominal() {
 						const [userWrittenText, setUserWrittenText] = useState("");
 
 						return (
-							<div className="flex flex-col items-center justify-center gap-y-3">
-								<p>{typingParagraph}</p>
+							<div className="p-4 relative flex flex-col items-center justify-center gap-y-3 text-xl font-extrabold">
+								<p className="text-gray-600">{typingParagraph}</p>
 
 								<textarea
-									placeholder="Start writing..."
-									className="w-full h-full resize-none bg-transparent outline-none text-sm"
+									placeholder=""
+									className="absolute p-4 w-full h-full resize-none bg-transparent outline-none"
 									rows={3}
 									value={userWrittenText}
 									onChange={(e) => setUserWrittenText(e.target.value)}
