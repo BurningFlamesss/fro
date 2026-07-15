@@ -25,6 +25,7 @@ import { useLauncherStore } from "#/store/launcher.tsx";
 import { useCalculatorStore } from "#/store/calculator.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
 import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
+import { useWidgetStore } from "#/store/widget.tsx";
 
 function Screen() {
 	const { apps, openApp, windows, focusWindow, pinApp } = useWindowStore();
@@ -36,6 +37,8 @@ function Screen() {
 		addToDesktop,
 		renameNode,
 	} = useFileSystemStore();
+	const { widgets } = useWidgetStore();
+
 	const [renameTarget, setRenameTarget] = useState<{
 		id: string;
 		type: "folder" | "file";
@@ -47,6 +50,10 @@ function Screen() {
 	const desktopContainers = desktopContainerIds
 		.map((id) => nodes[id])
 		.filter(Boolean);
+
+	const widgetsRenderables = Object.entries(widgets).filter(
+		([key, value]) => value.hidden !== true,
+	);
 
 	const handleNewFolder = () => {
 		const name = prompt("Enter the folder name");
@@ -125,7 +132,6 @@ function Screen() {
 			if (lastWin) focusWindow(lastWin.id);
 		}
 	};
-
 
 	// The below logic till handleOpen function (incl.) is repeating logic, meaning I shall change that in future patch
 	const { tabs, selectTab, addTab } = useNoteStore();
@@ -273,6 +279,7 @@ function Screen() {
 							</ContextMenuContent>
 						</ContextMenu>
 					))}
+
 					{desktopContainers.map((container) => {
 						return (
 							<ContextMenu key={`desktop-container-${container.id}`}>
@@ -335,6 +342,11 @@ function Screen() {
 								</ContextMenuContent>
 							</ContextMenu>
 						);
+					})}
+
+					{widgetsRenderables.map(([key, value]) => {
+
+						return value.name
 					})}
 				</div>
 			</ContextMenuTrigger>

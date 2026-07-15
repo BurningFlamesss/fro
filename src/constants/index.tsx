@@ -9,6 +9,7 @@ import Frotore from "#/apps/Frotore.tsx";
 import Frottings from "#/apps/Frottings.tsx";
 import Frowser from "#/apps/Frowser.tsx";
 import Froxplorer from "#/apps/Froxplorer.tsx";
+import type { ComponentType } from "react";
 
 export const INITIAL_Z_INDEX = 1000;
 export const BACK_Z_INDEX = 0;
@@ -23,6 +24,30 @@ export interface AppInstance {
 	component: React.ReactNode;
 	theme?: string;
 	singleInstance?: boolean;
+}
+
+export type WidgetProps = {};
+
+export interface WidgetInstance {
+	id: WidgetId;
+	name: string;
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+	source:
+		| {
+				type: "html";
+				code: string;
+		  }
+		| {
+				type: "component";
+				code: ComponentType<WidgetProps>;
+		  };
+	minimized: boolean;
+	locked: boolean;
+	hidden: boolean;
+	props?: Record<string, unknown>;
 }
 
 export interface WindowInstance {
@@ -56,6 +81,7 @@ export type AppId =
 	| "launcher"
 	| `app_${string}`;
 
+export type WidgetId = `widget_${string}`;
 export type WindowId = `${AppId}_${string}`;
 
 export const Apps: Record<AppId, AppInstance> = {
@@ -149,6 +175,30 @@ export const Apps: Record<AppId, AppInstance> = {
 		isPinned: true,
 		theme: DEFAULT_THEME,
 		component: <Froncher windowId="" />,
+	},
+};
+
+export const Widgets: Record<WidgetId, WidgetInstance> = {
+	widget_quote: {
+		id: "widget_quote",
+		name: "Quote",
+		x: 400,
+		y: 200,
+		width: 200,
+		height: 100,
+		minimized: false,
+		hidden: false,
+		locked: false,
+		source: {
+			type: "component",
+			code: function Quote() {
+				return (
+					<p>
+						It won't happen overnight. But if you quit, it won't happen at all.
+					</p>
+				);
+			},
+		},
 	},
 };
 

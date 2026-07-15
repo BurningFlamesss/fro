@@ -288,11 +288,13 @@ function Froxplorer({ windowId }: { windowId: string }) {
 						name: "App_froview",
 						source: {
 							type: "fromponent",
-							code: (
-								<>
-									<img src={node.content} alt="" />
-								</>
-							),
+							code: function View() {
+								return (
+									<>
+										<img src={node.content} alt="" />
+									</>
+								);
+							},
 						},
 						logo: "/apps/Game.svg",
 						showInCollections: true,
@@ -305,7 +307,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 						name: "App_froview",
 						source: {
 							type: "ftml",
-							code: node.content,
+							code: node.content ?? "",
 						},
 						logo: "/apps/Game.svg",
 						showInCollections: true,
