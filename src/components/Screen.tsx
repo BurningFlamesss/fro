@@ -26,6 +26,7 @@ import { useCalculatorStore } from "#/store/calculator.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
 import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
 import { useWidgetStore } from "#/store/widget.tsx";
+import WidgetRenderer from "#/widgets/WidgetRenderer.tsx";
 
 function Screen() {
 	const { apps, openApp, windows, focusWindow, pinApp } = useWindowStore();
@@ -345,8 +346,7 @@ function Screen() {
 					})}
 
 					{widgetsRenderables.map(([key, value]) => {
-
-						return value.name
+						return <WidgetRenderer key={key} widget={value} />;
 					})}
 				</div>
 			</ContextMenuTrigger>
