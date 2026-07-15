@@ -17,6 +17,24 @@ export interface LaunchSpecification {
 		  };
 }
 
+const WINDOW_SYSTEM_KEYS = [
+	"id",
+	"appId",
+	"title",
+	"theme",
+	"logo",
+	"minimized",
+	"maximized",
+	"zIndex",
+	"component",
+	"x",
+	"y",
+	"width",
+	"height",
+	"containerId",
+	"launchSpecification",
+] as const;
+
 function Froncher({ windowId }: { windowId: string }) {
 	const { windows } = useWindowStore();
 	const win = Object.values(windows)
@@ -53,8 +71,16 @@ function Froncher({ windowId }: { windowId: string }) {
 		);
 	}
 
+	const customProps = win
+		? Object.fromEntries(
+				Object.entries(win).filter(
+					([key]) => !(WINDOW_SYSTEM_KEYS as readonly string[]).includes(key),
+				),
+			)
+		: {};
+
 	const Component = source.code;
-	return <Component windowId={windowId} />;
+	return <Component windowId={windowId} {...customProps} />;
 }
 
 export default Froncher;
