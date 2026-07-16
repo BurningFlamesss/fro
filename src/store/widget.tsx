@@ -17,6 +17,7 @@ interface WidgetStore {
 		id: WidgetId,
 		rectangle: { x: number; y: number; width: number; height: number },
 	) => void;
+	updateWidgetProps: (id: WidgetId, props: Record<string, unknown>) => void;
 }
 
 export const useWidgetStore = create<WidgetStore>()(
@@ -75,6 +76,17 @@ export const useWidgetStore = create<WidgetStore>()(
 					widget.y = rectangle.y;
 					widget.width = rectangle.width;
 					widget.height = rectangle.height;
+				}
+			}),
+
+		updateWidgetProps: (id, props) =>
+			set((state) => {
+				const widget = state.widgets[id];
+				if (widget) {
+					widget.props = {
+						...widget.props,
+						...props,
+					};
 				}
 			}),
 	})),
