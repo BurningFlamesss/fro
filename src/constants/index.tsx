@@ -193,9 +193,12 @@ export const Widgets: Record<WidgetId, WidgetInstance> = {
 			type: "component",
 			code: function Quote() {
 				return (
-					<p>
-						It won't happen overnight. But if you quit, it won't happen at all.
-					</p>
+					<main className="px-4 py-2 bg-white text-black">
+						<p>
+							It won't happen overnight. But if you quit, it won't happen at
+							all.
+						</p>
+					</main>
 				);
 			},
 		},
