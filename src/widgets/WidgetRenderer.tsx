@@ -1,3 +1,10 @@
+import {
+	ContextMenu,
+	ContextMenuContent,
+	ContextMenuGroup,
+	ContextMenuItem,
+	ContextMenuTrigger,
+} from "#/components/ui/context-menu.tsx";
 import { useWidgetStore } from "#/store/widget.tsx";
 import type { WidgetInstance } from "../constants";
 
@@ -21,30 +28,63 @@ function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 		return null;
 	}
 
-	if (source.type === "html" && typeof source.code === "string") {
-		const injectableCode = `
-		<style>
-			body {
-				font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
-			}
-		</style>
-		<main>
-			${source.code}
-		</main>
-		`;
+	const Component = source.type === "component" ? source.code : null;
+	const htmlContent = source.type === "html" ? source.code : "";
 
-		return (
-			<iframe
-				srcDoc={injectableCode}
-				title={name}
-				className="w-full h-full border-0"
-				sandbox="allow-scripts allow-forms allow-modals allow-popups"
-			/>
-		);
-	}
-
-	const Component = source.code;
-	return <Component />;
+	return (
+		<ContextMenu>
+			<ContextMenuTrigger>
+				{minimized ? (
+					<div></div>
+				) : (
+					<div>
+						<div className="w-full h-[calc(100%)] overflow-auto">
+							{Component && <Component />}
+							{htmlContent && (
+								<iframe
+									title={name}
+									srcDoc={`
+									<style>
+										body { 
+											font-family: 'Manrope', sans-serif; 
+											margin:0; 
+											padding:8px; 
+											color:#fff; 
+											background:transparent;
+										}
+									</style>
+									${htmlContent}
+								`}
+									sandbox="allow-scripts"
+									className="w-full h-full border-0"
+								/>
+							)}
+						</div>
+					</div>
+				)}
+			</ContextMenuTrigger>
+			<ContextMenuContent className="z-100000002">
+				<ContextMenuGroup>
+					{minimized ? (
+						<ContextMenuItem onClick={() => restoreWidget(id)}>
+							Restore
+						</ContextMenuItem>
+					) : (
+						<ContextMenuItem onClick={() => minimizeWidget(id)}>
+							Minimize
+						</ContextMenuItem>
+					)}
+					<ContextMenuItem onClick={() => hideWidget(id)}>Hide</ContextMenuItem>
+					<ContextMenuItem onClick={() => lockWidget(id, !locked)}>
+						{locked ? "Unlock" : "Lock"}
+					</ContextMenuItem>
+					<ContextMenuItem onClick={() => removeWidget(id)}>
+						Remove
+					</ContextMenuItem>
+				</ContextMenuGroup>
+			</ContextMenuContent>
+		</ContextMenu>
+	);
 }
 
 export default WidgetRenderer;
