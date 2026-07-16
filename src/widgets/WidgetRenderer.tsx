@@ -1,7 +1,25 @@
+import { useWidgetStore } from "#/store/widget.tsx";
 import type { WidgetInstance } from "../constants";
 
+const MIN_WIDGET_WIDTH = 150;
+const MIN_WIDGET_HEIGHT = 100;
+
 function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
-	const { source, name } = widget;
+	const {
+		minimizeWidget,
+		restoreWidget,
+		hideWidget,
+		lockWidget,
+		updateWidgetRect,
+		removeWidget,
+	} = useWidgetStore();
+
+	const { source, name, id, height, hidden, locked, minimized, width, x, y } =
+		widget;
+
+	if (hidden) {
+		return null;
+	}
 
 	if (source.type === "html" && typeof source.code === "string") {
 		const injectableCode = `
