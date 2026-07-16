@@ -12,6 +12,11 @@ interface WidgetStore {
 	hideWidget: (id: WidgetId) => void;
 	showWidget: (id: WidgetId) => void;
 	lockWidget: (id: WidgetId, locked: boolean) => void;
+
+	updateWidgetRect: (
+		id: WidgetId,
+		rectangle: { x: number; y: number; width: number; height: number },
+	) => void;
 }
 
 export const useWidgetStore = create<WidgetStore>()(
@@ -59,6 +64,17 @@ export const useWidgetStore = create<WidgetStore>()(
 				const widget = state.widgets[id];
 				if (widget) {
 					widget.locked = locked;
+				}
+			}),
+
+		updateWidgetRect: (id, rectangle) =>
+			set((state) => {
+				const widget = state.widgets[id];
+				if (widget) {
+					widget.x = rectangle.x;
+					widget.y = rectangle.y;
+					widget.width = rectangle.width;
+					widget.height = rectangle.height;
 				}
 			}),
 	})),
