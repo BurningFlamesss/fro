@@ -66,7 +66,24 @@ export function findNextPosition(
 			};
 		}
 
-        
+		const overlapping = placedRectangles.filter(
+			(placed) =>
+				placed.x < currentX + widgetWidth && placed.x + placed.width > currentX,
+		);
+
+		if (overlapping.length > 0) {
+			const maxBottom = Math.max(
+				...overlapping.map((placed) => placed.y + placed.height),
+			);
+			currentY = maxBottom + GAP;
+
+			if (currentY + widgetHeight > containerHeight) {
+				currentX -= COLUMN_WIDTH;
+				currentY = GAP;
+			}
+		} else {
+			currentX -= COLUMN_WIDTH;
+		}
 	}
 
 	return {
