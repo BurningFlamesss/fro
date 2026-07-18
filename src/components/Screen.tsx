@@ -345,10 +345,13 @@ function Screen() {
 						);
 					})}
 				</div>
-				<div className="relative z-10 h-[calc(100dvh-76px)] w-1/2 p-2 flex flex-col flex-wrap content-start overflow-y-auto">
-					{widgetsRenderables.map(([key, value]) => {
-						return <WidgetRenderer key={key} widget={value} />;
-					})}
+				<div
+					id="widget-canvas"
+					className="relative z-10 h-[calc(100dvh-76px)] w-1/2 overflow-hidden"
+				>
+					{widgetsRenderables.map(([key, value]) => (
+						<WidgetRenderer key={key} widget={value} />
+					))}
 				</div>
 			</ContextMenuTrigger>
 			<ContextMenuContent className="z-100000002">
