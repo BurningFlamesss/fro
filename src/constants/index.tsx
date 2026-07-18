@@ -1,4 +1,5 @@
 import type React from "react";
+import type { ComponentType } from "react";
 import Froculator from "#/apps/Froculator.tsx";
 import Frolendar from "#/apps/Frolendar.tsx";
 import Frominal from "#/apps/Frominal.tsx";
@@ -9,7 +10,6 @@ import Frotore from "#/apps/Frotore.tsx";
 import Frottings from "#/apps/Frottings.tsx";
 import Frowser from "#/apps/Frowser.tsx";
 import Froxplorer from "#/apps/Froxplorer.tsx";
-import type { ComponentType } from "react";
 
 export const INITIAL_Z_INDEX = 1000;
 export const BACK_Z_INDEX = 0;
@@ -193,7 +193,7 @@ export const Widgets: Record<WidgetId, WidgetInstance> = {
 			type: "component",
 			code: function Quote() {
 				return (
-					<main className="px-4 py-2 bg-white text-black">
+					<main className="min-h-full w-full px-4 py-2 bg-white text-black">
 						<p>
 							It won't happen overnight. But if you quit, it won't happen at
 							all.

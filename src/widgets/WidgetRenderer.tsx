@@ -1,19 +1,19 @@
 import { useCallback, useRef } from "react";
-import { Rnd } from "react-rnd";
-import { cn } from "#/lib/utils.ts";
-import { useWidgetStore } from "#/store/widget.tsx";
-import type { WidgetInstance } from "../constants";
 import {
 	FaLock,
 	FaLockOpen,
 	FaRegWindowMinimize,
 	FaXmark,
 } from "react-icons/fa6";
+import { Rnd } from "react-rnd";
+import { cn } from "#/lib/utils.ts";
+import { useWidgetStore } from "#/store/widget.tsx";
+import type { WidgetInstance } from "../constants";
 
 const MIN_VISIBLE_W = 100;
 const MIN_VISIBLE_H = 40;
 const MIN_WIDGET_W = 150;
-const MIN_WIDGET_H = 100;
+const MIN_WIDGET_H = 70;
 
 const clampPosition = (
 	x: number,
