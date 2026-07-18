@@ -35,6 +35,21 @@ export interface WidgetInstance {
 	y: number;
 	width: number;
 	height: number;
+	minimized: boolean;
+	locked: boolean;
+	hidden: boolean;
+	props?: Record<string, unknown>;
+}
+
+export interface WidgetAppDefinitionsType {
+	sizeConfigurations?: {
+		defaultHeight?: number;
+		defaultWidth?: number;
+		minimumHeight?: number;
+		minimumWidth?: number;
+		maximumHeight?: number;
+		maximumWidth?: number;
+	};
 	source:
 		| {
 				type: "html";
@@ -44,10 +59,6 @@ export interface WidgetInstance {
 				type: "component";
 				code: ComponentType<WidgetProps>;
 		  };
-	minimized: boolean;
-	locked: boolean;
-	hidden: boolean;
-	props?: Record<string, unknown>;
 }
 
 export interface WindowInstance {
@@ -189,6 +200,19 @@ export const Widgets: Record<WidgetId, WidgetInstance> = {
 		minimized: false,
 		hidden: false,
 		locked: false,
+	},
+};
+
+export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> = {
+	widget_quote: {
+		sizeConfigurations: {
+			defaultHeight: 70,
+			defaultWidth: 150,
+			minimumHeight: 70,
+			minimumWidth: 150,
+			maximumHeight: 200,
+			maximumWidth: 250,
+		},
 		source: {
 			type: "component",
 			code: function Quote() {

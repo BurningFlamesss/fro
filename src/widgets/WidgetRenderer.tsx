@@ -8,7 +8,7 @@ import {
 import { Rnd } from "react-rnd";
 import { cn } from "#/lib/utils.ts";
 import { useWidgetStore } from "#/store/widget.tsx";
-import type { WidgetInstance } from "../constants";
+import { WidgetAppDefinitions, type WidgetInstance } from "../constants";
 
 const MIN_VISIBLE_W = 100;
 const MIN_VISIBLE_H = 40;
@@ -48,8 +48,10 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 		removeWidget,
 	} = useWidgetStore();
 
-	const { id, name, x, y, width, height, minimized, hidden, locked, source } =
+	const { id, name, x, y, width, height, minimized, hidden, locked } =
 		widget;
+
+	const { source } = WidgetAppDefinitions[id]
 
 	if (hidden) return null;
 
