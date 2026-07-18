@@ -140,7 +140,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 	if (minimized) {
 		return (
 			<div
-				className="absolute glassmorphism rounded-full px-3 py-1 cursor-pointer shadow-lg"
+				className="absolute glassmorphism px-3 py-1 cursor-pointer"
 				style={{ left: x, top: y }}
 				onClick={() => restoreWidget(id)}
 			>
@@ -173,17 +173,17 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 				bottomLeft: { cursor: "nesw-resize" },
 				bottomRight: { cursor: "nwse-resize" },
 			}}
-			className={cn("absolute rounded-xl overflow-hidden group")}
+			className={cn("absolute overflow-hidden group")}
 		>
 			<div
 				className={cn(
-					"group-hover:opacity-100 opacity-0 transition-all duration-75 widget-drag-handle flex items-center justify-between h-8 border-b border-background/5",
+					"group-hover:opacity-100 opacity-0 transition-all duration-75 widget-drag-handle flex items-center justify-between h-8",
 					"select-none cursor-grab active:cursor-grabbing",
 					locked && "cursor-auto active:cursor-auto",
 				)}
 			>
 				<div
-					className="flex items-center gap-1 cursor-auto bg-black"
+					className="flex items-center gap-1 cursor-auto glassmorphism"
 					onMouseDown={stopPropagation}
 					onClick={stopPropagation}
 				>
