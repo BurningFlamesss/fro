@@ -173,10 +173,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 				bottomLeft: { cursor: "nesw-resize" },
 				bottomRight: { cursor: "nwse-resize" },
 			}}
-			className={cn(
-				"absolute rounded-xl overflow-hidden group",
-				locked && "ring-1 ring-yellow-500/50",
-			)}
+			className={cn("absolute rounded-xl overflow-hidden group")}
 		>
 			<div
 				className={cn(
@@ -191,27 +188,29 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 					onClick={stopPropagation}
 				>
 					<button
-					type="button"
+						type="button"
 						onClick={() => minimizeWidget(id)}
-						className="w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-green-400/20 rounded text-background/60 hover:text-background text-sm"
+						className="w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-green-400/20 text-background/60 hover:text-background text-sm"
 						title="Minimize"
 					>
 						<FaRegWindowMinimize />
 					</button>
 					<button
-					type="button"
+						type="button"
 						onClick={() => lockWidget(id, !locked)}
-						className={`w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-yellow-400/20 rounded ${
-							locked ? "text-yellow-400" : "text-background/60 hover:text-background"
+						className={`w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-yellow-400/20 ${
+							locked
+								? "text-yellow-400"
+								: "text-background/60 hover:text-background"
 						} text-sm`}
-						title="Lock"
+						title={locked ? "Unlock" : "Lock"}
 					>
 						{locked ? <FaLock /> : <FaLockOpen />}
 					</button>
 					<button
-					type="button"
+						type="button"
 						onClick={() => removeWidget(id)}
-						className="w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-red-400/20 rounded text-background/60 hover:text-background text-sm"
+						className="w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-red-400/20 text-background/60 hover:text-background text-sm"
 						title="Remove"
 					>
 						<FaXmark />
@@ -219,7 +218,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 				</div>
 			</div>
 
-			<div className="w-full h-[calc(100%-2rem)] overflow-auto">
+			<div className="w-full h-[calc(100%-2rem)] overflow-auto glassmorphism">
 				{source.type === "component" && source.code ? (
 					<source.code />
 				) : source.type === "html" ? (
