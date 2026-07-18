@@ -27,6 +27,7 @@ import { useTerminalStore } from "#/store/terminal.tsx";
 import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
 import { useWidgetStore } from "#/store/widget.tsx";
 import WidgetRenderer from "#/widgets/WidgetRenderer.tsx";
+import { useBrowserStore } from "#/store/browser.tsx";
 
 function Screen() {
 	const { apps, openApp, windows, focusWindow, pinApp } = useWindowStore();
@@ -139,6 +140,7 @@ function Screen() {
 	const { launchables, launch } = useLauncherStore();
 	const { setCalculatorExpression } = useCalculatorStore();
 	const { setCommandExpression } = useTerminalStore();
+	const { addAndUpdateTab } = useBrowserStore();
 
 	const handleOpen = async (node: FileNode, openId?: AppId) => {
 		await new Promise((resolve, reject) => setTimeout(() => resolve(null), 20)); // Awaiting so that the context menu gets in original position and the z-index order isnot disturbed
@@ -163,10 +165,6 @@ function Screen() {
 		} else {
 			const { key } = searchFileAssociatesThroughExtension(extension, {
 				...FILE_ASSOCIATIONS,
-				app_view: {
-					file_image: "view",
-					extension: ["png", "jpg", "jpeg", "svg"],
-				},
 			});
 
 			switch (key) {
@@ -187,8 +185,20 @@ function Screen() {
 					break;
 				}
 				case "terminal": {
-					console.log("Key", "Terminal");
 					setCommandExpression(node.content ?? "");
+					openApp(key);
+
+					break;
+				}
+				case "browser": {
+					const content = node?.content ?? "";
+					const queries = content.split("\n").filter(Boolean);
+
+					queries.map((query) =>
+						addAndUpdateTab({
+							query: query,
+						}),
+					);
 					openApp(key);
 
 					break;
@@ -199,11 +209,26 @@ function Screen() {
 						name: "App_froview",
 						source: {
 							type: "fromponent",
-							code: (
-								<>
-									<img src={node.content} alt="" />
-								</>
-							),
+							code: function View() {
+								return (
+									<>
+										<img src={node.content} alt="" />
+									</>
+								);
+							},
+						},
+						logo: "/apps/Game.svg",
+						showInCollections: true,
+					});
+					break;
+				}
+				case "app_web_view": {
+					launch({
+						id: "app_froview",
+						name: "App_froview",
+						source: {
+							type: "ftml",
+							code: node.content ?? "",
 						},
 						logo: "/apps/Game.svg",
 						showInCollections: true,

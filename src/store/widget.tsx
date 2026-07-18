@@ -1,5 +1,7 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import { createDebouncedStorage } from "#/lib/debounced-storage.ts";
 import { type WidgetId, type WidgetInstance, Widgets } from "../constants";
 
 interface WidgetStore {
@@ -21,73 +23,79 @@ interface WidgetStore {
 }
 
 export const useWidgetStore = create<WidgetStore>()(
-	immer((set) => ({
-		widgets: Widgets,
+	persist(
+		immer((set) => ({
+			widgets: Widgets,
 
-		addWidget: (widget) =>
-			set((state) => {
-				state.widgets[widget.id] = widget;
-			}),
-		removeWidget: (id) =>
-			set((state) => {
-				delete state.widgets[id];
-			}),
-		minimizeWidget: (id) =>
-			set((state) => {
-				const widget = state.widgets[id];
-				if (widget) {
-					widget.minimized = true;
-				}
-			}),
-		restoreWidget: (id) =>
-			set((state) => {
-				const widget = state.widgets[id];
-				if (widget) {
-					widget.minimized = false;
-				}
-			}),
-		hideWidget: (id) =>
-			set((state) => {
-				const widget = state.widgets[id];
-				if (widget) {
-					widget.hidden = true;
-				}
-			}),
-		showWidget: (id) =>
-			set((state) => {
-				const widget = state.widgets[id];
-				if (widget) {
-					widget.hidden = false;
-				}
-			}),
-		lockWidget: (id, locked) =>
-			set((state) => {
-				const widget = state.widgets[id];
-				if (widget) {
-					widget.locked = locked;
-				}
-			}),
+			addWidget: (widget) =>
+				set((state) => {
+					state.widgets[widget.id] = widget;
+				}),
+			removeWidget: (id) =>
+				set((state) => {
+					delete state.widgets[id];
+				}),
+			minimizeWidget: (id) =>
+				set((state) => {
+					const widget = state.widgets[id];
+					if (widget) {
+						widget.minimized = true;
+					}
+				}),
+			restoreWidget: (id) =>
+				set((state) => {
+					const widget = state.widgets[id];
+					if (widget) {
+						widget.minimized = false;
+					}
+				}),
+			hideWidget: (id) =>
+				set((state) => {
+					const widget = state.widgets[id];
+					if (widget) {
+						widget.hidden = true;
+					}
+				}),
+			showWidget: (id) =>
+				set((state) => {
+					const widget = state.widgets[id];
+					if (widget) {
+						widget.hidden = false;
+					}
+				}),
+			lockWidget: (id, locked) =>
+				set((state) => {
+					const widget = state.widgets[id];
+					if (widget) {
+						widget.locked = locked;
+					}
+				}),
 
-		updateWidgetRect: (id, rectangle) =>
-			set((state) => {
-				const widget = state.widgets[id];
-				if (widget) {
-					widget.x = rectangle.x;
-					widget.y = rectangle.y;
-					widget.width = rectangle.width;
-					widget.height = rectangle.height;
-				}
-			}),
+			updateWidgetRect: (id, rectangle) =>
+				set((state) => {
+					const widget = state.widgets[id];
+					if (widget) {
+						widget.x = rectangle.x;
+						widget.y = rectangle.y;
+						widget.width = rectangle.width;
+						widget.height = rectangle.height;
+					}
+				}),
 
-		updateWidgetProps: (id, props) =>
-			set((state) => {
-				const widget = state.widgets[id];
-				if (widget) {
-					widget.props = {
-						...widget.props,
-						...props,
-					};
-				}
-			}),
-	})),
+			updateWidgetProps: (id, props) =>
+				set((state) => {
+					const widget = state.widgets[id];
+					if (widget) {
+						widget.props = {
+							...widget.props,
+							...props,
+						};
+					}
+				}),
+		})),
+		{
+			name: "widgets-storage",
+			storage: createDebouncedStorage(1000),
+		},
+	),
 );

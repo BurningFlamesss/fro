@@ -35,7 +35,7 @@ export interface Launchable {
 interface LauncherStore {
 	launchables: Record<string, Launchable>;
 	recentLaunches: Map<string, number>;
-	launch: (data: Launchable, props: Record<string, unknown>) => void;
+	launch: (data: Launchable, props?: Record<string, unknown>) => void;
 }
 
 export const useLauncherStore = create<LauncherStore>()(

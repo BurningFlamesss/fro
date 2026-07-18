@@ -186,7 +186,7 @@ export const Widgets: Record<WidgetId, WidgetInstance> = {
 		y: 200,
 		width: 200,
 		height: 100,
-		minimized: true,
+		minimized: false,
 		hidden: false,
 		locked: false,
 		source: {
