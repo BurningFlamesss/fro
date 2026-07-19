@@ -258,7 +258,10 @@ export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> =
 			},
 		},
 		widget_clock: {
-			sizeConfigurations: defaultSizeConfigurations,
+			sizeConfigurations: {
+				...defaultSizeConfigurations,
+				minimumHeight: 200
+			},
 			source: {
 				type: "component",
 				code: Clock

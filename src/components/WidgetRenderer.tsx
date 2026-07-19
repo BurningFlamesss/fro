@@ -67,8 +67,8 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 
 	const minW = sizeConfigurations?.minimumWidth ?? MIN_WIDGET_W;
 	const minH = sizeConfigurations?.minimumHeight ?? MIN_WIDGET_H;
-	const maxW = sizeConfigurations?.maximumWidth;
-	const maxH = sizeConfigurations?.maximumHeight;
+	const maxW = sizeConfigurations?.maximumWidth ?? 200;
+	const maxH = sizeConfigurations?.maximumHeight ?? 200;
 
 	const rndRef = useRef<Rnd>(null);
 	const lastClampedPos = useRef({ x, y });
@@ -171,7 +171,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 			ref={rndRef}
 			dragHandleClassName="widget-drag-handle"
 			position={{ x, y }}
-			size={{ width, height }}
+			size={{ width: width ?? 0, height: height ?? 0 }}
 			minWidth={minW}
 			minHeight={minH}
 			maxHeight={maxH}
