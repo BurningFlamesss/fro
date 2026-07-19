@@ -42,11 +42,17 @@ export const DEFAULT_QUOTES = [
 		text: "You are never too old to set another goal or to dream a new dream.",
 		author: "C.S. Lewis",
 	},
+	{
+		text: "Impossible and possible are relative terms.",
+		author: "Unknown",
+	},
 ];
 
 export function Quote() {
-	const [quote, setQuote] = useState<string>("Impossible and possible are relative terms.");
-	const [author, setAuthor] = useState<string>("Me");
+	const randomQuote =
+		DEFAULT_QUOTES[Math.floor(Math.random() * DEFAULT_QUOTES.length)];
+	const [quote, setQuote] = useState<string>(randomQuote.text);
+	const [author, setAuthor] = useState<string>(randomQuote.author);
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
@@ -62,7 +68,8 @@ export function Quote() {
 					if (author) setAuthor(author);
 				}
 			} catch (err) {
-				const randomQuote = DEFAULT_QUOTES[Math.floor(Math.random() * DEFAULT_QUOTES.length)]
+				const randomQuote =
+					DEFAULT_QUOTES[Math.floor(Math.random() * DEFAULT_QUOTES.length)];
 
 				setQuote(randomQuote.text);
 				setAuthor(randomQuote.author);
