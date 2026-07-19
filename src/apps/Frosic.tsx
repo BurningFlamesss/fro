@@ -48,7 +48,7 @@ function formatTime(seconds: number): string {
 	const minute = Math.floor(seconds / 60);
 	const second = Math.floor(seconds % 60);
 
-	return `${minute}:${second.toString().padStart(2, "0")}`;
+	return `${minute}:${second?.toString()?.padStart(2, "0")}`;
 }
 
 function Frosic({ windowId }: { windowId: string }) {

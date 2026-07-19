@@ -1,4 +1,3 @@
-import React from "react";
 import { parseFileName } from "#/lib/utils.ts";
 import { useFileSystemStore } from "#/store/fs.tsx";
 
@@ -9,7 +8,7 @@ function Task() {
 		return ["todo", "task"].includes(extension.toLowerCase());
 	});
 	return (
-		<ul>
+		<ul className="p-4 min-h-full w-full glassmorphism">
 			{tasks.map((tab, index) => (
 				<li key={`widget-task-pending-to-do-${tab[0]}`}>
 					{index + 1}. {tab[1].content}

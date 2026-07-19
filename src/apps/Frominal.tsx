@@ -565,7 +565,7 @@ function Frominal() {
 			);
 
 			const hashHex = Array.from(new Uint8Array(buffer))
-				.map((byte) => byte.toString(16).padStart(2, "0"))
+				.map((byte) => byte?.toString(16)?.padStart(2, "0"))
 				.join("");
 
 			const result = hashHex.slice(0, length);

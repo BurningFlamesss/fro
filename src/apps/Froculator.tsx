@@ -275,7 +275,7 @@ function Froculator({ windowId }: { windowId: string }) {
 				const response = evaluate(balanceParentheses(expression), scope);
 
 				if (typeof response === "number" && Number.isFinite(response)) {
-					setResult((+response.toFixed(10)).toString());
+					setResult((+response.toFixed(10))?.toString());
 				} else {
 					setResult("");
 					setError("Invalid Result");
@@ -323,7 +323,7 @@ function Froculator({ windowId }: { windowId: string }) {
 				break;
 
 			case "MR":
-				setExpression((exp) => exp + memory.toString());
+				setExpression((exp) => exp + memory?.toString());
 				break;
 
 			case "M+":

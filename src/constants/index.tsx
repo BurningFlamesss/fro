@@ -12,6 +12,7 @@ import Frowser from "#/apps/Frowser.tsx";
 import Froxplorer from "#/apps/Froxplorer.tsx";
 import { Quote } from "#/widgets/Quote.tsx";
 import Task from "#/widgets/Task.tsx";
+import Clock from "#/widgets/Clock.tsx";
 
 export const INITIAL_Z_INDEX = 1000;
 export const BACK_Z_INDEX = 0;
@@ -226,6 +227,18 @@ export const Widgets: Record<WidgetId, WidgetInstance> = {
 		hidden: false,
 		locked: false,
 	},
+	widget_clock: {
+		id: "widget_clock",
+		definitionId: "widget_clock",
+		name: "Clock",
+		x: 400,
+		y: 300,
+		width: 300,
+		height: 300,
+		minimized: false,
+		locked: false,
+		hidden: false,
+	},
 };
 
 export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> =
@@ -244,6 +257,13 @@ export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> =
 				code: Task,
 			},
 		},
+		widget_clock: {
+			sizeConfigurations: defaultSizeConfigurations,
+			source: {
+				type: "component",
+				code: Clock
+			}
+		}
 	};
 
 export const Windows: Partial<Record<WindowId, WindowInstance>> = {};
