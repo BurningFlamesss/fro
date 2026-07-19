@@ -97,9 +97,15 @@ function Taskbar() {
 	return (
 		<footer className="glassmorphism h-16 w-[80dvw] flex items-center justify-between px-4 absolute bottom-3 left-1/2 -translate-x-1/2 rounded-2xl z-100000000">
 			<section className="flex items-center gap-4 h-full">
-				<div className="relative flex items-center justify-center w-11 h-11 rounded-xl transition-colors duration-150 hover:bg-background/5 cursor-pointer">
+				<button type="button" onClick={() => {
+					Object.entries(windows).forEach(([key, value]) => {
+						if (value) {
+							minimizeWindow(value.id)
+						}
+					})
+				}} className="relative flex items-center justify-center w-11 h-11 rounded-xl transition-colors duration-150 hover:bg-background/5 cursor-pointer">
 					<img className="w-8 h-8 object-contain" src="/logo.png" alt="Logo" />
-				</div>
+				</button>
 
 				<div className="relative flex items-center">
 					<PiMagnifyingGlassDuotone className="absolute left-3 top-1/2 -translate-y-1/2 text-background pointer-events-none" />
