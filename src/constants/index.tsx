@@ -11,6 +11,7 @@ import Frottings from "#/apps/Frottings.tsx";
 import Frowser from "#/apps/Frowser.tsx";
 import Froxplorer from "#/apps/Froxplorer.tsx";
 import { Quote } from "#/widgets/Quote.tsx";
+import Task from "#/widgets/Task.tsx";
 
 export const INITIAL_Z_INDEX = 1000;
 export const BACK_Z_INDEX = 0;
@@ -191,6 +192,15 @@ export const Apps: Record<AppId, AppInstance> = {
 	},
 };
 
+const defaultSizeConfigurations = {
+	defaultHeight: 70,
+	defaultWidth: 150,
+	minimumHeight: 70,
+	minimumWidth: 150,
+	maximumHeight: 400,
+	maximumWidth: 700,
+};
+
 export const Widgets: Record<WidgetId, WidgetInstance> = {
 	widget_quote: {
 		id: "widget_quote",
@@ -204,15 +214,18 @@ export const Widgets: Record<WidgetId, WidgetInstance> = {
 		hidden: false,
 		locked: false,
 	},
-};
-
-const defaultSizeConfigurations = {
-	defaultHeight: 70,
-	defaultWidth: 150,
-	minimumHeight: 70,
-	minimumWidth: 150,
-	maximumHeight: 400,
-	maximumWidth: 700,
+	widget_task: {
+		id: "widget_task",
+		definitionId: "widget_task",
+		name: "Tasks",
+		x: 500,
+		y: 300,
+		width: 200,
+		height: 120,
+		minimized: false,
+		hidden: false,
+		locked: false,
+	},
 };
 
 export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> =
@@ -222,6 +235,13 @@ export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> =
 			source: {
 				type: "component",
 				code: Quote,
+			},
+		},
+		widget_task: {
+			sizeConfigurations: defaultSizeConfigurations,
+			source: {
+				type: "component",
+				code: Task,
 			},
 		},
 	};
