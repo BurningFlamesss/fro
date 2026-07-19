@@ -211,8 +211,8 @@ const defaultSizeConfigurations = {
 	defaultWidth: 150,
 	minimumHeight: 70,
 	minimumWidth: 150,
-	maximumHeight: 200,
-	maximumWidth: 450,
+	maximumHeight: 400,
+	maximumWidth: 700,
 };
 
 export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> =
