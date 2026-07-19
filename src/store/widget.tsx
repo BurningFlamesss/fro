@@ -39,7 +39,8 @@ export const useWidgetStore = create<WidgetStore>()(
 				const widget = WidgetAppDefinitions[definitionId];
 				if (!widget) return;
 				set((state) => {
-					const id = `widget_${definitionId}_${crypto.randomUUID()}`;
+					const id =
+						`widget_${definitionId}_${crypto.randomUUID()}` as WidgetId;
 
 					state.widgets[id] = {
 						id,

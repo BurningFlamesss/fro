@@ -48,12 +48,27 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 		removeWidget,
 	} = useWidgetStore();
 
-	const { id, definitionId, name, x, y, width, height, minimized, hidden, locked } =
-		widget;
+	const {
+		id,
+		definitionId,
+		name,
+		x,
+		y,
+		width,
+		height,
+		minimized,
+		hidden,
+		locked,
+	} = widget;
 
-	const { source } = WidgetAppDefinitions[definitionId]
+	const { source, sizeConfigurations } = WidgetAppDefinitions[definitionId];
 
 	if (hidden) return null;
+
+	const minW = sizeConfigurations?.minimumWidth ?? MIN_WIDGET_W;
+	const minH = sizeConfigurations?.minimumHeight ?? MIN_WIDGET_H;
+	const maxW = sizeConfigurations?.maximumWidth;
+	const maxH = sizeConfigurations?.maximumHeight;
 
 	const rndRef = useRef<Rnd>(null);
 	const lastClampedPos = useRef({ x, y });
@@ -157,8 +172,10 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 			dragHandleClassName="widget-drag-handle"
 			position={{ x, y }}
 			size={{ width, height }}
-			minWidth={MIN_WIDGET_W}
-			minHeight={MIN_WIDGET_H}
+			minWidth={minW}
+			minHeight={minH}
+			maxHeight={maxH}
+			maxWidth={maxW}
 			disableDragging={locked}
 			enableResizing={!locked}
 			bounds={document.getElementById("widget-canvas") ? "parent" : undefined}

@@ -214,7 +214,7 @@ export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> =
 				minimumHeight: 70,
 				minimumWidth: 150,
 				maximumHeight: 200,
-				maximumWidth: 250,
+				maximumWidth: 450,
 			},
 			source: {
 				type: "component",
