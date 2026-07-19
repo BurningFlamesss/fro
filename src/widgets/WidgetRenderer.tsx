@@ -48,10 +48,10 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 		removeWidget,
 	} = useWidgetStore();
 
-	const { id, name, x, y, width, height, minimized, hidden, locked } =
+	const { id, definitionId, name, x, y, width, height, minimized, hidden, locked } =
 		widget;
 
-	const { source } = WidgetAppDefinitions[id]
+	const { source } = WidgetAppDefinitions[definitionId]
 
 	if (hidden) return null;
 

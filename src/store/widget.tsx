@@ -2,12 +2,20 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { createDebouncedStorage } from "#/lib/debounced-storage.ts";
-import { type WidgetId, type WidgetInstance, Widgets } from "../constants";
+import {
+	WidgetAppDefinitions,
+	type WidgetId,
+	type WidgetInstance,
+	Widgets,
+} from "../constants";
 
 interface WidgetStore {
 	widgets: Record<WidgetId, WidgetInstance>;
 
-	addWidget: (widget: WidgetInstance) => void;
+	addWidget: (
+		definitionId: WidgetId,
+		position?: { x: number; y: number },
+	) => void;
 	removeWidget: (id: WidgetId) => void;
 	minimizeWidget: (id: WidgetId) => void;
 	restoreWidget: (id: WidgetId) => void;
@@ -27,10 +35,26 @@ export const useWidgetStore = create<WidgetStore>()(
 		immer((set) => ({
 			widgets: Widgets,
 
-			addWidget: (widget) =>
+			addWidget: (definitionId, position) => {
+				const widget = WidgetAppDefinitions[definitionId];
+				if (!widget) return;
 				set((state) => {
-					state.widgets[widget.id] = widget;
-				}),
+					const id = `widget_${definitionId}_${crypto.randomUUID()}`;
+
+					state.widgets[id] = {
+						id,
+						definitionId,
+						name: definitionId,
+						x: position?.x ?? 100,
+						y: position?.y ?? 100,
+						width: widget.sizeConfigurations?.defaultWidth ?? 200,
+						height: widget.sizeConfigurations?.defaultHeight ?? 100,
+						minimized: false,
+						hidden: false,
+						locked: false,
+					};
+				});
+			},
 			removeWidget: (id) =>
 				set((state) => {
 					delete state.widgets[id];

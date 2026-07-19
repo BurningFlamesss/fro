@@ -30,6 +30,7 @@ export type WidgetProps = {};
 
 export interface WidgetInstance {
 	id: WidgetId;
+	definitionId: WidgetId;
 	name: string;
 	x: number;
 	y: number;
@@ -192,6 +193,7 @@ export const Apps: Record<AppId, AppInstance> = {
 export const Widgets: Record<WidgetId, WidgetInstance> = {
 	widget_quote: {
 		id: "widget_quote",
+		definitionId: "widget_quote",
 		name: "Quote",
 		x: 400,
 		y: 200,
@@ -203,31 +205,32 @@ export const Widgets: Record<WidgetId, WidgetInstance> = {
 	},
 };
 
-export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> = {
-	widget_quote: {
-		sizeConfigurations: {
-			defaultHeight: 70,
-			defaultWidth: 150,
-			minimumHeight: 70,
-			minimumWidth: 150,
-			maximumHeight: 200,
-			maximumWidth: 250,
-		},
-		source: {
-			type: "component",
-			code: function Quote() {
-				return (
-					<main className="min-h-full w-full px-4 py-2 bg-white text-black">
-						<p>
-							It won't happen overnight. But if you quit, it won't happen at
-							all.
-						</p>
-					</main>
-				);
+export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> =
+	{
+		widget_quote: {
+			sizeConfigurations: {
+				defaultHeight: 70,
+				defaultWidth: 150,
+				minimumHeight: 70,
+				minimumWidth: 150,
+				maximumHeight: 200,
+				maximumWidth: 250,
+			},
+			source: {
+				type: "component",
+				code: function Quote() {
+					return (
+						<main className="min-h-full w-full px-4 py-2 bg-white text-black">
+							<p>
+								It won't happen overnight. But if you quit, it won't happen at
+								all.
+							</p>
+						</main>
+					);
+				},
 			},
 		},
-	},
-};
+	};
 
 export const Windows: Partial<Record<WindowId, WindowInstance>> = {};
 
