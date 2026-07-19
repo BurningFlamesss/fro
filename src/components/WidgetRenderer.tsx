@@ -235,6 +235,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 						<FaXmark />
 					</button>
 				</div>
+				<span className="text-xs font-medium text-background/80 truncate">{name}</span>
 			</div>
 
 			<div className="w-full h-[calc(100%-2rem)] overflow-auto glassmorphism">

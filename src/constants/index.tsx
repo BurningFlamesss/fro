@@ -10,6 +10,7 @@ import Frotore from "#/apps/Frotore.tsx";
 import Frottings from "#/apps/Frottings.tsx";
 import Frowser from "#/apps/Frowser.tsx";
 import Froxplorer from "#/apps/Froxplorer.tsx";
+import { Quote } from "#/widgets/Quote.tsx";
 
 export const INITIAL_Z_INDEX = 1000;
 export const BACK_Z_INDEX = 0;
@@ -205,29 +206,22 @@ export const Widgets: Record<WidgetId, WidgetInstance> = {
 	},
 };
 
+const defaultSizeConfigurations = {
+	defaultHeight: 70,
+	defaultWidth: 150,
+	minimumHeight: 70,
+	minimumWidth: 150,
+	maximumHeight: 200,
+	maximumWidth: 450,
+};
+
 export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> =
 	{
 		widget_quote: {
-			sizeConfigurations: {
-				defaultHeight: 70,
-				defaultWidth: 150,
-				minimumHeight: 70,
-				minimumWidth: 150,
-				maximumHeight: 200,
-				maximumWidth: 450,
-			},
+			sizeConfigurations: defaultSizeConfigurations,
 			source: {
 				type: "component",
-				code: function Quote() {
-					return (
-						<main className="min-h-full w-full px-4 py-2 bg-white text-black">
-							<p>
-								It won't happen overnight. But if you quit, it won't happen at
-								all.
-							</p>
-						</main>
-					);
-				},
+				code: Quote,
 			},
 		},
 	};

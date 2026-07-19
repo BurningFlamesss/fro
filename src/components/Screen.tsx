@@ -26,7 +26,7 @@ import { useCalculatorStore } from "#/store/calculator.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
 import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
 import { useWidgetStore } from "#/store/widget.tsx";
-import WidgetRenderer from "#/widgets/WidgetRenderer.tsx";
+import WidgetRenderer from "#/components/WidgetRenderer.tsx";
 import { useBrowserStore } from "#/store/browser.tsx";
 
 function Screen() {
