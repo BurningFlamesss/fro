@@ -45,8 +45,8 @@ export const DEFAULT_QUOTES = [
 ];
 
 export function Quote() {
-	const [quote, setQuote] = useState<string>("");
-	const [author, setAuthor] = useState<string>("");
+	const [quote, setQuote] = useState<string>("Impossible and possible are relative terms.");
+	const [author, setAuthor] = useState<string>("Me");
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
@@ -63,7 +63,7 @@ export function Quote() {
 				}
 			} catch (err) {
 				const randomQuote = DEFAULT_QUOTES[Math.floor(Math.random() * DEFAULT_QUOTES.length)]
-				
+
 				setQuote(randomQuote.text);
 				setAuthor(randomQuote.author);
 			} finally {
