@@ -124,7 +124,8 @@ function Frominal() {
 		"task.done": "Mark TASK as completed. Usage: `task.done <*INDICES>`",
 		"event.add":
 			"Create an event. Usage: `event.add <TITLE> [@START] [--end@END] [+DURATION]`",
-		"event.read": "List all calendar events.",
+		"event.read": "List all calendar events",
+		type: "Open FypeMaster for typing"
 	};
 
 	const commands: Record<string, CommandHandler> = {
