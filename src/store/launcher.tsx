@@ -55,7 +55,7 @@ export const useLauncherStore = create<LauncherStore>()(
 				app_fypemaster: {
 					id: "app_fypemaster",
 					name: "Fypemaster",
-					logo: "/apps/Game.svg",
+					logo: "/public/apps/FypeMaster.svg",
 					source: {
 						type: "fromponent",
 						code: FypeMaster,

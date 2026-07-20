@@ -58,7 +58,7 @@ export const FILE_ASSOCIATIONS: Record<
 	app_web_view: {
 		file_image: "frowebview",
 		extension: ["ftml", "ftm", "htm", "html"],
-	},
+	}
 };
 
 export const DEFAULT_APP_FOR_UNKNOWN_TYPE: AppId = "app_not_found";

@@ -314,20 +314,20 @@ function Froxplorer({ windowId }: { windowId: string }) {
 								);
 							},
 						},
-						logo: "/apps/Game.svg",
+						logo: "/general/fs/File-froview.svg",
 						showInCollections: true,
 					});
 					break;
 				}
 				case "app_web_view": {
 					launch({
-						id: "app_froview",
-						name: "App_froview",
+						id: "app_webview",
+						name: "App_webview",
 						source: {
 							type: "ftml",
 							code: node.content ?? "",
 						},
-						logo: "/apps/Game.svg",
+						logo: "/general/fs/File-frowebview.svg",
 						showInCollections: true,
 					});
 					break;
