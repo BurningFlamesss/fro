@@ -5,6 +5,7 @@ import {
 	ContextMenu,
 	ContextMenuContent,
 	ContextMenuItem,
+	ContextMenuPortal,
 	ContextMenuTrigger,
 } from "#/components/ui/context-menu.tsx";
 import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
@@ -74,11 +75,12 @@ const DraggableItem = ({
 	node,
 	onDragStart,
 	children,
+	...triggerProps
 }: {
 	node: FileNode;
 	onDragStart: (nodeId: string) => void;
 	children: React.ReactNode;
-}) => {
+} & React.HTMLAttributes<HTMLDivElement>) => {
 	const handleDragStart = (event: React.DragEvent) => {
 		event.dataTransfer.setData("text/plain", node.id);
 		onDragStart(node.id);
@@ -96,7 +98,12 @@ const DraggableItem = ({
 	};
 
 	return (
-		<div draggable onDragStart={handleDragStart} style={{ cursor: "grab" }}>
+		<div
+			draggable
+			onDragStart={handleDragStart}
+			onContextMenu={triggerProps.onContextMenu}
+			style={{ cursor: "grab" }}
+		>
 			{children}
 		</div>
 	);
@@ -108,13 +115,14 @@ const DroppableFolder = ({
 	onNavigate,
 	draggedNodeId,
 	children,
+	...triggerProps
 }: {
 	node: FileNode;
 	moveNode: (id: string, newParentId: string) => void;
 	onNavigate: () => void;
 	draggedNodeId: string | null;
 	children: React.ReactNode;
-}) => {
+} & React.HTMLAttributes<HTMLDivElement>) => {
 	const { isHovering, onDragOver, onDragLeave, onDrop } =
 		useHoverNavigate(onNavigate);
 
@@ -133,9 +141,19 @@ const DroppableFolder = ({
 
 	return (
 		<div
-			onDragOver={onDragOver}
-			onDragLeave={onDragLeave}
+			// onDragOver={onDragOver}
+			// onDragLeave={onDragLeave}
+			// onDrop={handleDrop}
+			onDragOver={(e) => {
+				onDragOver(e);
+				triggerProps.onDragOver?.(e);
+			}}
+			onDragLeave={(e) => {
+				onDragLeave(e);
+				triggerProps.onDragLeave?.(e);
+			}}
 			onDrop={handleDrop}
+			onContextMenu={triggerProps.onContextMenu}
 			className={isHovering ? "ring-2 ring-primary/50 rounded-xl" : ""}
 		>
 			{children}
@@ -559,8 +577,8 @@ function Froxplorer({ windowId }: { windowId: string }) {
 							);
 
 						return (
-							<ContextMenu key={`fs-node-${node.id}`}>
-								<ContextMenuTrigger>
+							<ContextMenu modal={false} key={`fs-node-${node.id}`}>
+								<ContextMenuTrigger asChild>
 									{node.type === "folder" ? (
 										<DroppableFolder
 											node={node}
@@ -636,28 +654,32 @@ function Froxplorer({ windowId }: { windowId: string }) {
 										</DraggableItem>
 									)}
 								</ContextMenuTrigger>
-								<ContextMenuContent className="z-100000002">
-									<ContextMenuItem onClick={() => handleOpen(node)}>
-										Open
-									</ContextMenuItem>
-									<ContextMenuItem onClick={() => handleRenameStart(node)}>
-										Rename
-									</ContextMenuItem>
-									{node.type === "file" && key ? (
-										<ContextMenuItem onClick={() => handleOpen(node, "notes")}>
-											Edit in Frotes
+								<ContextMenuPortal>
+									<ContextMenuContent className="z-100000002">
+										<ContextMenuItem onClick={() => handleOpen(node)}>
+											Open
 										</ContextMenuItem>
-									) : null}
-									<ContextMenuItem onClick={() => addToDesktop(node.id)}>
-										Add to desktop
-									</ContextMenuItem>
-									<ContextMenuItem onClick={() => removeFromDesktop(node.id)}>
-										Remove from desktop
-									</ContextMenuItem>
-									<ContextMenuItem onClick={() => deleteNode(node.id)}>
-										Delete
-									</ContextMenuItem>
-								</ContextMenuContent>
+										<ContextMenuItem onClick={() => handleRenameStart(node)}>
+											Rename
+										</ContextMenuItem>
+										{node.type === "file" && key ? (
+											<ContextMenuItem
+												onClick={() => handleOpen(node, "notes")}
+											>
+												Edit in Frotes
+											</ContextMenuItem>
+										) : null}
+										<ContextMenuItem onClick={() => addToDesktop(node.id)}>
+											Add to desktop
+										</ContextMenuItem>
+										<ContextMenuItem onClick={() => removeFromDesktop(node.id)}>
+											Remove from desktop
+										</ContextMenuItem>
+										<ContextMenuItem onClick={() => deleteNode(node.id)}>
+											Delete
+										</ContextMenuItem>
+									</ContextMenuContent>
+								</ContextMenuPortal>
 							</ContextMenu>
 						);
 					})}
