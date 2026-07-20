@@ -522,49 +522,51 @@ function TabBar({
 }) {
 	return (
 		<div className="relative z-30 flex items-end gap-1 px-2 pt-2.5">
-			{tabs.map((tab) => {
-				const isActive = tab.id === currentTabId;
-				const { icon: Icon, tone, spin } = getTabIcon(tab.state);
-				return (
-					<div
-						key={tab.id}
-						onClick={() => onSelect(tab.id)}
-						className={cn(
-							"group relative flex min-w-0 max-w-[180px] cursor-pointer items-center gap-2 rounded-t-xl px-3 py-2 text-xs font-medium transition-colors",
-							isActive
-								? "bg-background/10 text-background"
-								: "text-background/40 hover:bg-background/5 hover:text-background/80",
-						)}
-					>
-						<Icon
+			<div className="flex-1 min-w-0 overflow-x-auto flex items-start gap-1 no-scrollbar">
+				{tabs.map((tab) => {
+					const isActive = tab.id === currentTabId;
+					const { icon: Icon, tone, spin } = getTabIcon(tab.state);
+					return (
+						<div
+							key={tab.id}
+							onClick={() => onSelect(tab.id)}
 							className={cn(
-								"shrink-0",
-								isActive ? tone : "text-background/25",
-								spin && "animate-spin",
+								"group relative shrink-0 flex min-w-0 max-w-[180px] cursor-pointer items-center gap-2 rounded-t-xl px-3 py-2 text-xs font-medium transition-colors",
+								isActive
+									? "bg-background/10 text-background"
+									: "text-background/40 hover:bg-background/5 hover:text-background/80",
 							)}
-							size={14}
-						/>
-						<span className="flex-1 truncate">{tab.title}</span>
-
-						{tabs.length > 1 && (
-							<button
-								type="button"
-								aria-label="Close tab"
-								onClick={(e) => {
-									e.stopPropagation();
-									onClose(tab.id);
-								}}
+						>
+							<Icon
 								className={cn(
-									"flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-background/10",
-									!isActive && "opacity-0 group-hover:opacity-100",
+									"shrink-0",
+									isActive ? tone : "text-background/25",
+									spin && "animate-spin",
 								)}
-							>
-								<PiX size={11} />
-							</button>
-						)}
-					</div>
-				);
-			})}
+								size={14}
+							/>
+							<span className="flex-1 truncate">{tab.title}</span>
+
+							{tabs.length > 1 && (
+								<button
+									type="button"
+									aria-label="Close tab"
+									onClick={(e) => {
+										e.stopPropagation();
+										onClose(tab.id);
+									}}
+									className={cn(
+										"flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-background/10",
+										!isActive && "opacity-0 group-hover:opacity-100",
+									)}
+								>
+									<PiX size={11} />
+								</button>
+							)}
+						</div>
+					);
+				})}
+			</div>
 			<button
 				type="button"
 				aria-label="New tab"
