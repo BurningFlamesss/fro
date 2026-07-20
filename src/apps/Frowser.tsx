@@ -202,7 +202,8 @@ function PinnedSites({ onSelect }: { onSelect: (site: PinnedSite) => void }) {
 				</button>
 			))}
 
-			<button
+			{/* TODO */}
+			{/* <button
 				type="button"
 				className="group flex w-16 cursor-pointer flex-col items-center gap-2"
 			>
@@ -210,7 +211,7 @@ function PinnedSites({ onSelect }: { onSelect: (site: PinnedSite) => void }) {
 					<PiPlus className="text-background" size={20} />
 				</div>
 				<span className="text-xs text-background">Add</span>
-			</button>
+			</button> */}
 		</div>
 	);
 }
@@ -588,7 +589,7 @@ function Frowser() {
 		currentTabId,
 		editTab: updateTab,
 		setCurrentTabId,
-		setSuggestions
+		setSuggestions,
 	} = useBrowserStore();
 
 	const currentTab = tabs.find((tab) => tab.id === currentTabId) ?? tabs[0];
@@ -608,9 +609,9 @@ function Frowser() {
 					: undefined,
 				state: "loading",
 			});
-			
-			console.log("Query: ", query)
-			setSuggestions(query)
+
+			console.log("Query: ", query);
+			setSuggestions(query);
 
 			if (!navigating) {
 				try {
