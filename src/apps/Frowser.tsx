@@ -588,6 +588,7 @@ function Frowser() {
 		currentTabId,
 		editTab: updateTab,
 		setCurrentTabId,
+		setSuggestions
 	} = useBrowserStore();
 
 	const currentTab = tabs.find((tab) => tab.id === currentTabId) ?? tabs[0];
@@ -607,6 +608,9 @@ function Frowser() {
 					: undefined,
 				state: "loading",
 			});
+			
+			console.log("Query: ", query)
+			setSuggestions(query)
 
 			if (!navigating) {
 				try {

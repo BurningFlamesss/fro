@@ -54,9 +54,11 @@ const default_tab = { id: "1", title: "New Tab", state: "search" } as const;
 
 interface BrowserStore {
 	pinned_sites: Array<PinnedSite>;
+	setSuggestions: (suggestions: string) => void;
 	suggestions: Array<Suggestion>;
 	tabs: Array<Tab>;
 	currentTabId: string;
+	setPinnedSites: (sites: Array<PinnedSite>) => void;
 	setCurrentTabId: (id: string) => void;
 	editTab: (id: string, payload: Partial<Omit<Tab, "id">>) => void;
 	closeTab: (id: string) => void;
@@ -110,10 +112,35 @@ export const useBrowserStore = create<BrowserStore>()(
 		],
 		tabs: [default_tab],
 		currentTabId: "1",
+
+		setSuggestions: (suggestion) =>
+			set((state) => {
+				const maxLength = 3;
+				const filtered = state.suggestions.filter(
+					(suggest) => suggest.text !== suggestion,
+				);
+
+				state.suggestions = [
+					...filtered,
+					{
+						icon: PiGlobeDuotone,
+						text: suggestion,
+					},
+				].slice(-maxLength);
+			}),
+
+		setPinnedSites: (sites) =>
+			set((state) => {
+				if (sites) {
+					state.pinned_sites = sites;
+				}
+			}),
+
 		setCurrentTabId: (id) =>
 			set((state) => {
 				state.currentTabId = id;
 			}),
+
 		editTab: (id, payload) =>
 			set((state) => {
 				const tab = state.tabs.find((tab) => tab.id === id);
@@ -122,36 +149,39 @@ export const useBrowserStore = create<BrowserStore>()(
 					Object.assign(tab, payload);
 				}
 			}),
+
 		closeTab: (id) =>
-            set((state) => {
-                if (state.tabs.length === 1) {
-                    const fresh = createNewTab();
+			set((state) => {
+				if (state.tabs.length === 1) {
+					const fresh = createNewTab();
 
-                    state.tabs = [fresh];
-                    state.currentTabId = fresh.id;
+					state.tabs = [fresh];
+					state.currentTabId = fresh.id;
 
-                    return;
-                }
+					return;
+				}
 
-                const index = state.tabs.findIndex((tab) => tab.id === id);
+				const index = state.tabs.findIndex((tab) => tab.id === id);
 
-                if (index === -1) return;
+				if (index === -1) return;
 
-                state.tabs.splice(index, 1);
+				state.tabs.splice(index, 1);
 
-                if (id === state.currentTabId) {
-                    const nextIndex = index > 0 ? index - 1 : 0;
-                    state.currentTabId = state.tabs[nextIndex].id;
-                }
-            }),
+				if (id === state.currentTabId) {
+					const nextIndex = index > 0 ? index - 1 : 0;
+					state.currentTabId = state.tabs[nextIndex].id;
+				}
+			}),
+
 		deleteTab: (id) =>
-            set((state) => {
-                const index = state.tabs.findIndex((tab) => tab.id === id);
+			set((state) => {
+				const index = state.tabs.findIndex((tab) => tab.id === id);
 
-                if (index !== -1) {
-					state.tabs.splice(index, 1)
-				};
-            }),
+				if (index !== -1) {
+					state.tabs.splice(index, 1);
+				}
+			}),
+
 		addTab: () => {
 			const newTab = createNewTab();
 
@@ -162,15 +192,16 @@ export const useBrowserStore = create<BrowserStore>()(
 
 			return newTab;
 		},
-		addAndUpdateTab:  (patch) => {
-            const newTab = { ...createNewTab(), ...patch };
 
-            set((state) => {
-                state.tabs.push(newTab);
-                state.currentTabId = newTab.id;
-            });
+		addAndUpdateTab: (patch) => {
+			const newTab = { ...createNewTab(), ...patch };
 
-            return newTab;
-        },
+			set((state) => {
+				state.tabs.push(newTab);
+				state.currentTabId = newTab.id;
+			});
+
+			return newTab;
+		},
 	})),
 );
