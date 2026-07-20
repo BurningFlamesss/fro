@@ -88,7 +88,7 @@ export function Quote() {
 			) : (
 				<>
 					<p>{quote}</p>
-					{author && <p className="text-xs mt-1 opacity-60">- {author}</p>}
+					{author && <p className="text-xs mt-1 opacity-90">- {author}</p>}
 				</>
 			)}
 		</div>

@@ -13,6 +13,7 @@ import Froxplorer from "#/apps/Froxplorer.tsx";
 import { Quote } from "#/widgets/Quote.tsx";
 import Task from "#/widgets/Task.tsx";
 import Clock from "#/widgets/Clock.tsx";
+import Event from "#/widgets/Event.tsx";
 
 export const INITIAL_Z_INDEX = 1000;
 export const BACK_Z_INDEX = 0;
@@ -227,6 +228,18 @@ export const Widgets: Record<WidgetId, WidgetInstance> = {
 		hidden: false,
 		locked: false,
 	},
+	widget_events: {
+		id: "widget_events",
+		definitionId: "widget_events",
+		name: "Events",
+		x: 600,
+		y: 400,
+		width: 200,
+		height: 120,
+		minimized: false,
+		hidden: false,
+		locked: false,
+	},
 	widget_clock: {
 		id: "widget_clock",
 		definitionId: "widget_clock",
@@ -257,16 +270,23 @@ export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> =
 				code: Task,
 			},
 		},
+		widget_events: {
+			sizeConfigurations: defaultSizeConfigurations,
+			source: {
+				type: "component",
+				code: Event,
+			},
+		},
 		widget_clock: {
 			sizeConfigurations: {
 				...defaultSizeConfigurations,
-				minimumHeight: 200
+				minimumHeight: 200,
 			},
 			source: {
 				type: "component",
-				code: Clock
-			}
-		}
+				code: Clock,
+			},
+		},
 	};
 
 export const Windows: Partial<Record<WindowId, WindowInstance>> = {};
