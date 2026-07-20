@@ -238,7 +238,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 				<span className="text-xs font-medium text-background/80 truncate">{name}</span>
 			</div>
 
-			<div className="w-full h-[calc(100%-2rem)] overflow-auto">
+			<div className="w-full h-[calc(100%-2rem)] overflow-auto border border-dashed border-transparent group-hover:border-black">
 				{source.type === "component" && source.code ? (
 					<source.code />
 				) : source.type === "html" ? (
