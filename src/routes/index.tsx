@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import MediaPlayerEngine from "#/components/MediaPlayerEngine.tsx";
 import Screen from "#/components/Screen.tsx";
 import Taskbar from "#/components/Taskbar.tsx";
 import WindowOverlays from "#/components/WindowOverlays.tsx";
@@ -16,6 +17,7 @@ function Home() {
 			<Screen />
 			<WindowOverlays />
 			<Taskbar />
+			<MediaPlayerEngine />
 		</div>
 	);
 }

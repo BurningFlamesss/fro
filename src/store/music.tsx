@@ -1,12 +1,23 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-interface Track {
+export interface Track {
 	id: string;
 	title: string;
 	artist: string;
 	cover: string;
 	src: string;
+	type: "file" | "url" | "youtube";
+	youtubeId?: string;
+	originalFileId?: string;
+}
+
+interface YouTubePlayerAPI {
+	playVideo: () => void;
+	pauseVideo: () => void;
+	seekTo: (seconds: number, allowSeekAhead: boolean) => void;
+	getCurrentTime: () => number;
+	getDuration: () => number;
 }
 
 interface MusicState {
@@ -18,28 +29,31 @@ interface MusicState {
 	repeat: boolean;
 	currentTime: number;
 	duration: number;
+	youTubePlayerAPI: YouTubePlayerAPI | null;
 
-	init: (tracks: Track[]) => void;
+	addTrack: (track: Omit<Track, "id">) => void;
+	playTrackById: (trackId: string) => void;
 	loadTrack: (index: number) => void;
 	togglePlay: () => void;
-	setPlaying: (value: boolean) => void;
+	setPlaying: (playing: boolean) => void;
 	next: () => void;
 	previous: () => void;
-	seek: (time: number) => void;
-	setVolume: (vol: number) => void;
+	seek: (seconds: number) => void;
+	setVolume: (volume: number) => void;
 	setMuted: (muted: boolean) => void;
 	setRepeat: (repeat: boolean) => void;
+	setYouTubePlayerAPI: (api: YouTubePlayerAPI | null) => void;
+	setAudioElement: (element: HTMLAudioElement | null) => void;
 
 	activate: () => void;
 	deactivate: () => void;
 	reset: () => void;
 }
 
-const audio = new Audio();
-let isActivated = false;
-let initialized = false;
+let audioElement: HTMLAudioElement | null = null;
+let activationState = false;
 
-const getInitialState = () => ({
+const initialMusicState = () => ({
 	tracks: [] as Track[],
 	currentIndex: 0,
 	isPlaying: false,
@@ -48,29 +62,52 @@ const getInitialState = () => ({
 	repeat: false,
 	currentTime: 0,
 	duration: 0,
+	youTubePlayerAPI: null as YouTubePlayerAPI | null,
 });
 
 export const useMusicStore = create<MusicState>()(
 	immer((set, get) => ({
-		...getInitialState(),
+		...initialMusicState(),
 
-		init: (tracks) => {
-			if (initialized) return;
-			initialized = true;
+		setAudioElement: (element) => {
+			audioElement = element;
+		},
+
+		addTrack: (track) =>
 			set((state) => {
-				state.tracks = tracks;
-			});
-			if (tracks.length > 0) {
-				get().loadTrack(0);
-			}
+				const id = crypto.randomUUID();
+				state.tracks.push({ ...track, id });
+				if (state.tracks.length === 1) {
+					// optionally auto‑load
+				}
+			}),
+		playTrackById: (trackId) => {
+			const index = get().tracks.findIndex((t) => t.id === trackId);
+			if (index !== -1) get().loadTrack(index);
 		},
 
 		loadTrack: (index) => {
-			const { tracks } = get();
-			const track = tracks[index];
+			const track = get().tracks[index];
 			if (!track) return;
-			audio.src = track.src;
-			audio.load();
+
+			if (track.type !== "youtube") {
+				get().youTubePlayerAPI?.pauseVideo();
+			}
+
+			if (track.type === "youtube") {
+				set((state) => {
+					state.currentIndex = index;
+					state.currentTime = 0;
+					state.duration = 0;
+				});
+				return;
+			}
+
+			const audio = audioElement;
+			if (audio) {
+				audio.src = track.src;
+				audio.load();
+			}
 			set((state) => {
 				state.currentIndex = index;
 				state.currentTime = 0;
@@ -79,25 +116,36 @@ export const useMusicStore = create<MusicState>()(
 		},
 
 		togglePlay: () => {
-			const { isPlaying } = get();
-			if (isPlaying) {
-				audio.pause();
-			} else {
-				audio.play().catch(() => {});
+			const state = get();
+			const track = state.tracks[state.currentIndex];
+			if (track?.type === "youtube" && state.youTubePlayerAPI) {
+				state.isPlaying
+					? state.youTubePlayerAPI.pauseVideo()
+					: state.youTubePlayerAPI.playVideo();
+			} else if (audioElement) {
+				if (state.isPlaying) {
+					audioElement.pause();
+				} else {
+					audioElement.play().catch(() => {});
+				}
 			}
-			set((state) => {
-				state.isPlaying = !isPlaying;
+			set((draft) => {
+				draft.isPlaying = !draft.isPlaying;
 			});
 		},
 
-		setPlaying: (value) => {
-			if (value) {
-				audio.play().catch(() => {});
-			} else {
-				audio.pause();
+		setPlaying: (playing) => {
+			const state = get();
+			const track = state.tracks[state.currentIndex];
+			if (track?.type === "youtube" && state.youTubePlayerAPI) {
+				playing
+					? state.youTubePlayerAPI.playVideo()
+					: state.youTubePlayerAPI.pauseVideo();
+			} else if (audioElement) {
+				playing ? audioElement.play().catch(() => {}) : audioElement.pause();
 			}
-			set((state) => {
-				state.isPlaying = value;
+			set((draft) => {
+				draft.isPlaying = playing;
 			});
 		},
 
@@ -107,96 +155,79 @@ export const useMusicStore = create<MusicState>()(
 			const nextIndex = (currentIndex + 1) % tracks.length;
 			get().loadTrack(nextIndex);
 			setTimeout(() => {
-				if (get().isPlaying) audio.play().catch(() => {});
+				if (get().isPlaying) get().togglePlay();
 			}, 0);
 		},
 
 		previous: () => {
 			const { tracks, currentIndex } = get();
 			if (tracks.length === 0) return;
-			const prevIndex = (currentIndex - 1 + tracks.length) % tracks.length;
-			get().loadTrack(prevIndex);
+			const previousIndex = (currentIndex - 1 + tracks.length) % tracks.length;
+			get().loadTrack(previousIndex);
 			setTimeout(() => {
-				if (get().isPlaying) audio.play().catch(() => {});
+				if (get().isPlaying) get().togglePlay();
 			}, 0);
 		},
 
-		seek: (time) => {
-			audio.currentTime = time;
-			set((state) => {
-				state.currentTime = time;
+		seek: (seconds) => {
+			const state = get();
+			const track = state.tracks[state.currentIndex];
+			if (track?.type === "youtube" && state.youTubePlayerAPI) {
+				state.youTubePlayerAPI.seekTo(seconds, true);
+			} else if (audioElement) {
+				audioElement.currentTime = seconds;
+			}
+			set((draft) => {
+				draft.currentTime = seconds;
 			});
 		},
 
-		setVolume: (vol) => {
-			audio.volume = vol;
-			set((state) => {
-				state.volume = vol;
-				state.muted = false;
+		setVolume: (volume) => {
+			if (audioElement) audioElement.volume = volume;
+			set((draft) => {
+				draft.volume = volume;
+				draft.muted = false;
 			});
 		},
 
 		setMuted: (muted) => {
-			audio.volume = muted ? 0 : get().volume;
-			set((state) => {
-				state.muted = muted;
+			const state = get();
+			if (audioElement) audioElement.volume = muted ? 0 : state.volume;
+			set((draft) => {
+				draft.muted = muted;
 			});
 		},
 
 		setRepeat: (repeat) =>
-			set((state) => {
-				state.repeat = repeat;
+			set((draft) => {
+				draft.repeat = repeat;
+			}),
+
+		setYouTubePlayerAPI: (api) =>
+			set((draft) => {
+				draft.youTubePlayerAPI = api;
 			}),
 
 		activate: () => {
-			if (isActivated) return;
-			isActivated = true;
-
-			const onTimeUpdate = () =>
-				set((state) => {
-					state.currentTime = audio.currentTime;
-				});
-			const onEnded = () => {
-				if (get().repeat) {
-					audio.currentTime = 0;
-					audio.play();
-				} else {
-					get().next();
-				}
-			};
-			const onLoadedMetadata = () =>
-				set((state) => {
-					state.duration = audio.duration;
-				});
-
-			audio.addEventListener("timeupdate", onTimeUpdate);
-			audio.addEventListener("ended", onEnded);
-			audio.addEventListener("loadedmetadata", onLoadedMetadata);
-
-			if (!audio.paused) {
-				set((state) => {
-					state.isPlaying = true;
-				});
-			}
+			if (activationState) return;
+			activationState = true;
+			// The engine attaches its own event listeners
 		},
 
 		deactivate: () => {
-			if (!isActivated) return;
-
-			audio.pause();
-			audio.src = "";
-			audio.removeEventListener("timeupdate", () => {});
-			audio.removeEventListener("ended", () => {});
-			audio.removeEventListener("loadedmetadata", () => {});
-
+			if (!activationState) return;
+			if (audioElement) {
+				audioElement.pause();
+				audioElement.src = "";
+			}
+			get().youTubePlayerAPI?.pauseVideo();
 			get().reset();
-			isActivated = false;
-			initialized = false;
+			activationState = false;
 		},
 
 		reset: () =>
-			set((state) => {
-				Object.assign(state, getInitialState());
+			set((draft) => {
+				Object.assign(draft, initialMusicState());
 			}),
 	})),
 );

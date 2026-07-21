@@ -1,11 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	FaBackwardFast,
 	FaForwardFast,
 	FaList,
 	FaPause,
 	FaPlay,
+	FaPlus,
 	FaRepeat,
+	FaUpload,
 	FaVolumeHigh,
 	FaVolumeXmark,
 } from "react-icons/fa6";
@@ -16,100 +18,174 @@ import {
 } from "#/components/ui/popover";
 import { cn } from "#/lib/utils";
 import { useMusicStore } from "#/store/music";
-import { useWindowStore } from "#/store/window";
 
-const DEMO_TRACKS = [
-	{
-		id: "1",
-		title: "Spring Flowers",
-		artist: "Keys of Moon",
-		cover: "/music/cover/Spring-Flowers.jpg",
-		src: "/music/Spring-Flowers.mp3",
-	},
-	{
-		id: "2",
-		title: "Feel Good",
-		artist: "MusicbyAden",
-		cover: "/music/cover/Feel-Good.jpg",
-		src: "/music/Feel-Good.mp3",
-	},
-	{
-		id: "3",
-		title: "A drift",
-		artist: "Scott Buckley",
-		cover: "/music/cover/adriftamonginfinitestars.jpg",
-		src: "/music/adriftamonginfinitestars.mp3",
-	},
-];
-
-function formatTime(seconds: number): string {
-	if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
-
-	const minute = Math.floor(seconds / 60);
-	const second = Math.floor(seconds % 60);
-
-	return `${minute}:${second?.toString()?.padStart(2, "0")}`;
+function extractYouTubeId(url: string): string | null {
+	const patterns = [
+		/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
+		/(?:https?:\/\/)?(?:www\.)?youtu\.be\/([a-zA-Z0-9_-]{11})/,
+		/(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+	];
+	for (const pattern of patterns) {
+		const match = url.match(pattern);
+		if (match) return match[1];
+	}
+	return null;
 }
 
-function Frosic({ windowId }: { windowId: string }) {
-	const store = useMusicStore();
+function formatTime(totalSeconds: number): string {
+	if (!Number.isFinite(totalSeconds) || totalSeconds < 0) return "0:00";
+	const minutes = Math.floor(totalSeconds / 60);
+	const seconds = Math.floor(totalSeconds % 60);
+	return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+function Frosic() {
+	const musicStore = useMusicStore();
+	const [coverImageSource, setCoverImageSource] = useState("");
 	const isSeeking = useRef(false);
-	const progressRef = useRef<HTMLDivElement>(null);
+	const progressBarRef = useRef<HTMLDivElement>(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
+
+	const track = musicStore.tracks[musicStore.currentIndex];
 
 	useEffect(() => {
-		store.init(DEMO_TRACKS);
-	}, []);
+		if (track) {
+			setCoverImageSource(track.cover);
+		} else {
+			setCoverImageSource("/music/cover/default.jpg");
+		}
+	}, [track?.cover, track?.id]);
 
-	useEffect(() => {
-		store.activate();
-
-		return () => {
-			const { windows } = useWindowStore.getState();
-			const musicWindows = Object.values(windows).filter(
-				(win) => win?.appId === "music",
-			);
-			if (musicWindows.length === 0) {
-				store.deactivate();
+	const handleFileDrop = useCallback(
+		(acceptedFiles: File[]) => {
+			for (const file of acceptedFiles) {
+				if (file.type.startsWith("audio/")) {
+					const objectUrl = URL.createObjectURL(file);
+					musicStore.addTrack({
+						title: file.name.replace(/\.[^/.]+$/, ""),
+						artist: "Local File",
+						cover: "/music/cover/default.jpg",
+						src: objectUrl,
+						type: "file",
+					});
+				}
 			}
-		};
-	}, [windowId]);
+		},
+		[musicStore],
+	);
+
+	const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+		if (event.target.files) {
+			handleFileDrop(Array.from(event.target.files));
+			event.target.value = "";
+		}
+	};
+
+	const handleAddUrl = () => {
+		const url = prompt("Enter audio URL or YouTube link:");
+		if (!url) return;
+		const youtubeId = extractYouTubeId(url);
+		if (youtubeId) {
+			musicStore.addTrack({
+				title: url,
+				artist: "YouTube",
+				cover: `https://img.youtube.com/vi/${youtubeId}/default.jpg`,
+				src: "",
+				type: "youtube",
+				youtubeId,
+			});
+		} else {
+			musicStore.addTrack({
+				title: url,
+				artist: "Online Stream",
+				cover: "/music/cover/default.jpg",
+				src: url,
+				type: "url",
+			});
+		}
+	};
 
 	const seekToClientX = (clientX: number) => {
-		if (!progressRef.current || !store.duration) return;
-
-		const rect = progressRef.current.getBoundingClientRect();
-		const x = Math.min(Math.max(clientX - rect.left, 0), rect.width);
-		const ratio = x / rect.width;
-		store.seek(ratio * store.duration);
+		if (!progressBarRef.current || !track) return;
+		const totalDuration = musicStore.duration;
+		if (!totalDuration) return;
+		const rectangle = progressBarRef.current.getBoundingClientRect();
+		const relativeX = Math.min(
+			Math.max(clientX - rectangle.left, 0),
+			rectangle.width,
+		);
+		const ratio = relativeX / rectangle.width;
+		musicStore.seek(ratio * totalDuration);
 	};
 
-	const handlePointerDown = (e: React.PointerEvent) => {
-		e.preventDefault();
-		(e.target as HTMLElement).setPointerCapture(e.pointerId);
+	const handlePointerDown = (event: React.PointerEvent) => {
+		event.preventDefault();
+		(event.target as HTMLElement).setPointerCapture(event.pointerId);
 		isSeeking.current = true;
-		seekToClientX(e.clientX);
+		seekToClientX(event.clientX);
 	};
 
-	const handlePointerMove = (e: React.PointerEvent) => {
-		if (isSeeking.current) seekToClientX(e.clientX);
+	const handlePointerMove = (event: React.PointerEvent) => {
+		if (isSeeking.current) {
+			seekToClientX(event.clientX);
+		}
 	};
 
 	const handlePointerUp = () => {
 		isSeeking.current = false;
 	};
 
-	const track = store.tracks[store.currentIndex] ?? DEMO_TRACKS[0];
+	if (!track) {
+		return (
+			<main className="flex h-full w-full flex-col items-center justify-center bg-foreground text-background">
+				<p className="text-sm opacity-60">No tracks yet</p>
+				<p className="text-xs mt-1 opacity-40">
+					Drop audio files, paste a URL, or add a YouTube link
+				</p>
+				<div className="flex gap-2 mt-3">
+					<button
+						onClick={handleAddUrl}
+						className="px-3 py-1 bg-background/10 rounded cursor-pointer text-xs"
+					>
+						Add Link
+					</button>
+					<button
+						onClick={() => fileInputRef.current?.click()}
+						className="px-3 py-1 bg-background/10 rounded cursor-pointer text-xs"
+					>
+						Upload File
+					</button>
+					<input
+						type="file"
+						ref={fileInputRef}
+						className="hidden"
+						accept="audio/*"
+						multiple
+						onChange={handleFileSelect}
+					/>
+				</div>
+			</main>
+		);
+	}
 
 	return (
 		<main className="flex h-full w-full flex-col overflow-hidden bg-foreground text-background">
-			<div className="relative flex-1 min-h-0 flex items-center justify-center p-2">
-				<div className="w-full h-full max-w-48 max-h-full aspect-square rounded-2xl overflow-hidden border border-background/10">
+			<div
+				onDrop={(event) => {
+					event.preventDefault();
+					const files = Array.from(event.dataTransfer.files);
+					handleFileDrop(files);
+				}}
+				onDragOver={(event) => event.preventDefault()}
+				className="relative flex-1 min-h-0 flex items-center justify-center p-2"
+			>
+				<div className="w-full h-full max-w-48 max-h-full aspect-square rounded-2xl overflow-hidden border border-background/10 bg-black/30">
 					<img
-						src={track.cover}
+						src={coverImageSource}
 						alt={track.title}
 						className="h-full w-full object-cover"
-						onError={(e) => {
-							(e.target as HTMLImageElement).src = "/music/cover/Spring-Flowers.jpg";
+						onError={() => {
+							setCoverImageSource("/music/cover/default.jpg");
 						}}
 					/>
 				</div>
@@ -122,7 +198,7 @@ function Frosic({ windowId }: { windowId: string }) {
 
 			<div className="px-3 pb-1">
 				<div
-					ref={progressRef}
+					ref={progressBarRef}
 					className="relative h-2 w-full cursor-pointer rounded-full bg-background/10 group touch-none"
 					onPointerDown={handlePointerDown}
 					onPointerMove={handlePointerMove}
@@ -132,30 +208,35 @@ function Frosic({ windowId }: { windowId: string }) {
 					<div
 						className="absolute left-0 top-0 h-full rounded-full bg-background/70"
 						style={{
-							width: store.duration ? `${(store.currentTime / store.duration) * 100}%` : "0%",
+							width: musicStore.duration
+								? `${(musicStore.currentTime / musicStore.duration) * 100}%`
+								: "0%",
 						}}
 					/>
 					<div
 						className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-background rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
 						style={{
-							left: store.duration ? `calc(${(store.currentTime / store.duration) * 100}% - 6px)`: "0%",
+							left: musicStore.duration
+								? `calc(${(musicStore.currentTime / musicStore.duration) * 100}% - 6px)`
+								: "0%",
 						}}
 					/>
 				</div>
 				<div className="mt-0.5 flex justify-between text-xs text-background/50">
-					<span>{formatTime(store.currentTime)}</span>
-					<span>{store.duration ? formatTime(store.duration) : "--:--"}</span>
+					<span>{formatTime(musicStore.currentTime)}</span>
+					<span>
+						{musicStore.duration ? formatTime(musicStore.duration) : "--:--"}
+					</span>
 				</div>
 			</div>
 
 			<div className="flex items-center justify-between px-3 pb-2">
 				<div className="flex items-center gap-1">
 					<button
-						type="button"
-						onClick={() => store.setMuted(!store.muted)}
+						onClick={() => musicStore.setMuted(!musicStore.muted)}
 						className="cursor-pointer text-background/60 hover:text-background"
 					>
-						{store.muted || store.volume === 0 ? (
+						{musicStore.muted || musicStore.volume === 0 ? (
 							<FaVolumeXmark size={14} />
 						) : (
 							<FaVolumeHigh size={14} />
@@ -166,30 +247,33 @@ function Frosic({ windowId }: { windowId: string }) {
 						min="0"
 						max="1"
 						step="0.05"
-						value={store.muted ? 0 : store.volume}
-						onChange={(e) => store.setVolume(parseFloat(e.target.value))}
+						value={musicStore.muted ? 0 : musicStore.volume}
+						onChange={(event) =>
+							musicStore.setVolume(parseFloat(event.target.value))
+						}
 						className="w-12 h-1 accent-background/60 cursor-pointer"
 					/>
 				</div>
 
 				<div className="flex items-center gap-2">
 					<button
-						type="button"
-						onClick={() => store.previous()}
+						onClick={() => musicStore.previous()}
 						className="cursor-pointer text-background/60 hover:text-background"
 					>
 						<FaBackwardFast size={16} />
 					</button>
 					<button
-						type="button"
-						onClick={() => store.togglePlay()}
+						onClick={() => musicStore.togglePlay()}
 						className="cursor-pointer rounded-full p-1 bg-background/10 hover:bg-background/20"
 					>
-						{store.isPlaying ? <FaPause size={16} /> : <FaPlay size={16} />}
+						{musicStore.isPlaying ? (
+							<FaPause size={16} />
+						) : (
+							<FaPlay size={16} />
+						)}
 					</button>
 					<button
-						type="button"
-						onClick={() => store.next()}
+						onClick={() => musicStore.next()}
 						className="cursor-pointer text-background/60 hover:text-background"
 					>
 						<FaForwardFast size={16} />
@@ -198,11 +282,10 @@ function Frosic({ windowId }: { windowId: string }) {
 
 				<div className="flex items-center gap-1.5">
 					<button
-						type="button"
-						onClick={() => store.setRepeat(!store.repeat)}
+						onClick={() => musicStore.setRepeat(!musicStore.repeat)}
 						className={cn(
 							"cursor-pointer hover:text-background",
-							store.repeat ? "text-background" : "text-background/40",
+							musicStore.repeat ? "text-background" : "text-background/40",
 						)}
 					>
 						<FaRepeat size={14} />
@@ -210,10 +293,7 @@ function Frosic({ windowId }: { windowId: string }) {
 
 					<Popover>
 						<PopoverTrigger asChild>
-							<button
-								type="button"
-								className="cursor-pointer text-background/40 hover:text-background"
-							>
+							<button className="cursor-pointer text-background/40 hover:text-background">
 								<FaList size={14} />
 							</button>
 						</PopoverTrigger>
@@ -221,28 +301,50 @@ function Frosic({ windowId }: { windowId: string }) {
 							align="center"
 							className="w-48 p-2 bg-foreground border border-background/10 text-background text-xs"
 						>
-							<div className="max-h-[10.5rem] overflow-y-auto">
-								{store.tracks.map((track, idx) => (
+							<div className="max-h-32 overflow-y-auto">
+								{musicStore.tracks.map((singleTrack, index) => (
 									<button
-										type="button"
-										key={track.id}
+										key={singleTrack.id}
 										onClick={() => {
-											store.loadTrack(idx);
-											store.setPlaying(true);
+											musicStore.loadTrack(index);
+											musicStore.setPlaying(true);
 										}}
 										className={cn(
 											"w-full text-left truncate px-2 py-1.5 rounded cursor-pointer",
-											idx === store.currentIndex
+											index === musicStore.currentIndex
 												? "bg-background/10 text-background"
 												: "text-background/60 hover:bg-background/5",
 										)}
 									>
-										{track.title} - {track.artist}
+										{singleTrack.title} - {singleTrack.artist}
 									</button>
 								))}
 							</div>
 						</PopoverContent>
 					</Popover>
+
+					<button
+						onClick={handleAddUrl}
+						className="cursor-pointer text-background/40 hover:text-background"
+						title="Add URL or YouTube link"
+					>
+						<FaPlus size={14} />
+					</button>
+					<button
+						onClick={() => fileInputRef.current?.click()}
+						className="cursor-pointer text-background/40 hover:text-background"
+						title="Upload audio files"
+					>
+						<FaUpload size={14} />
+					</button>
+					<input
+						type="file"
+						ref={fileInputRef}
+						className="hidden"
+						accept="audio/*"
+						multiple
+						onChange={handleFileSelect}
+					/>
 				</div>
 			</div>
 		</main>
