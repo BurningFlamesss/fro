@@ -18,6 +18,7 @@ import {
 } from "#/components/ui/popover";
 import { cn } from "#/lib/utils";
 import { useMusicStore } from "#/store/music";
+import { useWindowStore } from "#/store/window";
 
 function extractYouTubeId(url: string): string | null {
 	const patterns = [
@@ -55,6 +56,19 @@ function Frosic() {
 			setCoverImageSource("/music/cover/default.jpg");
 		}
 	}, [track?.cover, track?.id]);
+
+	// Additional safety: if this window was the last one, stop music on unmount
+	useEffect(() => {
+		return () => {
+			const { windows } = useWindowStore.getState();
+			const openMusicWindows = Object.values(windows).filter(
+				(windowInstance) => windowInstance?.appId === "music",
+			);
+			if (openMusicWindows.length === 0) {
+				useMusicStore.getState().deactivate();
+			}
+		};
+	}, []);
 
 	const handleFileDrop = useCallback(
 		(acceptedFiles: File[]) => {

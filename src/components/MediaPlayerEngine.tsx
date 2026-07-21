@@ -4,45 +4,55 @@ import { useMusicStore } from "#/store/music";
 import { useWindowStore } from "#/store/window";
 
 function MediaPlayerEngine() {
-	const musicStore = useMusicStore();
 	const audioElementRef = useRef<HTMLAudioElement>(null);
 	const youTubePlayerRef = useRef<YouTube>(null);
 	const timeUpdateIntervalRef = useRef<NodeJS.Timeout>();
+	const previousMusicWindowCountRef = useRef(0);
 
-	const track = musicStore.tracks[musicStore.currentIndex];
+	const track = useMusicStore((state) => state.tracks[state.currentIndex]);
 	const isYouTubeTrack = track?.type === "youtube";
 	const youTubeVideoId = track?.youtubeId;
+	const isPlaying = useMusicStore((state) => state.isPlaying);
+	const volume = useMusicStore((state) => state.volume);
+	const muted = useMusicStore((state) => state.muted);
+	const repeat = useMusicStore((state) => state.repeat);
+	const nextTrack = useMusicStore((state) => state.next);
+	const setPlaying = useMusicStore((state) => state.setPlaying);
+	const setYouTubePlayerAPI = useMusicStore(
+		(state) => state.setYouTubePlayerAPI,
+	);
+	const setAudioElement = useMusicStore((state) => state.setAudioElement);
+	const deactivateMusic = useMusicStore((state) => state.deactivate);
 
-	// Pass the real audio element to the store
 	useEffect(() => {
 		if (audioElementRef.current) {
-			musicStore.setAudioElement(audioElementRef.current);
+			setAudioElement(audioElementRef.current);
 		}
-		return () => musicStore.setAudioElement(null);
-	}, [musicStore]);
+		return () => setAudioElement(null);
+	}, [setAudioElement]);
 
-	// Stop playback when no Frosic window remains open
 	useEffect(() => {
-		const checkForWindows = () => {
+		const checkAndStopIfNoWindows = () => {
 			const { windows } = useWindowStore.getState();
 			const openMusicWindows = Object.values(windows).filter(
-				(window) => window?.appId === "music",
+				(windowInstance) => windowInstance?.appId === "music",
 			);
-			if (openMusicWindows.length === 0) {
-				musicStore.deactivate();
+			const currentCount = openMusicWindows.length;
+
+			if (currentCount === 0 && previousMusicWindowCountRef.current > 0) {
+				deactivateMusic();
 			}
+			previousMusicWindowCountRef.current = currentCount;
 		};
 
-		checkForWindows();
+		checkAndStopIfNoWindows();
 		const unsubscribe = useWindowStore.subscribe(
 			(state) => state.windows,
-			checkForWindows,
-			{ equalityFn: shallow },
+			checkAndStopIfNoWindows,
 		);
 		return () => unsubscribe();
-	}, [musicStore]);
+	}, [deactivateMusic]);
 
-	// Attach audio element event listeners for time / ended
 	useEffect(() => {
 		const audio = audioElementRef.current;
 		if (!audio || isYouTubeTrack) return;
@@ -53,11 +63,11 @@ function MediaPlayerEngine() {
 			});
 		};
 		const onEnded = () => {
-			if (musicStore.repeat) {
+			if (repeat) {
 				audio.currentTime = 0;
 				audio.play().catch(() => {});
 			} else {
-				musicStore.next();
+				nextTrack();
 			}
 		};
 		const onLoadedMetadata = () => {
@@ -74,20 +84,18 @@ function MediaPlayerEngine() {
 			audio.removeEventListener("ended", onEnded);
 			audio.removeEventListener("loadedmetadata", onLoadedMetadata);
 		};
-	}, [isYouTubeTrack, musicStore.repeat, musicStore.next]);
+	}, [isYouTubeTrack, repeat, nextTrack]);
 
-	// Keep audio element in sync with play/pause state
 	useEffect(() => {
 		const audio = audioElementRef.current;
 		if (!audio || isYouTubeTrack) return;
-		if (musicStore.isPlaying) {
+		if (isPlaying) {
 			audio.play().catch(() => {});
 		} else {
 			audio.pause();
 		}
-	}, [musicStore.isPlaying, isYouTubeTrack]);
+	}, [isPlaying, isYouTubeTrack]);
 
-	// YouTube time tracking
 	useEffect(() => {
 		if (!isYouTubeTrack || !youTubePlayerRef.current?.internalPlayer) return;
 		timeUpdateIntervalRef.current = setInterval(async () => {
@@ -97,7 +105,7 @@ function MediaPlayerEngine() {
 					await youTubePlayerRef.current.internalPlayer.getCurrentTime();
 				const duration =
 					await youTubePlayerRef.current.internalPlayer.getDuration();
-				if (musicStore.isPlaying) {
+				if (isPlaying) {
 					useMusicStore.setState((state) => {
 						state.currentTime = currentTime;
 						state.duration = duration;
@@ -108,18 +116,17 @@ function MediaPlayerEngine() {
 			}
 		}, 1000);
 		return () => clearInterval(timeUpdateIntervalRef.current);
-	}, [isYouTubeTrack, musicStore.isPlaying, track?.id]);
+	}, [isYouTubeTrack, isPlaying, track?.id]);
 
-	// Volume sync for both players
 	useEffect(() => {
 		if (isYouTubeTrack && youTubePlayerRef.current?.internalPlayer) {
 			youTubePlayerRef.current.internalPlayer.setVolume(
-				musicStore.muted ? 0 : musicStore.volume * 100,
+				muted ? 0 : volume * 100,
 			);
 		} else if (audioElementRef.current) {
-			audioElementRef.current.volume = musicStore.muted ? 0 : musicStore.volume;
+			audioElementRef.current.volume = muted ? 0 : volume;
 		}
-	}, [musicStore.volume, musicStore.muted, isYouTubeTrack]);
+	}, [volume, muted, isYouTubeTrack]);
 
 	return (
 		<div
@@ -140,7 +147,7 @@ function MediaPlayerEngine() {
 						width: 1,
 						height: 1,
 						playerVars: {
-							autoplay: musicStore.isPlaying ? 1 : 0,
+							autoplay: isPlaying ? 1 : 0,
 							controls: 0,
 							disablekb: 1,
 							origin: window.location.origin,
@@ -148,7 +155,7 @@ function MediaPlayerEngine() {
 						},
 					}}
 					onReady={(event) => {
-						musicStore.setYouTubePlayerAPI({
+						setYouTubePlayerAPI({
 							playVideo: () => event.target.playVideo(),
 							pauseVideo: () => event.target.pauseVideo(),
 							seekTo: (seconds, allowSeekAhead) =>
@@ -156,47 +163,23 @@ function MediaPlayerEngine() {
 							getCurrentTime: () => event.target.getCurrentTime(),
 							getDuration: () => event.target.getDuration(),
 						});
-						event.target.setVolume(
-							musicStore.muted ? 0 : musicStore.volume * 100,
-						);
-						if (musicStore.isPlaying) event.target.playVideo();
+						event.target.setVolume(muted ? 0 : volume * 100);
+						if (isPlaying) event.target.playVideo();
 					}}
 					onEnd={() => {
-						if (musicStore.repeat) {
+						if (repeat) {
 							youTubePlayerRef.current?.internalPlayer?.seekTo(0);
 							youTubePlayerRef.current?.internalPlayer?.playVideo();
 						} else {
-							musicStore.next();
+							nextTrack();
 						}
 					}}
-					onPlay={() => musicStore.setPlaying(true)}
-					onPause={() => musicStore.setPlaying(false)}
+					onPlay={() => setPlaying(true)}
+					onPause={() => setPlaying(false)}
 				/>
 			)}
 		</div>
 	);
-}
-
-function shallow<T>(objA: T, objB: T): boolean {
-	if (Object.is(objA, objB)) return true;
-	if (
-		typeof objA !== "object" ||
-		objA === null ||
-		typeof objB !== "object" ||
-		objB === null
-	)
-		return false;
-	const keysA = Object.keys(objA);
-	const keysB = Object.keys(objB);
-	if (keysA.length !== keysB.length) return false;
-	for (const key of keysA) {
-		if (!Object.prototype.hasOwnProperty.call(objB, key)) return false;
-		if (
-			!Object.is(objA[key as keyof typeof objA], objB[key as keyof typeof objB])
-		)
-			return false;
-	}
-	return true;
 }
 
 export default MediaPlayerEngine;

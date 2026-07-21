@@ -51,7 +51,6 @@ interface MusicState {
 }
 
 let audioElement: HTMLAudioElement | null = null;
-let activationState = false;
 
 const initialMusicState = () => ({
 	tracks: [] as Track[],
@@ -77,9 +76,6 @@ export const useMusicStore = create<MusicState>()(
 			set((state) => {
 				const id = crypto.randomUUID();
 				state.tracks.push({ ...track, id });
-				if (state.tracks.length === 1) {
-					// optionally auto‑load
-				}
 			}),
 		playTrackById: (trackId) => {
 			const index = get().tracks.findIndex((t) => t.id === trackId);
@@ -209,20 +205,16 @@ export const useMusicStore = create<MusicState>()(
 			}),
 
 		activate: () => {
-			if (activationState) return;
-			activationState = true;
-			// The engine attaches its own event listeners
+			// Engine manages its own listeners
 		},
 
 		deactivate: () => {
-			if (!activationState) return;
 			if (audioElement) {
 				audioElement.pause();
 				audioElement.src = "";
 			}
 			get().youTubePlayerAPI?.pauseVideo();
 			get().reset();
-			activationState = false;
 		},
 
 		reset: () =>
