@@ -225,7 +225,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 	const { setCalculatorExpression } = useCalculatorStore();
 	const { setCommandExpression } = useTerminalStore();
 	const { addAndUpdateTab } = useBrowserStore();
-	const { addTrack } = useMusicStore();
+	const { addTrack, next } = useMusicStore();
 
 	const [currentFolderId, setCurrentFolderId] = useState<string>(folderId);
 	const [renameTarget, setRenameTarget] = useState<{
@@ -313,6 +313,8 @@ function Froxplorer({ windowId }: { windowId: string }) {
 					});
 					
 					openApp("music");
+
+					next()
 
 					break;
 				}

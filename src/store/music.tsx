@@ -101,7 +101,7 @@ export const useMusicStore = create<MusicState>()(
 
 			const audio = audioElement;
 			if (audio) {
-				audio.src = track.src;
+				audio.src = track?.src;
 				audio.load();
 			}
 			set((state) => {

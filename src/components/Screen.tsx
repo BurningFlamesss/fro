@@ -142,7 +142,7 @@ function Screen() {
 	const { setCalculatorExpression } = useCalculatorStore();
 	const { setCommandExpression } = useTerminalStore();
 	const { addAndUpdateTab } = useBrowserStore();
-	const { addTrack } = useMusicStore();
+	const { addTrack, next } = useMusicStore();
 
 	const handleOpen = async (node: FileNode, openId?: AppId) => {
 		await new Promise((resolve, reject) => setTimeout(() => resolve(null), 20)); // Awaiting so that the context menu gets in original position and the z-index order isnot disturbed
@@ -215,6 +215,8 @@ function Screen() {
 					});
 
 					openApp("music");
+
+					next();
 
 					break;
 				}
