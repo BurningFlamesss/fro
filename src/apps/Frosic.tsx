@@ -53,7 +53,7 @@ function Frosic() {
 		if (track) {
 			setCoverImageSource(track.cover);
 		} else {
-			setCoverImageSource("/music/cover/default.jpg");
+			setCoverImageSource("/apps/Music.svg");
 		}
 	}, [track?.cover, track?.id]);
 

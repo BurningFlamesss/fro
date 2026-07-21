@@ -21,6 +21,7 @@ import { useNoteStore } from "#/store/note.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import { type AppId, Apps, type WindowInstance } from "../constants";
+import { useMusicStore } from "#/store/music.tsx";
 
 function useHoverNavigate(onNavigate: () => void, delay = 600) {
 	const timeoutReference = useRef<NodeJS.Timeout | null>(null);
@@ -224,6 +225,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 	const { setCalculatorExpression } = useCalculatorStore();
 	const { setCommandExpression } = useTerminalStore();
 	const { addAndUpdateTab } = useBrowserStore();
+	const { addTrack } = useMusicStore();
 
 	const [currentFolderId, setCurrentFolderId] = useState<string>(folderId);
 	const [renameTarget, setRenameTarget] = useState<{
@@ -297,6 +299,20 @@ function Froxplorer({ windowId }: { windowId: string }) {
 						}),
 					);
 					openApp(key);
+
+					break;
+				}
+				case "music": {
+					
+					addTrack({
+						title: node.name,
+						src: node.content ?? "",
+						type: "file",
+						cover: "/apps/Music.svg",
+						artist: "Local File",
+					});
+					
+					openApp("music");
 
 					break;
 				}

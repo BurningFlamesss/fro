@@ -28,6 +28,7 @@ import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
 import { useWidgetStore } from "#/store/widget.tsx";
 import WidgetRenderer from "#/components/WidgetRenderer.tsx";
 import { useBrowserStore } from "#/store/browser.tsx";
+import { useMusicStore } from "#/store/music.tsx";
 
 function Screen() {
 	const { apps, openApp, windows, focusWindow, pinApp } = useWindowStore();
@@ -141,6 +142,7 @@ function Screen() {
 	const { setCalculatorExpression } = useCalculatorStore();
 	const { setCommandExpression } = useTerminalStore();
 	const { addAndUpdateTab } = useBrowserStore();
+	const { addTrack } = useMusicStore();
 
 	const handleOpen = async (node: FileNode, openId?: AppId) => {
 		await new Promise((resolve, reject) => setTimeout(() => resolve(null), 20)); // Awaiting so that the context menu gets in original position and the z-index order isnot disturbed
@@ -200,6 +202,19 @@ function Screen() {
 						}),
 					);
 					openApp(key);
+
+					break;
+				}
+				case "music": {
+					addTrack({
+						title: node.name,
+						src: node.content ?? "",
+						type: "file",
+						cover: "/apps/Music.svg",
+						artist: "Local File",
+					});
+
+					openApp("music");
 
 					break;
 				}

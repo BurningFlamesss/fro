@@ -15,7 +15,7 @@ Fro is a productive first WebOS.
 ## Apps
 
 1. Frotes (Markdown)
-2. Frottings (for Wallpaper change) // TODO: theme change, virtual pets
+2. Frottings (for Wallpaper change) // TODO: virtual pets
 3. Frowser (Search, and browse (Iframe based))
 4. Frominal (with dozens of commands like ls, open [app], add [app], calc, type)
 5. Froculator (Complex arithmetic calculations with memory system and shorcuts)
@@ -29,7 +29,8 @@ Fro is a productive first WebOS.
 
 1. FypeMaster (Type at the speed close to 99.99% of c)
 2. Froview (Witness the pixels)
-3. NOTFOUND (Are you f*#king kidding me? I meant Froking)
+3. Frowebview (Witness the power of markups)
+4. NOTFOUND (Are you f*#king kidding me? I meant Froking)
 
 ## Widgets
 
@@ -38,3 +39,4 @@ Fro is a productive first WebOS.
 3. Quote (Shows random quotes)
 4. Tasks (Shows the pending tasks)
 5. Pomodoro (Starts pomodoro timer)
+6. Events (Shows the upcoming events)
