@@ -121,6 +121,12 @@ export const Widgets: Record<WidgetId, WidgetInstance> = {
 		minimized: false,
 		locked: false,
 		hidden: false,
+		widgetSpecification: {
+			source: {
+				type: "html",
+				code: "<h1>Launcher</h1>",
+			}
+		}
 	},
 };
 

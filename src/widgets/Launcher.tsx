@@ -9,7 +9,10 @@ function Launcher({ props }: WidgetProps) {
 
 		if (id) {
 			const widget = widgets[id];
-			const source = widget.widgetSpecification?.source ?? "";
+			const source = widget.widgetSpecification?.source ?? {
+				type: "html",
+				code: "",
+			};
 
 			const injectableCode = `
       <style>
@@ -18,7 +21,7 @@ function Launcher({ props }: WidgetProps) {
         }
       </style>
       <main>
-        ${source}
+        ${source.code}
       </main>
 		`;
 
