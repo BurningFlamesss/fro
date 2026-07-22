@@ -7,6 +7,7 @@ import {
 	type WidgetId,
 	type WidgetInstance,
 	Widgets,
+	type WidgetSpecification,
 } from "../constants";
 
 interface WidgetStore {
@@ -15,6 +16,7 @@ interface WidgetStore {
 	addWidget: (
 		definitionId: WidgetId,
 		position?: { x: number; y: number },
+		widgetSpecification?: WidgetSpecification,
 	) => void;
 	removeWidget: (id: WidgetId) => void;
 	minimizeWidget: (id: WidgetId) => void;
@@ -35,9 +37,11 @@ export const useWidgetStore = create<WidgetStore>()(
 		immer((set) => ({
 			widgets: Widgets,
 
-			addWidget: (definitionId, position) => {
+			addWidget: (definitionId, position, widgetSpecification) => {
 				const widget = WidgetAppDefinitions[definitionId];
+
 				if (!widget) return;
+				
 				set((state) => {
 					const id =
 						`widget_${definitionId}_${crypto.randomUUID()}` as WidgetId;
@@ -53,6 +57,7 @@ export const useWidgetStore = create<WidgetStore>()(
 						minimized: false,
 						hidden: false,
 						locked: false,
+						widgetSpecification,
 					};
 				});
 			},

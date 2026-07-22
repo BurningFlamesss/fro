@@ -116,7 +116,7 @@ function Frotore() {
 					onClick={() => setFocused(false)}
 				/>
 			)}
-			<h2 className="mb-4 text-lg font-semibold">Discover</h2>
+			<h2 className="mb-4 text-lg font-semibold">Installed</h2>
 			<div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
 				<div className="flex flex-col items-center justify-center gap-y-1">
 					<button
@@ -139,6 +139,29 @@ function Frotore() {
 					</div>
 				</div>
 			</div>
+			{/* <h2 className="my-4 text-lg font-semibold">Discover</h2>
+			<div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
+				<div className="flex flex-col items-center justify-center gap-y-1">
+					<button
+						type="button"
+						className={cn(
+							"group relative overflow-hidden rounded-xl transition-all cursor-pointer",
+						)}
+					>
+						<img
+							src={"/public/apps/Game.svg"}
+							alt={""}
+							loading="lazy"
+							className="h-full w-full object-cover"
+						/>
+					</button>
+					<div className="">
+						<p className="truncate text-xs font-medium text-background">
+							Froncher
+						</p>
+					</div>
+				</div>
+			</div> */}
 		</div>
 	);
 }

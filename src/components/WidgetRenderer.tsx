@@ -240,7 +240,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 
 			<div className="w-full h-[calc(100%-2rem)] overflow-auto border border-dashed border-transparent group-hover:border-black">
 				{source.type === "component" && source.code ? (
-					<source.code />
+					<source.code props={{ id, definitionId, name }} />
 				) : source.type === "html" ? (
 					<iframe
 						srcDoc={`

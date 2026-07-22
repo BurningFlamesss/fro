@@ -10,10 +10,11 @@ import Frotore from "#/apps/Frotore.tsx";
 import Frottings from "#/apps/Frottings.tsx";
 import Frowser from "#/apps/Frowser.tsx";
 import Froxplorer from "#/apps/Froxplorer.tsx";
-import { Quote } from "#/widgets/Quote.tsx";
-import Task from "#/widgets/Task.tsx";
 import Clock from "#/widgets/Clock.tsx";
 import Event from "#/widgets/Event.tsx";
+import { Quote } from "#/widgets/Quote.tsx";
+import Task from "#/widgets/Task.tsx";
+import Launcher from "#/widgets/Launcher.tsx";
 
 export const INITIAL_Z_INDEX = 1000;
 export const BACK_Z_INDEX = 0;
@@ -30,7 +31,15 @@ export interface AppInstance {
 	singleInstance?: boolean;
 }
 
-export type WidgetProps = {};
+export type WidgetSpecification = {
+	source?: {
+		type: "html";
+		code: string;
+	};
+};
+export type WidgetProps = {
+	props?: Record<string, unknown>
+};
 
 export interface WidgetInstance {
 	id: WidgetId;
@@ -43,7 +52,7 @@ export interface WidgetInstance {
 	minimized: boolean;
 	locked: boolean;
 	hidden: boolean;
-	props?: Record<string, unknown>;
+	widgetSpecification?: WidgetSpecification;
 }
 
 export interface WidgetAppDefinitionsType {
@@ -252,6 +261,18 @@ export const Widgets: Record<WidgetId, WidgetInstance> = {
 		locked: false,
 		hidden: false,
 	},
+	widget_launcher: {
+		id: "widget_launcher",
+		definitionId: "widget_launcher",
+		name: "Widget",
+		x: 450,
+		y: 300,
+		width: 200,
+		height: 200,
+		minimized: false,
+		locked: false,
+		hidden: false,
+	},
 };
 
 export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> =
@@ -287,6 +308,13 @@ export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> =
 				code: Clock,
 			},
 		},
+		widget_launcher: {
+			sizeConfigurations: defaultSizeConfigurations,
+			source: {
+				type: "component",
+				code: Launcher
+			}
+		}
 	};
 
 export const Windows: Partial<Record<WindowId, WindowInstance>> = {};
