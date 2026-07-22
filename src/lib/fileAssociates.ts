@@ -1,4 +1,4 @@
-import type { AppId } from "../constants";
+import type { AppId } from "../constants/apps";
 
 export const FILE_ASSOCIATIONS: Record<
 	AppId,

@@ -8,7 +8,7 @@ import {
 import { Rnd } from "react-rnd";
 import { cn } from "#/lib/utils.ts";
 import { useWidgetStore } from "#/store/widget.tsx";
-import { WidgetAppDefinitions, type WidgetInstance } from "../constants";
+import { WidgetAppDefinitions, type WidgetInstance } from "../constants/widgets";
 
 const MIN_VISIBLE_W = 100;
 const MIN_VISIBLE_H = 40;

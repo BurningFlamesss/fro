@@ -3,7 +3,7 @@ import React, { Activity, createContext, useCallback, useEffect, useRef } from "
 import { Rnd } from "react-rnd";
 import { cn } from "#/lib/utils.ts";
 import { useWindowStore } from "#/store/window.tsx";
-import type { WindowInstance } from "../constants";
+import type { WindowInstance } from "../constants/apps";
 
 export const WindowIdContext = createContext<string>("");
 

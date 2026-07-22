@@ -6,7 +6,7 @@ import { PiMagnifyingGlassDuotone } from "react-icons/pi";
 import { RiUnpinLine } from "react-icons/ri";
 import { cn, getDateTime } from "#/lib/utils.ts";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
-import type { AppInstance, WindowInstance } from "../constants";
+import type { AppInstance, WindowInstance } from "../constants/apps";
 import {
 	ContextMenu,
 	ContextMenuContent,

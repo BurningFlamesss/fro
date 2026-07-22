@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import FroncherExplore from "#/components/FroncherExplore.tsx";
 import type { LaunchProps } from "#/store/launcher.tsx";
 import { useWindowStore } from "#/store/window.tsx";
-import type { WindowInstance } from "../constants";
+import type { WindowInstance } from "../constants/apps";
 
 export interface LaunchSpecification {
 	name: string;

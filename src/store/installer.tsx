@@ -5,7 +5,7 @@ import {
 	type WidgetAppDefinitionsType,
 	type WidgetId,
 	type WidgetInstance,
-} from "../constants";
+} from "../constants/widgets";
 
 interface InstallerStore {
 	installedWidgetDefinitions: Record<WidgetId, WidgetAppDefinitionsType>;

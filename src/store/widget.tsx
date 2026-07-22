@@ -6,9 +6,9 @@ import {
 	WidgetAppDefinitions,
 	type WidgetId,
 	type WidgetInstance,
-	Widgets,
 	type WidgetSpecification,
-} from "../constants";
+	Widgets,
+} from "../constants/widgets";
 
 interface WidgetStore {
 	widgets: Record<WidgetId, WidgetInstance>;
@@ -29,7 +29,10 @@ interface WidgetStore {
 		id: WidgetId,
 		rectangle: { x: number; y: number; width: number; height: number },
 	) => void;
-	updateWidgetProps: (id: WidgetId, props: Record<string, unknown>) => void;
+	updateWidgetSpecifications: (
+		id: WidgetId,
+		specifications: Record<string, unknown>,
+	) => void;
 }
 
 export const useWidgetStore = create<WidgetStore>()(
@@ -41,7 +44,7 @@ export const useWidgetStore = create<WidgetStore>()(
 				const widget = WidgetAppDefinitions[definitionId];
 
 				if (!widget) return;
-				
+
 				set((state) => {
 					const id =
 						`widget_${definitionId}_${crypto.randomUUID()}` as WidgetId;
@@ -112,13 +115,13 @@ export const useWidgetStore = create<WidgetStore>()(
 					}
 				}),
 
-			updateWidgetProps: (id, props) =>
+			updateWidgetSpecifications: (id, specifications) =>
 				set((state) => {
 					const widget = state.widgets[id];
 					if (widget) {
-						widget.props = {
-							...widget.props,
-							...props,
+						widget.widgetSpecification = {
+							...widget.widgetSpecification,
+							...specifications,
 						};
 					}
 				}),

@@ -8,7 +8,7 @@ import {
 	INITIAL_Z_INDEX,
 	type WindowId,
 	Windows,
-} from "../constants";
+} from "../constants/apps";
 
 interface WindowStore {
 	windows: typeof Windows;

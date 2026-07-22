@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { useWindowStore } from "#/store/window.tsx";
-import type { WindowInstance } from "../constants";
+import type { WindowInstance } from "../constants/apps";
 import { useMusicStore } from "#/store/music.tsx";
 
 interface Props {

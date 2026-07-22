@@ -1,5 +1,4 @@
 import type React from "react";
-import type { ComponentType } from "react";
 import Froculator from "#/apps/Froculator.tsx";
 import Frolendar from "#/apps/Frolendar.tsx";
 import Frominal from "#/apps/Frominal.tsx";
@@ -10,11 +9,6 @@ import Frotore from "#/apps/Frotore.tsx";
 import Frottings from "#/apps/Frottings.tsx";
 import Frowser from "#/apps/Frowser.tsx";
 import Froxplorer from "#/apps/Froxplorer.tsx";
-import Clock from "#/widgets/Clock.tsx";
-import Event from "#/widgets/Event.tsx";
-import { Quote } from "#/widgets/Quote.tsx";
-import Task from "#/widgets/Task.tsx";
-import Launcher from "#/widgets/Launcher.tsx";
 
 export const INITIAL_Z_INDEX = 1000;
 export const BACK_Z_INDEX = 0;
@@ -29,50 +23,6 @@ export interface AppInstance {
 	component: React.ReactNode;
 	theme?: string;
 	singleInstance?: boolean;
-}
-
-export type WidgetSpecification = {
-	source?: {
-		type: "html";
-		code: string;
-	};
-};
-export type WidgetProps = {
-	props?: Record<string, unknown>
-};
-
-export interface WidgetInstance {
-	id: WidgetId;
-	definitionId: WidgetId;
-	name: string;
-	x: number;
-	y: number;
-	width: number;
-	height: number;
-	minimized: boolean;
-	locked: boolean;
-	hidden: boolean;
-	widgetSpecification?: WidgetSpecification;
-}
-
-export interface WidgetAppDefinitionsType {
-	sizeConfigurations?: {
-		defaultHeight?: number;
-		defaultWidth?: number;
-		minimumHeight?: number;
-		minimumWidth?: number;
-		maximumHeight?: number;
-		maximumWidth?: number;
-	};
-	source:
-		| {
-				type: "html";
-				code: string;
-		  }
-		| {
-				type: "component";
-				code: ComponentType<WidgetProps>;
-		  };
 }
 
 export interface WindowInstance {
@@ -106,7 +56,6 @@ export type AppId =
 	| "launcher"
 	| `app_${string}`;
 
-export type WidgetId = `widget_${string}`;
 export type WindowId = `${AppId}_${string}`;
 
 export const Apps: Record<AppId, AppInstance> = {
@@ -181,7 +130,7 @@ export const Apps: Record<AppId, AppInstance> = {
 		singleInstance: true,
 		isPinned: false,
 		theme: DEFAULT_THEME,
-		component: <Frosic windowId="" />,
+		component: <Frosic />,
 	},
 	store: {
 		id: "store",
@@ -202,120 +151,6 @@ export const Apps: Record<AppId, AppInstance> = {
 		component: <Froncher windowId="" />,
 	},
 };
-
-const defaultSizeConfigurations = {
-	defaultHeight: 70,
-	defaultWidth: 150,
-	minimumHeight: 70,
-	minimumWidth: 150,
-	maximumHeight: 400,
-	maximumWidth: 700,
-};
-
-export const Widgets: Record<WidgetId, WidgetInstance> = {
-	widget_quote: {
-		id: "widget_quote",
-		definitionId: "widget_quote",
-		name: "Quote",
-		x: 208,
-		y: 0,
-		width: 399,
-		height: 122,
-		minimized: false,
-		hidden: false,
-		locked: false,
-	},
-	widget_task: {
-		id: "widget_task",
-		definitionId: "widget_task",
-		name: "Tasks",
-		x: 0,
-		y: 218,
-		width: 342,
-		height: 125,
-		minimized: false,
-		hidden: false,
-		locked: false,
-	},
-	widget_events: {
-		id: "widget_events",
-		definitionId: "widget_events",
-		name: "Events",
-		x: 350,
-		y: 140,
-		width: 317,
-		height: 125,
-		minimized: false,
-		hidden: false,
-		locked: false,
-	},
-	widget_clock: {
-		id: "widget_clock",
-		definitionId: "widget_clock",
-		name: "Clock",
-		x: 0,
-		y: 0,
-		width: 173,
-		height: 173,
-		minimized: false,
-		locked: false,
-		hidden: false,
-	},
-	widget_launcher: {
-		id: "widget_launcher",
-		definitionId: "widget_launcher",
-		name: "Widget",
-		x: 450,
-		y: 300,
-		width: 200,
-		height: 200,
-		minimized: false,
-		locked: false,
-		hidden: false,
-	},
-};
-
-export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> =
-	{
-		widget_quote: {
-			sizeConfigurations: defaultSizeConfigurations,
-			source: {
-				type: "component",
-				code: Quote,
-			},
-		},
-		widget_task: {
-			sizeConfigurations: defaultSizeConfigurations,
-			source: {
-				type: "component",
-				code: Task,
-			},
-		},
-		widget_events: {
-			sizeConfigurations: defaultSizeConfigurations,
-			source: {
-				type: "component",
-				code: Event,
-			},
-		},
-		widget_clock: {
-			sizeConfigurations: {
-				...defaultSizeConfigurations,
-				minimumHeight: 200,
-			},
-			source: {
-				type: "component",
-				code: Clock,
-			},
-		},
-		widget_launcher: {
-			sizeConfigurations: defaultSizeConfigurations,
-			source: {
-				type: "component",
-				code: Launcher
-			}
-		}
-	};
 
 export const Windows: Partial<Record<WindowId, WindowInstance>> = {};
 

@@ -1,14 +1,24 @@
+import { useCallback, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { IoMdRefresh } from "react-icons/io";
 import { RiPushpinLine } from "react-icons/ri";
+import WidgetRenderer from "#/components/WidgetRenderer.tsx";
+import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
 import {
 	cn,
 	parseFileName,
 	searchFileAssociatesThroughExtension,
 } from "#/lib/utils.ts";
-import { useFileSystemStore, type FileNode } from "#/store/fs.tsx";
+import { useBrowserStore } from "#/store/browser.tsx";
+import { useCalculatorStore } from "#/store/calculator.tsx";
+import { type FileNode, useFileSystemStore } from "#/store/fs.tsx";
+import { useLauncherStore } from "#/store/launcher.tsx";
+import { useMusicStore } from "#/store/music.tsx";
+import { useNoteStore } from "#/store/note.tsx";
+import { useTerminalStore } from "#/store/terminal.tsx";
+import { useWidgetStore } from "#/store/widget.tsx";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
-import type { AppId, AppInstance, WindowInstance } from "../constants";
+import type { AppId, AppInstance, WindowInstance } from "../constants/apps";
 import {
 	ContextMenu,
 	ContextMenuContent,
@@ -19,16 +29,6 @@ import {
 	ContextMenuSubTrigger,
 	ContextMenuTrigger,
 } from "./ui/context-menu";
-import { useCallback, useState } from "react";
-import { useNoteStore } from "#/store/note.tsx";
-import { useLauncherStore } from "#/store/launcher.tsx";
-import { useCalculatorStore } from "#/store/calculator.tsx";
-import { useTerminalStore } from "#/store/terminal.tsx";
-import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
-import { useWidgetStore } from "#/store/widget.tsx";
-import WidgetRenderer from "#/components/WidgetRenderer.tsx";
-import { useBrowserStore } from "#/store/browser.tsx";
-import { useMusicStore } from "#/store/music.tsx";
 
 function Screen() {
 	const { apps, openApp, windows, focusWindow, pinApp } = useWindowStore();

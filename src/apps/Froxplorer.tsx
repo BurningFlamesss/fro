@@ -20,7 +20,7 @@ import { useLauncherStore } from "#/store/launcher.tsx";
 import { useNoteStore } from "#/store/note.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
 import { useWindowStore } from "#/store/window.tsx";
-import { type AppId, Apps, type WindowInstance } from "../constants";
+import { type AppId, Apps, type WindowInstance } from "../constants/apps";
 import { useMusicStore } from "#/store/music.tsx";
 
 function useHoverNavigate(onNavigate: () => void, delay = 600) {

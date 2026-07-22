@@ -20,7 +20,7 @@ import { useLauncherStore } from "#/store/launcher.tsx";
 import { useNoteStore } from "#/store/note.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
 import { useWindowStore } from "#/store/window.tsx";
-import type { AppInstance, WindowInstance } from "../constants";
+import type { AppInstance, WindowInstance } from "../constants/apps";
 import { EVENT_COLORS } from "./Frolendar";
 
 type TerminalResponse = React.ReactNode | string;

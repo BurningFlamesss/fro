@@ -1,5 +1,5 @@
 import { useWindowStore } from "#/store/window.tsx";
-import type { WindowInstance } from "../constants";
+import type { WindowInstance } from "../constants/apps";
 import Window from "./Window";
 
 function WindowOverlays() {

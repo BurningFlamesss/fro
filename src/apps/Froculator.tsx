@@ -8,7 +8,7 @@ import { useCalculatorStore } from "#/store/calculator.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import { evaluate } from "mathjs";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { WindowInstance } from "../constants";
+import type { WindowInstance } from "../constants/apps";
 
 type ButtonType =
 	| "number"

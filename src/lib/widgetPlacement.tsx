@@ -1,4 +1,4 @@
-import type { WidgetInstance } from "../constants";
+import type { WidgetInstance } from "../constants/widgets";
 
 interface Rectangle {
 	x: number;
