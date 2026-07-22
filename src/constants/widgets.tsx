@@ -52,9 +52,9 @@ export interface WidgetAppDefinitionsType {
 
 export type WidgetId = `widget_${string}`;
 
-const defaultSizeConfigurations = {
-	defaultHeight: 70,
-	defaultWidth: 150,
+export const defaultSizeConfigurations = {
+	defaultHeight: 122,
+	defaultWidth: 170,
 	minimumHeight: 70,
 	minimumWidth: 150,
 	maximumHeight: 400,
@@ -121,12 +121,12 @@ export const Widgets: Record<WidgetId, WidgetInstance> = {
 		minimized: false,
 		locked: false,
 		hidden: false,
-		widgetSpecification: {
-			source: {
-				type: "html",
-				code: "<h1>Launcher</h1>",
-			}
-		}
+		// widgetSpecification: {
+		// 	source: {
+		// 		type: "html",
+		// 		code: "<h1>Launcher</h1>",
+		// 	}
+		// }
 	},
 };
 

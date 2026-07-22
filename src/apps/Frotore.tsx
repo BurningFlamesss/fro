@@ -1,11 +1,13 @@
 import { useRef, useState } from "react";
 import { PiMagnifyingGlassDuotone, PiMicrophone, PiX } from "react-icons/pi";
 import { cn } from "#/lib/utils.ts";
+import { useWidgetStore } from "#/store/widget.tsx";
 
 function Frotore() {
 	const [value, setValue] = useState("");
 	const [focused, setFocused] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
+	const { addWidget } = useWidgetStore();
 
 	const submit = (text: string) => {
 		const trimmed = text.trim();
@@ -120,6 +122,14 @@ function Frotore() {
 			<div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
 				<div className="flex flex-col items-center justify-center gap-y-1">
 					<button
+						// onClick={() => {
+						// 	addWidget("widget_launcher", undefined, {
+						// 		source: {
+						// 			type: "html",
+						// 			code: "<div style='background: white;'><h1>Froncher Launcher</h1></div>"
+						// 		}
+						// 	})
+						// }}
 						type="button"
 						className={cn(
 							"group relative overflow-hidden rounded-xl transition-all cursor-pointer",

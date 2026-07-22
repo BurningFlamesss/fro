@@ -8,6 +8,7 @@ import {
 	type WidgetInstance,
 	type WidgetSpecification,
 	Widgets,
+	defaultSizeConfigurations,
 } from "../constants/widgets";
 
 interface WidgetStore {
@@ -55,8 +56,12 @@ export const useWidgetStore = create<WidgetStore>()(
 						name: definitionId,
 						x: position?.x ?? 100,
 						y: position?.y ?? 100,
-						width: widget.sizeConfigurations?.defaultWidth ?? 200,
-						height: widget.sizeConfigurations?.defaultHeight ?? 100,
+						width:
+							widget.sizeConfigurations?.defaultWidth ??
+							defaultSizeConfigurations.defaultWidth,
+						height:
+							widget.sizeConfigurations?.defaultHeight ??
+							defaultSizeConfigurations.defaultHeight,
 						minimized: false,
 						hidden: false,
 						locked: false,
