@@ -246,7 +246,7 @@ export const Widgets: Record<WidgetId, WidgetInstance> = {
 		name: "Clock",
 		x: 0,
 		y: 0,
-		width: 205,
+		width: 173,
 		height: 173,
 		minimized: false,
 		locked: false,

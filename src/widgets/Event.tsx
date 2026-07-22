@@ -15,7 +15,7 @@ function Event() {
 
 	return (
 		<ul className="p-4 min-h-full w-full glassmorphism">
-			{upcoming.map((tab, index) => (
+			{upcoming.length > 0 ? upcoming.map((tab, index) => (
 				<li key={tab.id}>
 					{index + 1}. {tab.title}
 					<br />
@@ -23,7 +23,7 @@ function Event() {
 						{formatEventRange(tab.start, tab.end)}
 					</span>
 				</li>
-			))}
+			)) : <li className="h-full w-full flex flex-row items-center justify-center">No Any Upcoming Events</li>}
 		</ul>
 	);
 }

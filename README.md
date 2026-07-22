@@ -17,7 +17,7 @@ Fro is a productive first WebOS.
 1. Frotes (Markdown)
 2. Frottings (for Wallpaper change) // TODO: virtual pets
 3. Frowser (Search, and browse (Iframe based))
-4. Frominal (with dozens of commands like ls, open [app], add [app], calc, type)
+4. Frominal (with dozens of commands like ls, open [app], calc, type)
 5. Froculator (Complex arithmetic calculations with memory system and shorcuts)
 6. Frolendar (Day, Month, and Year view. Event system and more)
 7. Frosic (Play some musics)
