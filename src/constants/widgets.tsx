@@ -133,7 +133,7 @@ export const Widgets: Record<WidgetId, WidgetInstance> = {
 		height: 200,
 		minimized: false,
 		locked: false,
-		hidden: false,
+		hidden: true,
 		// widgetSpecification: {
 		// 	source: {
 		// 		type: "html",
