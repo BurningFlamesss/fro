@@ -115,6 +115,13 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+ @font-face {
+    font-family: 'Retrograde-Regular';
+    src: url('../public/widgets/pomodoro/Retrograde-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 @layer base {
   * {
     @apply m-0 p-0 box-border;
@@ -170,6 +177,9 @@
     scrollbar-width: none;
   }
   
+  .retro-font {
+    font-family: 'Retrograde-Regular', sans-serif;
+  }
 }
 
 
