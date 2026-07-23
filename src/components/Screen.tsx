@@ -271,7 +271,7 @@ function Screen() {
 	return (
 		<ContextMenu modal={false}>
 			<ContextMenuTrigger className="flex flex-row">
-				<div className="relative z-10 h-[calc(100dvh-76px)] w-2/5 p-2 flex flex-col flex-wrap content-start overflow-y-auto">
+				<div className="relative z-10 h-[calc(100dvh-76px)] w-full p-2 flex flex-col flex-wrap content-start overflow-y-auto">
 					{Object.entries(apps).map(([key, app]) => (
 						<ContextMenu key={`screen-app-${key}`}>
 							<ContextMenuTrigger>
@@ -389,7 +389,7 @@ function Screen() {
 				</div>
 				<div
 					id="widget-canvas"
-					className="relative z-10 h-[calc(100dvh-76px)] w-3/5 overflow-hidden"
+					className="absolute inset-0 z-10 h-[calc(100dvh-76px)] w-full overflow-hidden pointer-events-none"
 				>
 					{widgetsRenderables.map(([key, value]) => (
 						<WidgetRenderer key={key} widget={value} />

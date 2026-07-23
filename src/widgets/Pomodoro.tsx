@@ -21,7 +21,7 @@ const cheerMessages = [
 
 const breakMessages = [
 	"Stay Hydrated!",
-	"Eat some frogs, maybe?",
+	"Eat some frogs?",
 	"Stretch you arms",
 	"Touch some grass",
 	"Walk 100 meters",
@@ -37,7 +37,7 @@ const formatTime = (seconds: number): string => {
 };
 
 function Pomodoro() {
-	const [timeLeft, setTimeLeft] = useState<number>(25 * 60);
+	const [timeLeft, setTimeLeft] = useState<number>(1 * 30);
 	const [isRunning, setIsRunning] = useState<boolean>(false);
 	const [isBreak, setIsBreak] = useState<boolean>(false);
 	const [encouragement, setEncouragement] = useState<string>("");

@@ -192,7 +192,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 				bottomLeft: { cursor: "nesw-resize" },
 				bottomRight: { cursor: "nwse-resize" },
 			}}
-			className={cn("absolute overflow-hidden group")}
+			className={cn("absolute overflow-hidden group pointer-events-auto")}
 		>
 			<div
 				className={cn(
