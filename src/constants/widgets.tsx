@@ -5,6 +5,7 @@ import Event from "#/widgets/Event.tsx";
 import Launcher from "#/widgets/Launcher.tsx";
 import { Quote } from "#/widgets/Quote.tsx";
 import Task from "#/widgets/Task.tsx";
+import Pomodoro from "#/widgets/Pomodoro.tsx";
 
 export type WidgetSpecification = {
 	source?: {
@@ -110,6 +111,18 @@ export const Widgets: Record<WidgetId, WidgetInstance> = {
 		locked: false,
 		hidden: false,
 	},
+	widget_pomodoro: {
+		id: "widget_pomodoro",
+		definitionId: "widget_pomodoro",
+		name: "Pomodoro",
+		x: 400,
+		y: 400,
+		width: 200,
+		height: 200,
+		minimized: false,
+		locked: false,
+		hidden: false,
+	},
 	widget_launcher: {
 		id: "widget_launcher",
 		definitionId: "widget_launcher",
@@ -161,6 +174,13 @@ export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> =
 			source: {
 				type: "component",
 				code: Clock,
+			},
+		},
+		widget_pomodoro: {
+			sizeConfigurations: defaultSizeConfigurations,
+			source: {
+				type: "component",
+				code: Pomodoro,
 			},
 		},
 		widget_launcher: {
