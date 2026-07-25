@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { PiArrowUpRight, PiMagnifyingGlassDuotone, PiX } from "react-icons/pi";
 import { cn } from "#/lib/utils.ts";
 import { getWeatherReport } from "#/server/getWeatherReport.tsx";
+import { useSettingStore } from "#/store/setting.tsx";
 
 function Weather() {
+	const { location, setLocation } = useSettingStore();
 	const [value, setValue] = useState("");
 	const [focused, setFocused] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -11,14 +13,14 @@ function Weather() {
 		humidity: 91,
 		windSpeed: 21,
 		temperature: 27,
-		location: "Earth",
+		location: location,
 	});
 
 	const submit = (text: string) => {
 		const trimmed = text.trim();
 		if (!trimmed) return;
 
-		// TODO: handleSubmit
+		fetchWeather(trimmed);
 
 		setValue("");
 		setFocused(false);
@@ -36,18 +38,19 @@ function Weather() {
 			return;
 		}
 
-		console.log("Response: ", response);
+		const data = response.data;
 
 		setWeatherData({
-			humidity: response.data.main.humidity,
-			windSpeed: response.data.wind.speed,
-			temperature: Math.floor(response.data.main.temp),
-			location: response.data.name,
+			humidity: data.main.humidity,
+			windSpeed: data.wind.speed,
+			temperature: Math.floor(data.main.temp),
+			location: data.name,
 		});
+		setLocation(data.name);
 	};
 
 	useEffect(() => {
-		fetchWeather("London");
+		fetchWeather(location);
 	}, []);
 
 	return (
@@ -106,21 +109,23 @@ function Weather() {
 					{focused && (
 						<div className="absolute inset-x-0 top-full mt-2 overflow-hidden rounded-2xl border border-background/10 bg-foreground p-2 opacity-100">
 							<ul className="flex flex-col gap-0.5">
-								{["Earth"].map((suggestion) => (
-									<li key={suggestion}>
-										<button
-											type="button"
-											onClick={() => submit(suggestion)}
-											className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-background/60 transition-colors hover:bg-background/5 hover:text-background"
-										>
-											<span className="truncate">{suggestion}</span>
-											<PiArrowUpRight
-												className="ml-auto shrink-0 text-background/20"
-												size={14}
-											/>
-										</button>
-									</li>
-								))}
+								{["Butwal", "Kathmandu", "Delhi", "Bhairahawa"].map(
+									(suggestion) => (
+										<li key={suggestion}>
+											<button
+												type="button"
+												onClick={() => submit(suggestion)}
+												className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-background/60 transition-colors hover:bg-background/5 hover:text-background"
+											>
+												<span className="truncate">{suggestion}</span>
+												<PiArrowUpRight
+													className="ml-auto shrink-0 text-background/20"
+													size={14}
+												/>
+											</button>
+										</li>
+									),
+								)}
 							</ul>
 						</div>
 					)}
