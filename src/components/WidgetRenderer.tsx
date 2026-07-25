@@ -157,7 +157,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 	if (minimized) {
 		return (
 			<div
-				className="absolute glassmorphism px-3 py-1 cursor-pointer"
+				className="absolute glassmorphism px-3 py-1 cursor-pointer pointer-events-auto"
 				style={{ left: x, top: y }}
 				onClick={() => restoreWidget(id)}
 			>
