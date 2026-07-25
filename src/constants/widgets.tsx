@@ -197,7 +197,10 @@ export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> =
 			},
 		},
 		widget_weather: {
-			sizeConfigurations: defaultSizeConfigurations,
+			sizeConfigurations: {
+				...defaultSizeConfigurations,
+				maximumHeight: 500
+			},
 			source: {
 				type: "component",
 				code: Weather,

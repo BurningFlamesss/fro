@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PiArrowUpRight, PiMagnifyingGlassDuotone, PiX } from "react-icons/pi";
 import { cn } from "#/lib/utils.ts";
+import { getWeatherReport } from "#/server/getWeatherReport.tsx";
 
 function Weather() {
 	const [value, setValue] = useState("");
@@ -17,6 +18,20 @@ function Weather() {
 		setFocused(false);
 		inputRef.current?.blur();
 	};
+
+	const fetchWeather = async (city_name: string) => {
+		const response = await getWeatherReport({
+			data: {
+				city_name: city_name,
+			},
+		});
+
+		console.log("Response: ", response);
+	};
+
+	useEffect(() => {
+		fetchWeather("London");
+	}, []);
 
 	return (
 		<div className="p-2 min-h-full glassmorphism">
@@ -102,7 +117,36 @@ function Weather() {
 				/>
 			)}
 
-            
+			<div className="w-full h-full flex flex-col justify-center items-center py-2">
+				<img className="w-36" src="/public/widgets/weather/clear.png" alt="" />
+				<p className="text-5xl">26°c</p>
+				<p className="text-3xl">Earth</p>
+
+				<div className="w-full mt-8 flex justify-between">
+					<div className="flex items-start gap-3 text-xl">
+						<img
+							className="w-6.5 mt-2.5"
+							src="/public/widgets/weather/humidity.png"
+							alt=""
+						/>
+						<div>
+							<p>91 %</p>
+							<span className="flex text-[16px]">Humidity</span>
+						</div>
+					</div>
+					<div className="flex items-start gap-3 text-xl">
+						<img
+							className="w-6.5 mt-2.5"
+							src="/public/widgets/weather/wind.png"
+							alt=""
+						/>
+						<div>
+							<p>21 km/hr</p>
+							<span className="flex text-[16px]">Wind speed</span>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	);
 }
