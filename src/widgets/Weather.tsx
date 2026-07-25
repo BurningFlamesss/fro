@@ -3,6 +3,28 @@ import { PiArrowUpRight, PiMagnifyingGlassDuotone, PiX } from "react-icons/pi";
 import { cn } from "#/lib/utils.ts";
 import { getWeatherReport } from "#/server/getWeatherReport.tsx";
 import { useSettingStore } from "#/store/setting.tsx";
+import clear_icon from "../../public/widgets/weather/clear.png";
+import cloud_icon from "../../public/widgets/weather/cloud.png";
+import drizzle_icon from "../../public/widgets/weather/drizzle.png";
+import rain_icon from "../../public/widgets/weather/rain.png";
+import snow_icon from "../../public/widgets/weather/snow.png";
+
+const iconsMap = {
+	"01d": clear_icon,
+	"01n": clear_icon,
+	"02d": cloud_icon,
+	"02n": cloud_icon,
+	"03d": cloud_icon,
+	"03n": cloud_icon,
+	"04d": drizzle_icon,
+	"04n": drizzle_icon,
+	"09d": rain_icon,
+	"09n": rain_icon,
+	"10d": rain_icon,
+	"10n": rain_icon,
+	"13d": snow_icon,
+	"13n": snow_icon,
+};
 
 function Weather() {
 	const { location, setLocation } = useSettingStore();
@@ -14,6 +36,7 @@ function Weather() {
 		windSpeed: 21,
 		temperature: 27,
 		location: location,
+		icon: clear_icon,
 	});
 
 	const submit = (text: string) => {
@@ -40,11 +63,14 @@ function Weather() {
 
 		const data = response.data;
 
+		const icon = iconsMap?.[data.weather?.[0]?.icon] ?? clear_icon;
+
 		setWeatherData({
 			humidity: data.main.humidity,
 			windSpeed: data.wind.speed,
 			temperature: Math.floor(data.main.temp),
 			location: data.name,
+			icon,
 		});
 		setLocation(data.name);
 	};
@@ -140,7 +166,7 @@ function Weather() {
 			)}
 
 			<div className="w-full h-full flex flex-col justify-center items-center py-2">
-				<img className="w-36" src="/public/widgets/weather/clear.png" alt="" />
+				<img className="w-36" src={weatherData.icon} alt="" />
 				<p className="text-5xl">{weatherData.temperature}°c</p>
 				<p className="text-3xl">{weatherData.location}</p>
 
