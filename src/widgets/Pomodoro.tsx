@@ -123,7 +123,7 @@ function Pomodoro() {
 		<main
 			className="w-full min-h-full flex items-center justify-center box-border text-center retro-font"
 			style={{
-				backgroundImage: `url("../../public/widgets/pomodoro/background.png")`,
+				backgroundImage: `url("../../widgets/pomodoro/background.png")`,
 				backgroundSize: "cover",
 				backgroundPosition: "center",
 			}}

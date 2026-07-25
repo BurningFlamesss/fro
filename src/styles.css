@@ -117,7 +117,7 @@
 
  @font-face {
     font-family: 'Retrograde-Regular';
-    src: url('../public/widgets/pomodoro/Retrograde-Regular.otf') format('opentype');
+    src: url('../widgets/pomodoro/Retrograde-Regular.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
 }
@@ -142,7 +142,7 @@
     height: 100dvh;
     overflow: hidden !important;
 
-    background-image: url("/public/backgrounds/forest.gif");
+    background-image: url("/backgrounds/forest.gif");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;

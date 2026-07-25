@@ -146,7 +146,7 @@ function Frotore() {
 								)}
 							>
 								<img
-									src={"/public/apps/Game.svg"}
+									src={"/apps/Game.svg"}
 									alt={""}
 									loading="lazy"
 									className="h-full w-full object-cover"
@@ -171,7 +171,7 @@ function Frotore() {
 						)}
 					>
 						<img
-							src={"/public/apps/Game.svg"}
+							src={"/apps/Game.svg"}
 							alt={""}
 							loading="lazy"
 							className="h-full w-full object-cover"

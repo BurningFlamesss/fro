@@ -174,7 +174,7 @@ function Weather() {
 					<div className="flex items-start gap-3 text-xl">
 						<img
 							className="w-6.5 mt-2.5"
-							src="/public/widgets/weather/humidity.png"
+							src="/widgets/weather/humidity.png"
 							alt=""
 						/>
 						<div>
@@ -185,7 +185,7 @@ function Weather() {
 					<div className="flex items-start gap-3 text-xl">
 						<img
 							className="w-6.5 mt-2.5"
-							src="/public/widgets/weather/wind.png"
+							src="/widgets/weather/wind.png"
 							alt=""
 						/>
 						<div>
