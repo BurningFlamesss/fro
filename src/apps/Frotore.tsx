@@ -9,6 +9,10 @@ function Frotore() {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { addWidget, widgets } = useWidgetStore();
 
+	const widgetItems = Object.entries(widgets).filter(
+		(widget) => widget[1].id !== "widget_launcher",
+	);
+
 	const submit = (text: string) => {
 		const trimmed = text.trim();
 		if (!trimmed) return;
@@ -120,34 +124,42 @@ function Frotore() {
 			)}
 			<h2 className="mb-4 text-lg font-semibold">Installed</h2>
 			<div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
-				<div className="flex flex-col items-center justify-center gap-y-1">
-					<button
-						// onClick={() => {
-						// 	addWidget("widget_launcher", undefined, {
-						// 		source: {
-						// 			type: "html",
-						// 			code: "<div style='background: white;'><h1>Froncher Launcher</h1></div>"
-						// 		}
-						// 	})
-						// }}
-						type="button"
-						className={cn(
-							"group relative overflow-hidden rounded-xl transition-all cursor-pointer",
-						)}
-					>
-						<img
-							src={"/public/apps/Game.svg"}
-							alt={""}
-							loading="lazy"
-							className="h-full w-full object-cover"
-						/>
-					</button>
-					<div className="">
-						<p className="truncate text-xs font-medium text-background">
-							Froncher
-						</p>
-					</div>
-				</div>
+				{widgetItems.map(([key, value]) => {
+					return (
+						<div
+							key={`widgets-${key}-${value.id}`}
+							className="flex flex-col items-center justify-center gap-y-1"
+						>
+							<button
+								onClick={() => {
+									addWidget(value.definitionId);
+									// addWidget("widget_launcher", undefined, {
+									// 	source: {
+									// 		type: "html",
+									// 		code: "<div style='background: white;'><h1>Froncher Launcher</h1></div>"
+									// 	}
+									// })
+								}}
+								type="button"
+								className={cn(
+									"group relative overflow-hidden rounded-xl transition-all cursor-pointer",
+								)}
+							>
+								<img
+									src={"/public/apps/Game.svg"}
+									alt={""}
+									loading="lazy"
+									className="h-full w-full object-cover"
+								/>
+							</button>
+							<div className="">
+								<p className="truncate text-xs font-medium text-background">
+									{value.name}
+								</p>
+							</div>
+						</div>
+					);
+				})}
 			</div>
 			{/* <h2 className="my-4 text-lg font-semibold">Discover</h2>
 			<div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
