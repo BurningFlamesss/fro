@@ -15,7 +15,12 @@ interface NoteStore {
 	activeTabId: string;
 	ensureDefaultTab: () => void;
 
-	addTab: (title?: string, content?: string, identifier?: string) => NoteTab;
+	addTab: (
+		title?: string,
+		content?: string,
+		identifier?: string,
+		extension?: string,
+	) => NoteTab;
 	closeTab: (id: string) => void;
 	selectTab: (id: string) => void;
 	updateContent: (id: string, content: string) => void;
@@ -40,24 +45,30 @@ export const useNoteStore = create<NoteStore>()(
 						}
 					}),
 
-				addTab: (title = "Untitled", content = "", identifier) => {
-					const id = identifier
-						? identifier
-						: useFileSystemStore
-								.getState()
-								.createNode("notes", `${title}.frote`, "file", content);
-
+				addTab: (
+					title = "Untitled",
+					content = "",
+					identifier,
+					extension = "frote",
+				) => {
+					const fileId = useFileSystemStore
+						.getState()
+						.createNode(
+							"notes",
+							`${title}.${extension}`,
+							"file",
+							content,
+							identifier,
+						);
 					const newTab: NoteTab = {
-						id,
-						title: title,
-						content: content,
+						id: fileId,
+						title,
+						content,
 					};
-
 					set((state) => {
 						state.tabs.push(newTab);
 						state.activeTabId = newTab.id;
 					});
-
 					return newTab;
 				},
 
@@ -97,15 +108,11 @@ export const useNoteStore = create<NoteStore>()(
 						if (!tab) return;
 						tab.content = content;
 
-						const latestNodes = useFileSystemStore.getState().nodes;
-						const fileNode = latestNodes[id];
-
-						if (fileNode) {
-							useFileSystemStore.getState().updateNode(id, content);
+						const fs = useFileSystemStore.getState();
+						if (fs.nodes[id]) {
+							fs.updateNode(id, content);
 						} else {
-							useFileSystemStore
-								.getState()
-								.createNode("notes", `${tab.title}.frote`, "file", content);
+							fs.createNode("notes", `${tab.title}.frote`, "file", content, id);
 						}
 					}),
 

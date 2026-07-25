@@ -1,19 +1,91 @@
-import { parseFileName } from "#/lib/utils.ts";
-import { useFileSystemStore } from "#/store/fs.tsx";
+import { Checkbox } from "#/components/ui/checkbox.tsx";
+import { useNoteStore } from "#/store/note.tsx";
+
+export const TASK_TAB_ID = "user-task.todo";
+export const COMPLETED_MARKER = "[x]";
+export const INCOMPLETE_MARKER = "[ ]";
 
 function Task() {
-	const { nodes } = useFileSystemStore();
-	const tasks = Object.entries(nodes).filter(([key, value]) => {
-		const { extension } = parseFileName(value.name);
-		return ["todo", "task"].includes(extension.toLowerCase());
-	});
+	const { tabs, addTab, updateContent } = useNoteStore();
+	const taskTab = tabs.find((tab) => tab.id === TASK_TAB_ID);
+	const content = taskTab?.content ?? "";
+
+	const taskItems = content
+		.split("\n")
+		.map((line) => {
+			const trimmed = line.trim();
+			if (trimmed.startsWith(COMPLETED_MARKER)) {
+				return {
+					text: trimmed.slice(COMPLETED_MARKER.length).trim(),
+					completed: true,
+				};
+			}
+			if (trimmed.startsWith(INCOMPLETE_MARKER)) {
+				return {
+					text: trimmed.slice(INCOMPLETE_MARKER.length).trim(),
+					completed: false,
+				};
+			}
+			return { text: trimmed, completed: false };
+		})
+		.filter((item) => item.text.length > 0);
+
+	const buildContent = (items: typeof taskItems) =>
+		items
+			.map(
+				(item) =>
+					`${item.completed ? COMPLETED_MARKER : INCOMPLETE_MARKER} ${item.text}`,
+			)
+			.join("\n");
+
+	const handleAddTask = (value: string) => {
+		const trimmed = value.trim();
+		if (!trimmed) return;
+
+		if (!taskTab) {
+			addTab("Tasks", `${INCOMPLETE_MARKER} ${trimmed}`, TASK_TAB_ID, "todo");
+		} else {
+			const newItems = [...taskItems, { text: trimmed, completed: false }];
+			const newContent = buildContent(newItems);
+			updateContent(TASK_TAB_ID, newContent);
+		}
+	};
+
+	const toggleTask = (index: number) => {
+		if (!taskTab) return;
+		const updatedItems = taskItems.map((item, i) =>
+			i === index ? { ...item, completed: !item.completed } : item,
+		);
+		const newContent = buildContent(updatedItems);
+		updateContent(TASK_TAB_ID, newContent);
+	};
+
 	return (
-		<ul className="p-4 min-h-full w-full glassmorphism">
-			{tasks.length > 0 ? tasks.map((tab, index) => (
-				<li key={`widget-task-pending-to-do-${tab[0]}`}>
-					{index + 1}. {tab[1].content}
+		<ul className="p-4 min-h-full w-full glassmorphism flex flex-col gap-y-2">
+			<input
+				onKeyDown={(e) => {
+					if (e.key === "Enter") {
+						handleAddTask(e.currentTarget.value);
+						e.currentTarget.value = "";
+					}
+				}}
+				placeholder="Add your task"
+				className="max-h-6 flex-1 bg-transparent text-sm text-background border-b border-b-transparent focus:border-b-white transition-all duration-75 focus:outline-none placeholder:text-background/40"
+			/>
+			{taskItems.map((task, index) => (
+				<li
+					key={`widget-task-${index}`}
+					className="flex justify-start items-center gap-x-2"
+				>
+					<Checkbox
+						checked={task.completed}
+						onCheckedChange={() => toggleTask(index)}
+					/>
+					<span className={task.completed ? "line-through opacity-60" : ""}>
+						{task.text}
+					</span>
 				</li>
-			)) : <li className="h-full w-full flex flex-row items-center justify-center">No Any Tasks</li>}
+			))}
 		</ul>
 	);
 }

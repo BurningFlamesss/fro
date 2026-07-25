@@ -22,6 +22,7 @@ import { useTerminalStore } from "#/store/terminal.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { AppInstance, WindowInstance } from "../constants/apps";
 import { EVENT_COLORS } from "./Frolendar";
+import { COMPLETED_MARKER, INCOMPLETE_MARKER } from "#/widgets/Task.tsx";
 
 type TerminalResponse = React.ReactNode | string;
 
@@ -125,7 +126,7 @@ function Frominal() {
 		"event.add":
 			"Create an event. Usage: `event.add <TITLE> [@START] [--end@END] [+DURATION]`",
 		"event.read": "List all calendar events",
-		type: "Open FypeMaster for typing"
+		type: "Open FypeMaster for typing",
 	};
 
 	const commands: Record<string, CommandHandler> = {
@@ -764,37 +765,56 @@ function Frominal() {
 			if (!params.length) {
 				return (
 					<div>
-						Please provide the content to create note.
-						<p>Here's the currents do's</p>
+						<p>Please provide the task text.</p>
 						<div>{await executeCommand("task.read")}</div>
 					</div>
 				);
 			}
 
-			// TASK: Process via AI
+			const taskText = params.join(" ");
+			const existing = tabs.find((tab) => tab.id === "user-task.todo");
 
-			const id = createNode(
-				"notes",
-				`TASK-${params[0]}.task`,
-				"file",
-				params.join(" "),
-			);
-			addTab(`TASK #${params[0]}`, params.join(" "), id);
+			if (!existing) {
+				addTab(
+					"Tasks",
+					`${INCOMPLETE_MARKER} ${taskText}`,
+					"user-task.todo",
+					"todo",
+				);
+			} else {
+				const newContent = existing.content
+					? `${existing.content}\n${INCOMPLETE_MARKER} ${taskText}`
+					: `${INCOMPLETE_MARKER} ${taskText}`;
+				updateContent("user-task.todo", newContent);
+			}
 
-			return <p>Added TASK!</p>;
+			return <p>Task added.</p>;
 		},
 
 		"task.read": () => {
-			const taskTabs = Object.entries(nodes).filter(([key, value]) => {
-				const { extension } = parseFileName(value.name);
-				return ["todo", "task"].includes(extension.toLowerCase());
-			});
+			const tab = tabs.find((tab) => tab.id === "user-task.todo");
+
+			if (!tab) return <p>No tasks.</p>;
+
+			const tasks = tab.content
+				.split("\n")
+				.map((line) => line.trim())
+				.filter(
+					(line) =>
+						line.startsWith(INCOMPLETE_MARKER) ||
+						line.startsWith(COMPLETED_MARKER),
+				)
+				.map((line, idx) => ({
+					index: idx + 1,
+					completed: line.startsWith(COMPLETED_MARKER),
+					text: line.slice(COMPLETED_MARKER.length).trim(),
+				}));
 
 			return (
 				<ul>
-					{taskTabs.map((tab, index) => (
-						<li key={`read-do-${tab[0]}`}>
-							{index + 1}. {tab[1].content}
+					{tasks.map((task) => (
+						<li key={task.index}>
+							{task.index}. [{task.completed ? "x" : " "}] {task.text}
 						</li>
 					))}
 				</ul>
@@ -802,40 +822,29 @@ function Frominal() {
 		},
 
 		"task.done": (params) => {
-			if (!params.length) {
-				return;
-			}
+			if (!params.length) return <p>Please specify task numbers.</p>;
 
-			const doneIndex = params.map((param) => +param);
-			const doneTasks: Array<{ title: string; content: string }> = [];
+			const tab = tabs.find((tab) => tab.id === "user-task.todo");
+			if (!tab) return <p>No tasks to complete.</p>;
 
-			doneIndex.forEach((index) => {
-				const tab = tabs[index - 1];
+			const numbers = params.map(Number).filter((n) => !isNaN(n));
+			const lines = tab.content.split("\n");
 
-				if (tab) {
-					doneTasks.push({
-						title: tab.title,
-						content: tab.content,
-					});
-					closeTab(tab.id);
-					deleteNode(tab.id);
+			const newLines = lines.map((line, idx) => {
+				const taskNumber = idx + 1;
+				if (
+					numbers.includes(taskNumber) &&
+					line.startsWith(INCOMPLETE_MARKER)
+				) {
+					return line.replace(INCOMPLETE_MARKER, COMPLETED_MARKER);
 				}
+				return line;
 			});
 
-			return (
-				<ul className="flex flex-col gap-2">
-					{doneTasks.map((tab, index) => (
-						<li key={`Done-do-${tab.title}`}>
-							<p>
-								{index + 1}. {tab.title}
-							</p>
-							<p>{tab.content}</p>
-						</li>
-					))}
-				</ul>
-			);
-		},
+			updateContent("user-task.todo", newLines.join("\n"));
 
+			return <p>Marked {numbers.join(", ")} as done.</p>;
+		},
 		"event.add": async (params) => {
 			if (!params.length) {
 				return (

@@ -23,7 +23,8 @@ interface FileSystemState {
 		name: string,
 		type: "file" | "folder",
 		content?: string,
-	) => `${string}-${string}-${string}-${string}-${string}`;
+		identifier?: string
+	) => `${string}-${string}-${string}-${string}-${string}` | string;
 	renameNode: (id: string, newName: string) => void;
 	updateNode: (id: string, content: string) => void;
 	moveNode: (id: string, newParentId: string) => void;
@@ -59,12 +60,12 @@ export const useFileSystemStore = create<FileSystemState>()(
 					name: "notes",
 					type: "folder",
 					children: [],
-				},
+				}
 			},
 			rootId: "root",
 			desktopContainerIds: [],
-			createNode: (parentId, name, type, content) => {
-				const id = crypto.randomUUID();
+			createNode: (parentId, name, type, content, identifier) => {
+				const id = identifier ?? crypto.randomUUID();
 
 				set((state) => {
 					const parent = state.nodes[parentId];
@@ -96,6 +97,7 @@ export const useFileSystemStore = create<FileSystemState>()(
 			updateNode: (id, content) => {
 				set((state) => {
 					const node = state.nodes[id];
+					
 					if (node && node.type === "file" && content.trim().length > 0) {
 						node.content = content;
 						node.modifiedAt = Date.now();
