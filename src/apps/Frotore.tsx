@@ -7,7 +7,7 @@ function Frotore() {
 	const [value, setValue] = useState("");
 	const [focused, setFocused] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
-	const { addWidget } = useWidgetStore();
+	const { addWidget, widgets } = useWidgetStore();
 
 	const submit = (text: string) => {
 		const trimmed = text.trim();

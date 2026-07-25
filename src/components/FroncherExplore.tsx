@@ -2,7 +2,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useMemo, useRef, useState } from "react";
 import { PiMagnifyingGlassDuotone, PiMicrophone, PiX } from "react-icons/pi";
 import { cn } from "#/lib/utils.ts";
-import { useLauncherStore, type Launchable } from "#/store/launcher.tsx";
+import { type Launchable, useLauncherStore } from "#/store/launcher.tsx";
 
 function FroncherExplore() {
 	const { launchables, recentLaunches, launch } = useLauncherStore();
@@ -31,7 +31,8 @@ function FroncherExplore() {
 		[collectionItems, trimmedQuery],
 	);
 
-	const recentItems = Array.from(recentLaunches);
+	const recentItems = Array.from(recentLaunches)
+							// .filter(launch => launchables[launch[0]].showInCollections);
 
 	const displayedItems = trimmedQuery ? searchResults : collectionItems;
 

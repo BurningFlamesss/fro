@@ -50,7 +50,7 @@ export const useLauncherStore = create<LauncherStore>()(
 						code: AppNotFound,
 					},
 					logo: "/apps/Game.svg",
-					showInCollections: true,
+					showInCollections: false,
 				},
 				app_fypemaster: {
 					id: "app_fypemaster",
