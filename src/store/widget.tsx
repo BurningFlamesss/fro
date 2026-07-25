@@ -1,14 +1,14 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import { WidgetAppDefinitions } from "#/constants/widgetsAppDefinition.tsx";
 import { createDebouncedStorage } from "#/lib/debounced-storage.ts";
 import {
-	WidgetAppDefinitions,
+	defaultSizeConfigurations,
 	type WidgetId,
 	type WidgetInstance,
 	type WidgetSpecification,
 	Widgets,
-	defaultSizeConfigurations,
 } from "../constants/widgets";
 
 interface WidgetStore {

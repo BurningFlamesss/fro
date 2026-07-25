@@ -1,10 +1,9 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import {
-	WidgetAppDefinitions,
-	type WidgetAppDefinitionsType,
-	type WidgetId,
-	type WidgetInstance,
+import type {
+	WidgetAppDefinitionsType,
+	WidgetId,
+	WidgetInstance,
 } from "../constants/widgets";
 
 interface InstallerStore {
@@ -13,6 +12,6 @@ interface InstallerStore {
 
 export const useInstallerStore = create<InstallerStore>()(
 	immer((set) => ({
-		installedWidgetDefinitions: {}
+		installedWidgetDefinitions: {},
 	})),
 );

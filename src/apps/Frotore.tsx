@@ -8,7 +8,7 @@ function Frotore() {
 	const [value, setValue] = useState("");
 	const [focused, setFocused] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
-	const { addWidget, widgets } = useWidgetStore();
+	const { addWidget } = useWidgetStore();
 
 	// const widgetItems = Object.entries(widgets).filter(
 	// 	(widget) => widget[1].id !== "widget_launcher",
