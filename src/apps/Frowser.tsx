@@ -445,7 +445,7 @@ function SurfingView({ tab }: { tab: Tab }) {
 					<p>This site cannot be reached.</p>
 
 					<a
-						className="px-3 py-2 glassmorphism rounded-xl"
+						className="px-3 py-2 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white rounded-xl"
 						href={tab.url}
 						target="_blank"
 					>

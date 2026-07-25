@@ -80,7 +80,7 @@ function Weather() {
 	}, []);
 
 	return (
-		<div className="p-2 min-h-full glassmorphism">
+		<div className="p-2 min-h-full bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white">
 			<div className="relative z-20 flex w-full flex-row items-center justify-center">
 				<div
 					className={cn(

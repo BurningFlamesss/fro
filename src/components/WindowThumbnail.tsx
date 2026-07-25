@@ -1,7 +1,7 @@
 import { memo } from "react";
+import { useMusicStore } from "#/store/music.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { WindowInstance } from "../constants/apps";
-import { useMusicStore } from "#/store/music.tsx";
 
 interface Props {
 	win: WindowInstance;
@@ -29,7 +29,7 @@ const WindowThumbnail = memo(function WindowThumbnail({ win }: Props) {
 
 	return (
 		<div
-			className="shrink-0 rounded-lg overflow-hidden border border-background/10 shadow-lg glassmorphism cursor-pointer hover:border-background/20 transition-all duration-150"
+			className="shrink-0 rounded-lg overflow-hidden border border-background/10 shadow-lg bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white cursor-pointer hover:border-background/20 transition-all duration-150"
 			style={{ width: THUMB_WIDTH }}
 			onClick={handleThumbnailClick}
 			role="button"

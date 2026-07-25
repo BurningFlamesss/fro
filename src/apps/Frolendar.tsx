@@ -89,7 +89,7 @@ const Toolbar = memo(function Toolbar({
 	}, [view, date, onNavigate]);
 
 	return (
-		<div className="flex items-center justify-between px-4 py-2 border-b border-white/5 glassmorphism rounded-t-xl select-none">
+		<div className="flex items-center justify-between px-4 py-2 border-b border-white/5 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white rounded-t-xl select-none">
 			<div className="flex items-center gap-2">
 				<button
 					type="button"

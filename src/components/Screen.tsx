@@ -288,7 +288,7 @@ function Screen() {
 										alt={app.name}
 										draggable={false}
 									/>
-									<p className="text-background glassmorphism py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
+									<p className="text-background bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
 										{app.name}
 									</p>
 								</button>
@@ -358,7 +358,7 @@ function Screen() {
 												type="text"
 											/>
 										) : (
-											<p className="text-background glassmorphism py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
+											<p className="text-background bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
 												{container.name}
 											</p>
 										)}

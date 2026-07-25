@@ -95,7 +95,7 @@ function Taskbar() {
 	};
 
 	return (
-		<footer className="glassmorphism h-16 w-[80dvw] flex items-center justify-between px-4 absolute bottom-3 left-1/2 -translate-x-1/2 rounded-2xl z-100000000">
+		<footer className="bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white h-16 w-[80dvw] flex items-center justify-between px-4 absolute bottom-3 left-1/2 -translate-x-1/2 rounded-2xl z-100000000">
 			<section className="flex items-center gap-4 h-full">
 				<button type="button" onClick={() => {
 					Object.entries(windows).forEach(([key, value]) => {

@@ -157,7 +157,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 	if (minimized) {
 		return (
 			<div
-				className="absolute glassmorphism px-3 py-1 cursor-pointer pointer-events-auto"
+				className="absolute bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white px-3 py-1 cursor-pointer pointer-events-auto"
 				style={{ left: x, top: y }}
 				onClick={() => restoreWidget(id)}
 			>
@@ -202,7 +202,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 				)}
 			>
 				<div
-					className="flex items-center gap-1 cursor-auto glassmorphism"
+					className="flex items-center gap-1 cursor-auto bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white"
 					onMouseDown={stopPropagation}
 					onClick={stopPropagation}
 				>

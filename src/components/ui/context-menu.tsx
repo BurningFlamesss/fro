@@ -87,7 +87,7 @@ function ContextMenuSubContent({
 			<ContextMenuPrimitive.SubContent
 				data-slot="context-menu-sub-content"
 				className={cn(
-					"z-50 max-h-64 min-w-[8rem] origin-(--radix-context-menu-content-transform-origin) overflow-y-auto rounded-md border glassmorphism p-1 text-popover-background shadow-md",
+					"z-50 max-h-64 min-w-[8rem] origin-(--radix-context-menu-content-transform-origin) overflow-y-auto rounded-md border bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white p-1 text-popover-background shadow-md",
 					"data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
 					"data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
 					className,
@@ -107,7 +107,7 @@ function ContextMenuContent({
 			<ContextMenuPrimitive.Content
 				data-slot="context-menu-content"
 				className={cn(
-					"z-50 max-h-(--radix-context-menu-content-available-height) w-full origin-(--radix-context-menu-content-transform-origin) overflow-x-visible overflow-y-auto rounded-md border glassmorphism p-1 text-popover-background shadow-md",
+					"z-50 max-h-(--radix-context-menu-content-available-height) w-full origin-(--radix-context-menu-content-transform-origin) overflow-x-visible overflow-y-auto rounded-md border bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white p-1 text-popover-background shadow-md",
 					"data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
 					"data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
 					className,

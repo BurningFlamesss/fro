@@ -61,7 +61,7 @@ function Task() {
 	};
 
 	return (
-		<ul className="p-4 min-h-full w-full glassmorphism flex flex-col gap-y-2">
+		<ul className="p-4 min-h-full w-full bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white flex flex-col gap-y-2">
 			<input
 				onKeyDown={(e) => {
 					if (e.key === "Enter") {

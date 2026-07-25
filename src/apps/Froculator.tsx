@@ -1,3 +1,5 @@
+import { evaluate } from "mathjs";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	balanceParentheses,
 	cn,
@@ -6,8 +8,6 @@ import {
 } from "#/lib/utils.ts";
 import { useCalculatorStore } from "#/store/calculator.tsx";
 import { useWindowStore } from "#/store/window.tsx";
-import { evaluate } from "mathjs";
-import { useCallback, useEffect, useRef, useState } from "react";
 import type { WindowInstance } from "../constants/apps";
 
 type ButtonType =
@@ -453,7 +453,7 @@ function Froculator({ windowId }: { windowId: string }) {
 
 	return (
 		<div className="flex flex-col p-4 gap-2 select-none">
-			<div className="display glassmorphism p-3 rounded-xl text-right flex flex-col justify-end gap-y-1 min-h-24">
+			<div className="display bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white p-3 rounded-xl text-right flex flex-col justify-end gap-y-1 min-h-24">
 				<p
 					className={cn(
 						"text-2xl break-all transition-all ease-in-out duration-75",
@@ -474,7 +474,7 @@ function Froculator({ windowId }: { windowId: string }) {
 						type="button"
 						onClick={() => handleButtonClick(element.value)}
 						className={cn(
-							"rounded-md font-medium text-sm flex justify-center items-center p-1 glassmorphism cursor-pointer",
+							"rounded-md font-medium text-sm flex justify-center items-center p-1 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white cursor-pointer",
 							element.label === "Deg" && angleMode === "Deg"
 								? "text-green-400"
 								: "",
