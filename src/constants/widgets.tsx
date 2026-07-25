@@ -6,6 +6,7 @@ import Launcher from "#/widgets/Launcher.tsx";
 import { Quote } from "#/widgets/Quote.tsx";
 import Task from "#/widgets/Task.tsx";
 import Pomodoro from "#/widgets/Pomodoro.tsx";
+import Weather from "#/widgets/Weather.tsx";
 
 export type WidgetSpecification = {
 	source?: {
@@ -123,6 +124,18 @@ export const Widgets: Record<WidgetId, WidgetInstance> = {
 		locked: false,
 		hidden: false,
 	},
+	widget_weather: {
+		id: "widget_weather",
+		definitionId: "widget_weather",
+		name: "Weather",
+		x: 300,
+		y: 400,
+		width: 200,
+		height: 200,
+		minimized: false,
+		locked: false,
+		hidden: false,
+	},
 	widget_launcher: {
 		id: "widget_launcher",
 		definitionId: "widget_launcher",
@@ -181,6 +194,13 @@ export const WidgetAppDefinitions: Record<WidgetId, WidgetAppDefinitionsType> =
 			source: {
 				type: "component",
 				code: Pomodoro,
+			},
+		},
+		widget_weather: {
+			sizeConfigurations: defaultSizeConfigurations,
+			source: {
+				type: "component",
+				code: Weather,
 			},
 		},
 		widget_launcher: {
