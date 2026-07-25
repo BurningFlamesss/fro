@@ -7,6 +7,12 @@ function Weather() {
 	const [value, setValue] = useState("");
 	const [focused, setFocused] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
+	const [weatherData, setWeatherData] = useState({
+		humidity: 91,
+		windSpeed: 21,
+		temperature: 27,
+		location: "Earth",
+	});
 
 	const submit = (text: string) => {
 		const trimmed = text.trim();
@@ -26,7 +32,18 @@ function Weather() {
 			},
 		});
 
+		if (response.error || !response.data) {
+			return;
+		}
+
 		console.log("Response: ", response);
+
+		setWeatherData({
+			humidity: response.data.main.humidity,
+			windSpeed: response.data.wind.speed,
+			temperature: Math.floor(response.data.main.temp),
+			location: response.data.name,
+		});
 	};
 
 	useEffect(() => {
@@ -119,8 +136,8 @@ function Weather() {
 
 			<div className="w-full h-full flex flex-col justify-center items-center py-2">
 				<img className="w-36" src="/public/widgets/weather/clear.png" alt="" />
-				<p className="text-5xl">26°c</p>
-				<p className="text-3xl">Earth</p>
+				<p className="text-5xl">{weatherData.temperature}°c</p>
+				<p className="text-3xl">{weatherData.location}</p>
 
 				<div className="w-full mt-8 flex justify-between">
 					<div className="flex items-start gap-3 text-xl">
@@ -130,7 +147,7 @@ function Weather() {
 							alt=""
 						/>
 						<div>
-							<p>91 %</p>
+							<p>{weatherData.humidity} %</p>
 							<span className="flex text-[16px]">Humidity</span>
 						</div>
 					</div>
@@ -141,7 +158,7 @@ function Weather() {
 							alt=""
 						/>
 						<div>
-							<p>21 km/hr</p>
+							<p>{weatherData.windSpeed} km/hr</p>
 							<span className="flex text-[16px]">Wind speed</span>
 						</div>
 					</div>

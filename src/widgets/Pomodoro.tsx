@@ -37,7 +37,7 @@ const formatTime = (seconds: number): string => {
 };
 
 function Pomodoro() {
-	const [timeLeft, setTimeLeft] = useState<number>(1 * 30);
+	const [timeLeft, setTimeLeft] = useState<number>(25 * 60);
 	const [isRunning, setIsRunning] = useState<boolean>(false);
 	const [isBreak, setIsBreak] = useState<boolean>(false);
 	const [encouragement, setEncouragement] = useState<string>("");
