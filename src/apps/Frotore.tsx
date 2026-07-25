@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { PiMagnifyingGlassDuotone, PiMicrophone, PiX } from "react-icons/pi";
+import { Widgets } from "#/constants/widgets.tsx";
 import { cn } from "#/lib/utils.ts";
 import { useWidgetStore } from "#/store/widget.tsx";
 
@@ -9,9 +10,13 @@ function Frotore() {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { addWidget, widgets } = useWidgetStore();
 
-	const widgetItems = Object.entries(widgets).filter(
+	// const widgetItems = Object.entries(widgets).filter(
+	// 	(widget) => widget[1].id !== "widget_launcher",
+	// );
+
+	const widgetItems = Object.entries(Widgets).filter(
 		(widget) => widget[1].id !== "widget_launcher",
-	);
+	)
 
 	const submit = (text: string) => {
 		const trimmed = text.trim();
