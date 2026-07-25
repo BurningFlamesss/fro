@@ -1,6 +1,6 @@
+import { IoMdCheckmark } from "react-icons/io";
 import { cn } from "#/lib/utils.ts";
 import { useSettingStore } from "#/store/setting.tsx";
-import { IoMdCheckmark } from "react-icons/io";
 
 const backgrounds = [
 	{
@@ -118,10 +118,10 @@ function Frottings() {
 							}
 							className={cn(
 								"group relative overflow-hidden rounded-xl border transition-all cursor-pointer",
-								"hover:border-background/30",
+								"hover:border-white/30",
 								selected
 									? "border-primary ring-2 ring-primary/40"
-									: "border-background/10",
+									: "border-white/10",
 							)}
 						>
 							<img
@@ -131,8 +131,8 @@ function Frottings() {
 								className="aspect-video w-full object-cover transition-transform duration-300 group-hover:scale-105"
 							/>
 
-							<div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-foreground/80 via-foreground/40 to-transparent p-2">
-								<p className="truncate text-xs font-medium text-background">
+							<div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 via-black/40 to-transparent p-2">
+								<p className="truncate text-xs font-medium text-white">
 									{background.name
 										.split("-")
 										.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -141,7 +141,7 @@ function Frottings() {
 							</div>
 
 							{selected && (
-								<div className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-background">
+								<div className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white">
 									<IoMdCheckmark />
 								</div>
 							)}

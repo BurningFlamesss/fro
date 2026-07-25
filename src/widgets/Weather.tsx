@@ -92,12 +92,12 @@ function Weather() {
 						onClick={() => inputRef.current?.focus()}
 						className={cn(
 							"relative flex items-center gap-3 rounded-2xl border transition-all duration-300",
-							"border-background/10",
-							focused ? "h-12 px-5 ring-2 ring-background/20" : "h-10 px-4",
+							"border-white/10",
+							focused ? "h-12 px-5 ring-2 ring-white/20" : "h-10 px-4",
 						)}
 					>
 						<PiMagnifyingGlassDuotone
-							className="shrink-0 text-background/40"
+							className="shrink-0 text-white/40"
 							size={focused ? 20 : 18}
 						/>
 
@@ -114,7 +114,7 @@ function Weather() {
 								}
 							}}
 							placeholder="Search for weather"
-							className="flex-1 bg-transparent text-sm text-background outline-none placeholder:text-background/40"
+							className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/40"
 						/>
 
 						{value && (
@@ -125,7 +125,7 @@ function Weather() {
 									e.stopPropagation();
 									setValue("");
 								}}
-								className="flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-full text-background/40 transition-colors hover:bg-background/10 hover:text-background/70"
+								className="flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-full text-white/40 transition-colors hover:bg-white/10 hover:text-white/70"
 							>
 								<PiX size={12} />
 							</button>
@@ -133,7 +133,7 @@ function Weather() {
 					</div>
 
 					{focused && (
-						<div className="absolute inset-x-0 top-full mt-2 overflow-hidden rounded-2xl border border-background/10 bg-foreground p-2 opacity-100">
+						<div className="absolute inset-x-0 top-full mt-2 overflow-hidden rounded-2xl border border-white/10 bg-black p-2 opacity-100">
 							<ul className="flex flex-col gap-0.5">
 								{["Butwal", "Kathmandu", "Delhi", "Bhairahawa"].map(
 									(suggestion) => (
@@ -141,11 +141,11 @@ function Weather() {
 											<button
 												type="button"
 												onClick={() => submit(suggestion)}
-												className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-background/60 transition-colors hover:bg-background/5 hover:text-background"
+												className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-white/60 transition-colors hover:bg-white/5 hover:text-white"
 											>
 												<span className="truncate">{suggestion}</span>
 												<PiArrowUpRight
-													className="ml-auto shrink-0 text-background/20"
+													className="ml-auto shrink-0 text-white/20"
 													size={14}
 												/>
 											</button>

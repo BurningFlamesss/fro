@@ -161,7 +161,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 				style={{ left: x, top: y }}
 				onClick={() => restoreWidget(id)}
 			>
-				<span className="text-xs font-medium text-background">{name}</span>
+				<span className="text-xs font-medium text-white">{name}</span>
 			</div>
 		);
 	}
@@ -209,7 +209,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 					<button
 						type="button"
 						onClick={() => minimizeWidget(id)}
-						className="w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-green-400/20 text-background/60 hover:text-background text-sm"
+						className="w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-green-400/20 text-white/60 hover:text-white text-sm"
 						title="Minimize"
 					>
 						<FaRegWindowMinimize />
@@ -220,7 +220,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 						className={`w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-yellow-400/20 ${
 							locked
 								? "text-yellow-400"
-								: "text-background/60 hover:text-background"
+								: "text-white/60 hover:text-white"
 						} text-sm`}
 						title={locked ? "Unlock" : "Lock"}
 					>
@@ -229,13 +229,13 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 					<button
 						type="button"
 						onClick={() => removeWidget(id)}
-						className="w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-red-400/20 text-background/60 hover:text-background text-sm"
+						className="w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-red-400/20 text-white/60 hover:text-white text-sm"
 						title="Remove"
 					>
 						<FaXmark />
 					</button>
 				</div>
-				<span className="text-xs font-medium text-background/80 truncate">{name}</span>
+				<span className="text-xs font-medium text-white/80 truncate">{name}</span>
 			</div>
 
 			<div className="w-full h-[calc(100%-2rem)] overflow-auto border border-dashed border-transparent group-hover:border-black">

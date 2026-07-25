@@ -288,7 +288,7 @@ function Screen() {
 										alt={app.name}
 										draggable={false}
 									/>
-									<p className="text-background bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
+									<p className="text-white bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
 										{app.name}
 									</p>
 								</button>
@@ -315,7 +315,7 @@ function Screen() {
 										New Window
 									</ContextMenuItem>
 									<ContextMenuItem onClick={() => pinApp(app.id)}>
-										<RiPushpinLine className="text-background" />
+										<RiPushpinLine className="text-white" />
 										Pin to taskbar
 									</ContextMenuItem>
 								</ContextMenuGroup>
@@ -358,7 +358,7 @@ function Screen() {
 												type="text"
 											/>
 										) : (
-											<p className="text-background bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
+											<p className="text-white bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
 												{container.name}
 											</p>
 										)}
@@ -405,12 +405,12 @@ function Screen() {
 							}, 200);
 						}}
 					>
-						<IoMdRefresh className="text-background" />
+						<IoMdRefresh className="text-white" />
 						Refresh
 					</ContextMenuItem>
 					<ContextMenuSub>
 						<ContextMenuSubTrigger>
-							<FaPlus className="text-background" />
+							<FaPlus className="text-white" />
 							New
 						</ContextMenuSubTrigger>
 						<ContextMenuSubContent className="w-44 z-100000003">

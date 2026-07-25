@@ -103,18 +103,18 @@ function Taskbar() {
 							minimizeWindow(value.id)
 						}
 					})
-				}} className="relative flex items-center justify-center w-11 h-11 rounded-xl transition-colors duration-150 hover:bg-background/5 cursor-pointer">
+				}} className="relative flex items-center justify-center w-11 h-11 rounded-xl transition-colors duration-150 hover:bg-white/5 cursor-pointer">
 					<img className="w-8 h-8 object-contain" src="/logo.png" alt="Logo" />
 				</button>
 
 				<div className="relative flex items-center">
-					<PiMagnifyingGlassDuotone className="absolute left-3 top-1/2 -translate-y-1/2 text-background pointer-events-none" />
+					<PiMagnifyingGlassDuotone className="absolute left-3 top-1/2 -translate-y-1/2 text-white pointer-events-none" />
 					<input
 						type="text"
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
 						placeholder="Search"
-						className="w-52 h-9 pl-10 pr-4 rounded-full bg-background/10 border border-border/30 text-sm text-background/80 placeholder:text-background/50 hover:bg-background/20 focus:outline-none focus:bg-background/20 transition-colors duration-150"
+						className="w-52 h-9 pl-10 pr-4 rounded-full bg-white/10 border border-border/30 text-sm text-white/80 placeholder:text-white/50 hover:bg-white/20 focus:outline-none focus:bg-white/20 transition-colors duration-150"
 					/>
 				</div>
 			</section>
@@ -136,8 +136,8 @@ function Taskbar() {
 										type="button"
 										onClick={() => toggleApp(app)}
 										className={cn(
-											"group p-2 rounded-xl transition-colors duration-150 hover:bg-background/5 cursor-pointer",
-											win.length ? "bg-background/5 " : "",
+											"group p-2 rounded-xl transition-colors duration-150 hover:bg-white/5 cursor-pointer",
+											win.length ? "bg-white/5 " : "",
 										)}
 									>
 										<img
@@ -209,7 +209,7 @@ function Taskbar() {
 										</ContextMenuItem>
 									)}
 									<ContextMenuItem onClick={() => unpinApp(app.id)}>
-										<RiUnpinLine className="text-background" />
+										<RiUnpinLine className="text-white" />
 										Unpin from taskbar
 									</ContextMenuItem>
 									<ContextMenuItem
@@ -226,7 +226,7 @@ function Taskbar() {
 			</section>
 
 			<section className="flex items-center gap-5 h-full">
-				<div className="flex items-center gap-3 text-background text-lg">
+				<div className="flex items-center gap-3 text-white text-lg">
 					<Tooltip>
 						<TooltipTrigger className="cursor-default">
 							<FaWifi className="" />
@@ -249,10 +249,10 @@ function Taskbar() {
 
 				<div className="flex items-center gap-3 pl-3 border-l border-border/30">
 					<div className="flex flex-col items-end leading-tight">
-						<p className="text-sm font-semibold text-background">
+						<p className="text-sm font-semibold text-white">
 							{dateTimeData.time}
 						</p>
-						<p className="text-xs text-background/90 font-medium">
+						<p className="text-xs text-white/90 font-medium">
 							{dateTimeData.date}
 						</p>
 					</div>

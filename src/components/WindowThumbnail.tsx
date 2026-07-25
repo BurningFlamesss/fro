@@ -29,25 +29,25 @@ const WindowThumbnail = memo(function WindowThumbnail({ win }: Props) {
 
 	return (
 		<div
-			className="shrink-0 rounded-lg overflow-hidden border border-background/10 shadow-lg bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white cursor-pointer hover:border-background/20 transition-all duration-150"
+			className="shrink-0 rounded-lg overflow-hidden border border-white/10 shadow-lg bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white cursor-pointer hover:border-white/20 transition-all duration-150"
 			style={{ width: THUMB_WIDTH }}
 			onClick={handleThumbnailClick}
 			role="button"
 			tabIndex={0}
 		>
-			<div className="flex items-center justify-between px-2 h-7 bg-foreground/30 backdrop-blur-md">
+			<div className="flex items-center justify-between px-2 h-7 bg-black/30 backdrop-blur-md">
 				<div className="flex items-center gap-1.5 min-w-0">
 					<img
 						src={logo}
 						alt=""
 						className="w-3.5 h-3.5 rounded opacity-80 shrink-0"
 					/>
-					<span className="text-xs font-medium text-background/90 truncate">
+					<span className="text-xs font-medium text-white/90 truncate">
 						{title}
 					</span>
 				</div>
 				<button
-					className="text-background/50 hover:text-red-400 hover:bg-red-400/10 rounded p-1 flex items-center justify-center transition-colors cursor-pointer"
+					className="text-white/50 hover:text-red-400 hover:bg-red-400/10 rounded p-1 flex items-center justify-center transition-colors cursor-pointer"
 					onClick={handleClose}
 				>
 					<img src="/general/Close.svg" alt="Close" className="w-3 h-3" />
@@ -55,7 +55,7 @@ const WindowThumbnail = memo(function WindowThumbnail({ win }: Props) {
 			</div>
 
 			<div
-				className="relative overflow-hidden bg-foreground/10"
+				className="relative overflow-hidden bg-black/10"
 				style={{ width: THUMB_WIDTH, height: THUMB_HEIGHT }}
 			>
 				{previewUrl ? (
@@ -66,7 +66,7 @@ const WindowThumbnail = memo(function WindowThumbnail({ win }: Props) {
 						draggable={false}
 					/>
 				) : (
-					<div className="flex items-center justify-center h-full text-background/40 text-xs">
+					<div className="flex items-center justify-center h-full text-white/40 text-xs">
 						{title}
 					</div>
 				)}

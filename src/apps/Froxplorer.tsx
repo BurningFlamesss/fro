@@ -17,11 +17,11 @@ import { useBrowserStore } from "#/store/browser.tsx";
 import { useCalculatorStore } from "#/store/calculator.tsx";
 import { type FileNode, useFileSystemStore } from "#/store/fs.tsx";
 import { useLauncherStore } from "#/store/launcher.tsx";
+import { useMusicStore } from "#/store/music.tsx";
 import { useNoteStore } from "#/store/note.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import { type AppId, Apps, type WindowInstance } from "../constants/apps";
-import { useMusicStore } from "#/store/music.tsx";
 
 function useHoverNavigate(onNavigate: () => void, delay = 600) {
 	const timeoutReference = useRef<NodeJS.Timeout | null>(null);
@@ -527,7 +527,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 					type="button"
 					onClick={goUp}
 					disabled={!currentFolder.parentId}
-					className="p-1 rounded-full hover:bg-background/10 cursor-pointer"
+					className="p-1 rounded-full hover:bg-white/10 cursor-pointer"
 				>
 					<FaArrowUp />
 				</button>

@@ -60,12 +60,12 @@ function FroncherExplore() {
 						onClick={() => inputRef.current?.focus()}
 						className={cn(
 							"relative flex items-center gap-3 rounded-2xl border transition-all duration-300",
-							"border-background/10",
-							focused ? "h-14 px-5 ring-2 ring-background/20" : "h-12 px-4",
+							"border-white/10",
+							focused ? "h-14 px-5 ring-2 ring-white/20" : "h-12 px-4",
 						)}
 					>
 						<PiMagnifyingGlassDuotone
-							className="shrink-0 text-background/40"
+							className="shrink-0 text-white/40"
 							size={focused ? 20 : 18}
 						/>
 
@@ -82,7 +82,7 @@ function FroncherExplore() {
 								}
 							}}
 							placeholder="Find your apps to launch"
-							className="flex-1 bg-transparent text-sm text-background outline-none placeholder:text-background/40"
+							className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/40"
 						/>
 
 						{query && (
@@ -93,41 +93,41 @@ function FroncherExplore() {
 									e.stopPropagation();
 									setQuery("");
 								}}
-								className="flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-full text-background/40 transition-colors hover:bg-background/10 hover:text-background/70"
+								className="flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-full text-white/40 transition-colors hover:bg-white/10 hover:text-white/70"
 							>
 								<PiX size={12} />
 							</button>
 						)}
 
-						<div className="h-5 w-px shrink-0 bg-background/10" />
+						<div className="h-5 w-px shrink-0 bg-white/10" />
 
 						<button
 							type="button"
 							aria-label="Search by voice"
 							onClick={(e) => e.stopPropagation()}
-							className="flex shrink-0 cursor-pointer items-center justify-center text-background/30 transition-colors hover:text-background/60"
+							className="flex shrink-0 cursor-pointer items-center justify-center text-white/30 transition-colors hover:text-white/60"
 						>
 							<PiMicrophone size={18} />
 						</button>
 					</div>
 
 					{/* {focused && (
-					<div className="absolute inset-x-0 top-full mt-2 overflow-hidden rounded-2xl border border-background/10 bg-foreground p-2 opacity-100">
+					<div className="absolute inset-x-0 top-full mt-2 overflow-hidden rounded-2xl border border-white/10 bg-black p-2 opacity-100">
 						<ul className="flex flex-col gap-0.5">
 							{SUGGESTIONS.map((suggestion) => (
 								<li key={suggestion.text}>
 									<button
 										type="button"
 										onClick={() => submit(suggestion.text)}
-										className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-background/60 transition-colors hover:bg-background/5 hover:text-background"
+										className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-white/60 transition-colors hover:bg-white/5 hover:text-white"
 									>
 										<suggestion.icon
-											className="shrink-0 text-background/40"
+											className="shrink-0 text-white/40"
 											size={16}
 										/>
 										<span className="truncate">{suggestion.text}</span>
 										<PiArrowUpRight
-											className="ml-auto shrink-0 text-background/20"
+											className="ml-auto shrink-0 text-white/20"
 											size={14}
 										/>
 									</button>
@@ -173,7 +173,7 @@ function FroncherExplore() {
 									/>
 								</button>
 								<div className="">
-									<p className="truncate text-xs font-medium text-background">
+									<p className="truncate text-xs font-medium text-white">
 										{launchable.name}
 									</p>
 								</div>
@@ -218,7 +218,7 @@ function FroncherExplore() {
 										/>
 									</button>
 									<div className="">
-										<p className="truncate text-xs font-medium text-background">
+										<p className="truncate text-xs font-medium text-white">
 											{launchable.name}
 										</p>
 									</div>

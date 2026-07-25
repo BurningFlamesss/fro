@@ -20,9 +20,9 @@ import { useLauncherStore } from "#/store/launcher.tsx";
 import { useNoteStore } from "#/store/note.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
 import { useWindowStore } from "#/store/window.tsx";
+import { COMPLETED_MARKER, INCOMPLETE_MARKER } from "#/widgets/Task.tsx";
 import type { AppInstance, WindowInstance } from "../constants/apps";
 import { EVENT_COLORS } from "./Frolendar";
-import { COMPLETED_MARKER, INCOMPLETE_MARKER } from "#/widgets/Task.tsx";
 
 type TerminalResponse = React.ReactNode | string;
 
@@ -970,7 +970,7 @@ function Frominal() {
 						<li key={tab.id}>
 							{index + 1}. {tab.title}
 							<br />
-							<span className="text-muted-foreground text-sm">
+							<span className="text-muted-black text-sm">
 								{formatEventRange(tab.start, tab.end)}
 							</span>
 						</li>
@@ -1021,7 +1021,7 @@ function Frominal() {
 
 	const generateWelcomeMessage = () => {
 		return (
-			<div className="text-background">
+			<div className="text-white">
 				Welcome to FRO OS TERMINAL!!!
 				<pre className="text-primary">
 					╔══════════════════════════════╗ <br />
@@ -1058,7 +1058,7 @@ function Frominal() {
 
 	return (
 		<div
-			className="w-full min-h-full overflow-y-auto bg-foreground text-primary font-mono p-5 box-border m-0 selection:bg-green-800 selection:text-white"
+			className="w-full min-h-full overflow-y-auto bg-black text-primary font-mono p-5 box-border m-0 selection:bg-green-800 selection:text-white"
 			ref={terminalRef}
 		>
 			{generateWelcomeMessage()}
@@ -1079,7 +1079,7 @@ function Frominal() {
 								readonly={true}
 							/>
 
-							<div className="m-0 p-0 text-background">{lines.output}</div>
+							<div className="m-0 p-0 text-white">{lines.output}</div>
 						</div>
 					);
 				})}
@@ -1131,9 +1131,9 @@ function FrominalInputSection({
 					className="shrink-0 mr-0"
 				>
 					<span className="text-green-400 font-bold">{username}</span>
-					<span className="text-background">@</span>
+					<span className="text-white">@</span>
 					<span className="text-blue-400 font-bold">{hostname}</span>
-					<span className="text-background">:</span>
+					<span className="text-white">:</span>
 					<span className="text-yellow-400">~</span>
 				</span>
 				<input

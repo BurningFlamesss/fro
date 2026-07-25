@@ -31,26 +31,26 @@ const STATE_META: Record<
 		icon: PiSpinnerGap,
 		label: "Loading",
 		hint: "Fetching the page",
-		tone: "text-background",
+		tone: "text-white",
 		spin: true,
 	},
 	results: {
 		icon: PiMagnifyingGlassDuotone,
 		label: "Search results",
 		hint: "Results page goes here",
-		tone: "text-background",
+		tone: "text-white",
 	},
 	search: {
 		icon: PiGlobeDuotone,
 		label: "Search",
 		hint: "Search the web",
-		tone: "text-background",
+		tone: "text-white",
 	},
 	surfing: {
 		icon: PiGlobeDuotone,
 		label: "Browsing",
 		hint: "The live page would render here",
-		tone: "text-background",
+		tone: "text-white",
 	},
 	error: {
 		icon: PiWarningOctagonDuotone,
@@ -102,12 +102,12 @@ function SearchBar({
 				onClick={() => inputRef.current?.focus()}
 				className={cn(
 					"relative flex items-center gap-3 rounded-2xl border transition-all duration-300",
-					"border-background/10",
-					focused ? "h-14 px-5 ring-2 ring-background/20" : "h-12 px-4",
+					"border-white/10",
+					focused ? "h-14 px-5 ring-2 ring-white/20" : "h-12 px-4",
 				)}
 			>
 				<PiMagnifyingGlassDuotone
-					className="shrink-0 text-background/40"
+					className="shrink-0 text-white/40"
 					size={focused ? 20 : 18}
 				/>
 
@@ -124,7 +124,7 @@ function SearchBar({
 						}
 					}}
 					placeholder="Search the web or enter an address"
-					className="flex-1 bg-transparent text-sm text-background outline-none placeholder:text-background/40"
+					className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/40"
 				/>
 
 				{value && (
@@ -135,41 +135,41 @@ function SearchBar({
 							e.stopPropagation();
 							setValue("");
 						}}
-						className="flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-full text-background/40 transition-colors hover:bg-background/10 hover:text-background/70"
+						className="flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-full text-white/40 transition-colors hover:bg-white/10 hover:text-white/70"
 					>
 						<PiX size={12} />
 					</button>
 				)}
 
-				<div className="h-5 w-px shrink-0 bg-background/10" />
+				<div className="h-5 w-px shrink-0 bg-white/10" />
 
 				<button
 					type="button"
 					aria-label="Search by voice"
 					onClick={(e) => e.stopPropagation()}
-					className="flex shrink-0 cursor-pointer items-center justify-center text-background/30 transition-colors hover:text-background/60"
+					className="flex shrink-0 cursor-pointer items-center justify-center text-white/30 transition-colors hover:text-white/60"
 				>
 					<PiMicrophone size={18} />
 				</button>
 			</div>
 
 			{focused && (
-				<div className="absolute inset-x-0 top-full mt-2 overflow-hidden rounded-2xl border border-background/10 bg-foreground p-2 opacity-100">
+				<div className="absolute inset-x-0 top-full mt-2 overflow-hidden rounded-2xl border border-white/10 bg-black p-2 opacity-100">
 					<ul className="flex flex-col gap-0.5">
 						{SUGGESTIONS.map((suggestion) => (
 							<li key={suggestion.text}>
 								<button
 									type="button"
 									onClick={() => submit(suggestion.text)}
-									className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-background/60 transition-colors hover:bg-background/5 hover:text-background"
+									className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-white/60 transition-colors hover:bg-white/5 hover:text-white"
 								>
 									<suggestion.icon
-										className="shrink-0 text-background/40"
+										className="shrink-0 text-white/40"
 										size={16}
 									/>
 									<span className="truncate">{suggestion.text}</span>
 									<PiArrowUpRight
-										className="ml-auto shrink-0 text-background/20"
+										className="ml-auto shrink-0 text-white/20"
 										size={14}
 									/>
 								</button>
@@ -193,10 +193,10 @@ function PinnedSites({ onSelect }: { onSelect: (site: PinnedSite) => void }) {
 					onClick={() => onSelect(site)}
 					className="group flex w-16 cursor-pointer flex-col items-center gap-2"
 				>
-					<div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-background/10 bg-foreground/80 transition-colors hover:bg-foreground group-hover:bg-foreground/85 sm:h-14 sm:w-14">
+					<div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-black/80 transition-colors hover:bg-black group-hover:bg-black/85 sm:h-14 sm:w-14">
 						<site.icon size={22} style={{ color: site.color }} />
 					</div>
-					<span className="w-full truncate text-center text-xs text-background transition-colors">
+					<span className="w-full truncate text-center text-xs text-white transition-colors">
 						{site.name}
 					</span>
 				</button>
@@ -207,10 +207,10 @@ function PinnedSites({ onSelect }: { onSelect: (site: PinnedSite) => void }) {
 				type="button"
 				className="group flex w-16 cursor-pointer flex-col items-center gap-2"
 			>
-				<div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-dashed border-background/15 bg-foreground/80 transition-colors group-hover:bg-foreground sm:h-14 sm:w-14">
-					<PiPlus className="text-background" size={20} />
+				<div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-dashed border-white/15 bg-black/80 transition-colors group-hover:bg-black sm:h-14 sm:w-14">
+					<PiPlus className="text-white" size={20} />
 				</div>
-				<span className="text-xs text-background">Add</span>
+				<span className="text-xs text-white">Add</span>
 			</button> */}
 		</div>
 	);
@@ -278,7 +278,7 @@ function ResultsView({
 								<h2 className="text-sm font-semibold text-primary">
 									AI Overview
 								</h2>
-								<p className="mt-2 text-sm leading-relaxed text-background/80">
+								<p className="mt-2 text-sm leading-relaxed text-white/80">
 									{answer}
 								</p>
 							</div>
@@ -289,7 +289,7 @@ function ResultsView({
 				{images.length > 0 && (
 					<section>
 						<div className="mb-3 flex items-center gap-2">
-							<h2 className="text-sm font-medium text-background/60">Images</h2>
+							<h2 className="text-sm font-medium text-white/60">Images</h2>
 						</div>
 						<div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
 							{images.map((image, index) => (
@@ -322,7 +322,7 @@ function ResultsView({
 					{results.length > 0 && (
 						<section>
 							<div className="mb-3 flex items-center gap-2">
-								<h2 className="text-sm font-medium text-background/60">
+								<h2 className="text-sm font-medium text-white/60">
 									Frow Results
 								</h2>
 							</div>
@@ -344,7 +344,7 @@ function ResultsView({
 											>
 												<article className="rounded-xl border border-transparent p-3 transition-colors">
 													<div className="flex flex-start gap-3">
-														<div className="flex w-6 h-6 shrink-0 items-center justify-center rounded-md bg-background/10">
+														<div className="flex w-6 h-6 shrink-0 items-center justify-center rounded-md bg-white/10">
 															{result.favicon ? (
 																<img
 																	src={result.favicon}
@@ -358,16 +358,16 @@ function ResultsView({
 																/>
 															) : (
 																<PiGlobeSimple
-																	className="text-background/40"
+																	className="text-white/40"
 																	size={14}
 																/>
 															)}
 														</div>
 														<div className="min-w-0 flex-1 ">
-															<h3 className="truncate text-sm font-medium text-background group:text-primary">
+															<h3 className="truncate text-sm font-medium text-white group:text-primary">
 																{result.title}
 															</h3>
-															<div className="mt-0.5 flex items-center gap-2 text-xs text-background/40">
+															<div className="mt-0.5 flex items-center gap-2 text-xs text-white/40">
 																<span className="truncate group-hover:underline text-primary">
 																	{result.url}
 																</span>
@@ -378,12 +378,12 @@ function ResultsView({
 																	</>
 																)}
 															</div>
-															<p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-background/60">
+															<p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-white/60">
 																{result.content}
 															</p>
 														</div>
 														<PiArrowUpRight
-															className="mt-0.5 shrink-0 text-background/40 opacity-0 group-hover:opacity-100 transition-all duration-150"
+															className="mt-0.5 shrink-0 text-white/40 opacity-0 group-hover:opacity-100 transition-all duration-150"
 															size={14}
 														/>
 													</div>
@@ -477,8 +477,8 @@ function PlaceholderView({
 				/>
 			</div>
 			<div>
-				<p className="font-medium text-background">{meta.label}</p>
-				<p className="mt-1 max-w-xs text-sm text-background/40">
+				<p className="font-medium text-white">{meta.label}</p>
+				<p className="mt-1 max-w-xs text-sm text-white/40">
 					{tab.query ?? tab.url ?? meta.hint}
 				</p>
 			</div>
@@ -486,7 +486,7 @@ function PlaceholderView({
 				<button
 					type="button"
 					onClick={onReset}
-					className="mt-2 cursor-pointer rounded-xl border border-background/10 px-4 py-2 text-sm text-background/70 transition-colors hover:text-background"
+					className="mt-2 cursor-pointer rounded-xl border border-white/10 px-4 py-2 text-sm text-white/70 transition-colors hover:text-white"
 				>
 					Back to new tab
 				</button>
@@ -501,7 +501,7 @@ function getTabIcon(state: TabState): {
 	spin?: boolean;
 } {
 	if (state === "search")
-		return { icon: PiCompassDuotone, tone: "text-background/35" };
+		return { icon: PiCompassDuotone, tone: "text-white/35" };
 
 	const meta = STATE_META[state];
 
@@ -534,14 +534,14 @@ function TabBar({
 							className={cn(
 								"group relative shrink-0 flex min-w-0 max-w-[180px] cursor-pointer items-center gap-2 rounded-t-xl px-3 py-2 text-xs font-medium transition-colors",
 								isActive
-									? "bg-background/10 text-background"
-									: "text-background/40 hover:bg-background/5 hover:text-background/80",
+									? "bg-white/10 text-white"
+									: "text-white/40 hover:bg-white/5 hover:text-white/80",
 							)}
 						>
 							<Icon
 								className={cn(
 									"shrink-0",
-									isActive ? tone : "text-background/25",
+									isActive ? tone : "text-white/25",
 									spin && "animate-spin",
 								)}
 								size={14}
@@ -557,7 +557,7 @@ function TabBar({
 										onClose(tab.id);
 									}}
 									className={cn(
-										"flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-background/10",
+										"flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-white/10",
 										!isActive && "opacity-0 group-hover:opacity-100",
 									)}
 								>
@@ -572,7 +572,7 @@ function TabBar({
 				type="button"
 				aria-label="New tab"
 				onClick={onAdd}
-				className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-background/35 transition-colors hover:bg-background/5 hover:text-background/70"
+				className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-white/35 transition-colors hover:bg-white/5 hover:text-white/70"
 			>
 				<PiPlus size={15} />
 			</button>
@@ -681,7 +681,7 @@ function Frowser() {
 	}, [currentTab?.id, currentTab?.query, currentTab?.state, handleSearch]);
 
 	return (
-		<div className="relative flex h-full w-full flex-col overflow-hidden text-background">
+		<div className="relative flex h-full w-full flex-col overflow-hidden text-white">
 			<TabBar
 				tabs={tabs}
 				currentTabId={currentTabId}

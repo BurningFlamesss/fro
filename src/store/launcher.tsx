@@ -179,23 +179,23 @@ function FypeMaster({ params }: LaunchProps) {
 
 					<div className="mt-8 grid grid-cols-2 gap-6">
 						<div>
-							<p className="text-muted-foreground">Speed</p>
+							<p className="text-muted-black">Speed</p>
 							<p className="text-3xl font-bold">{stats.wpm.toFixed(1)}</p>
 							<p>WPM</p>
 						</div>
 
 						<div>
-							<p className="text-muted-foreground">Accuracy</p>
+							<p className="text-muted-black">Accuracy</p>
 							<p className="text-3xl font-bold">{stats.accuracy.toFixed(1)}%</p>
 						</div>
 
 						<div>
-							<p className="text-muted-foreground">Time</p>
+							<p className="text-muted-black">Time</p>
 							<p className="text-3xl font-bold">{stats.time.toFixed(2)}s</p>
 						</div>
 
 						<div>
-							<p className="text-muted-foreground">Mistakes</p>
+							<p className="text-muted-black">Mistakes</p>
 							<p className="text-3xl font-bold">{stats.incorrect}</p>
 						</div>
 					</div>
@@ -214,7 +214,7 @@ function FypeMaster({ params }: LaunchProps) {
 
 								inputRef.current?.focus();
 							}}
-							className="rounded-md bg-primary px-4 py-2 text-primary-foreground cursor-pointer"
+							className="rounded-md bg-primary px-4 py-2 text-primary-black cursor-pointer"
 						>
 							Restart
 						</button>

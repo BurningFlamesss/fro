@@ -138,7 +138,7 @@ function Frosic() {
 
 	if (!track) {
 		return (
-			<main className="flex h-full w-full flex-col items-center justify-center bg-foreground text-background">
+			<main className="flex h-full w-full flex-col items-center justify-center bg-black text-white">
 				<p className="text-sm opacity-60">No tracks yet</p>
 				<p className="text-xs mt-1 opacity-40">
 					Drop audio files, paste a URL, or add a YouTube link
@@ -146,13 +146,13 @@ function Frosic() {
 				<div className="flex gap-2 mt-3">
 					<button
 						onClick={handleAddUrl}
-						className="px-3 py-1 bg-background/10 rounded cursor-pointer text-xs"
+						className="px-3 py-1 bg-white/10 rounded cursor-pointer text-xs"
 					>
 						Add Link
 					</button>
 					<button
 						onClick={() => fileInputRef.current?.click()}
-						className="px-3 py-1 bg-background/10 rounded cursor-pointer text-xs"
+						className="px-3 py-1 bg-white/10 rounded cursor-pointer text-xs"
 					>
 						Upload File
 					</button>
@@ -170,7 +170,7 @@ function Frosic() {
 	}
 
 	return (
-		<main className="flex h-full w-full flex-col overflow-hidden bg-foreground text-background">
+		<main className="flex h-full w-full flex-col overflow-hidden bg-black text-white">
 			<div
 				onDrop={(event) => {
 					event.preventDefault();
@@ -180,7 +180,7 @@ function Frosic() {
 				onDragOver={(event) => event.preventDefault()}
 				className="relative flex-1 min-h-0 flex items-center justify-center p-2"
 			>
-				<div className="w-full h-full max-w-48 max-h-full aspect-square rounded-2xl overflow-hidden border border-background/10 bg-black/30">
+				<div className="w-full h-full max-w-48 max-h-full aspect-square rounded-2xl overflow-hidden border border-white/10 bg-black/30">
 					<img
 						src={coverImageSource}
 						alt={track.title}
@@ -194,20 +194,20 @@ function Frosic() {
 
 			<div className="px-3 pb-1 text-center">
 				<h2 className="text-sm font-semibold truncate">{track.title}</h2>
-				<p className="text-xs text-background/60 truncate">{track.artist}</p>
+				<p className="text-xs text-white/60 truncate">{track.artist}</p>
 			</div>
 
 			<div className="px-3 pb-1">
 				<div
 					ref={progressBarRef}
-					className="relative h-2 w-full cursor-pointer rounded-full bg-background/10 group touch-none"
+					className="relative h-2 w-full cursor-pointer rounded-full bg-white/10 group touch-none"
 					onPointerDown={handlePointerDown}
 					onPointerMove={handlePointerMove}
 					onPointerUp={handlePointerUp}
 					onPointerCancel={handlePointerUp}
 				>
 					<div
-						className="absolute left-0 top-0 h-full rounded-full bg-background/70"
+						className="absolute left-0 top-0 h-full rounded-full bg-white/70"
 						style={{
 							width: musicStore.duration
 								? `${(musicStore.currentTime / musicStore.duration) * 100}%`
@@ -215,7 +215,7 @@ function Frosic() {
 						}}
 					/>
 					<div
-						className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-background rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+						className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
 						style={{
 							left: musicStore.duration
 								? `calc(${(musicStore.currentTime / musicStore.duration) * 100}% - 6px)`
@@ -223,7 +223,7 @@ function Frosic() {
 						}}
 					/>
 				</div>
-				<div className="mt-0.5 flex justify-between text-xs text-background/50">
+				<div className="mt-0.5 flex justify-between text-xs text-white/50">
 					<span>{formatTime(musicStore.currentTime)}</span>
 					<span>
 						{musicStore.duration ? formatTime(musicStore.duration) : "--:--"}
@@ -235,7 +235,7 @@ function Frosic() {
 				<div className="flex items-center gap-1">
 					<button
 						onClick={() => musicStore.setMuted(!musicStore.muted)}
-						className="cursor-pointer text-background/60 hover:text-background"
+						className="cursor-pointer text-white/60 hover:text-white"
 					>
 						{musicStore.muted || musicStore.volume === 0 ? (
 							<FaVolumeXmark size={14} />
@@ -252,20 +252,20 @@ function Frosic() {
 						onChange={(event) =>
 							musicStore.setVolume(parseFloat(event.target.value))
 						}
-						className="w-12 h-1 accent-background/60 cursor-pointer"
+						className="w-12 h-1 accent-white/60 cursor-pointer"
 					/>
 				</div>
 
 				<div className="flex items-center gap-2">
 					<button
 						onClick={() => musicStore.previous()}
-						className="cursor-pointer text-background/60 hover:text-background"
+						className="cursor-pointer text-white/60 hover:text-white"
 					>
 						<FaBackwardFast size={16} />
 					</button>
 					<button
 						onClick={() => musicStore.togglePlay()}
-						className="cursor-pointer rounded-full p-1 bg-background/10 hover:bg-background/20"
+						className="cursor-pointer rounded-full p-1 bg-white/10 hover:bg-white/20"
 					>
 						{musicStore.isPlaying ? (
 							<FaPause size={16} />
@@ -275,7 +275,7 @@ function Frosic() {
 					</button>
 					<button
 						onClick={() => musicStore.next()}
-						className="cursor-pointer text-background/60 hover:text-background"
+						className="cursor-pointer text-white/60 hover:text-white"
 					>
 						<FaForwardFast size={16} />
 					</button>
@@ -285,8 +285,8 @@ function Frosic() {
 					<button
 						onClick={() => musicStore.setRepeat(!musicStore.repeat)}
 						className={cn(
-							"cursor-pointer hover:text-background",
-							musicStore.repeat ? "text-background" : "text-background/40",
+							"cursor-pointer hover:text-white",
+							musicStore.repeat ? "text-white" : "text-white/40",
 						)}
 					>
 						<FaRepeat size={14} />
@@ -294,13 +294,13 @@ function Frosic() {
 
 					<Popover>
 						<PopoverTrigger asChild>
-							<button className="cursor-pointer text-background/40 hover:text-background">
+							<button className="cursor-pointer text-white/40 hover:text-white">
 								<FaList size={14} />
 							</button>
 						</PopoverTrigger>
 						<PopoverContent
 							align="center"
-							className="w-48 p-2 bg-foreground border border-background/10 text-background text-xs"
+							className="w-48 p-2 bg-black border border-white/10 text-white text-xs"
 						>
 							<div className="max-h-32 overflow-y-auto">
 								{musicStore.tracks.map((singleTrack, index) => (
@@ -316,8 +316,8 @@ function Frosic() {
 											className={cn(
 												"flex-1 text-left truncate px-2 py-1.5 rounded cursor-pointer",
 												index === musicStore.currentIndex
-													? "bg-background/10 text-background"
-													: "text-background/60 hover:bg-background/5",
+													? "bg-white/10 text-white"
+													: "text-white/60 hover:bg-white/5",
 											)}
 										>
 											{singleTrack.title} - {singleTrack.artist}
@@ -327,7 +327,7 @@ function Frosic() {
 												e.stopPropagation();
 												musicStore.removeTrack(singleTrack.id);
 											}}
-											className="opacity-0 group-hover:opacity-100 text-background/40 hover:text-red-400 transition-opacity p-1 cursor-pointer"
+											className="opacity-0 group-hover:opacity-100 text-white/40 hover:text-red-400 transition-opacity p-1 cursor-pointer"
 											title="Remove track"
 										>
 											<FaTrash size={12} />
@@ -348,14 +348,14 @@ function Frosic() {
 
 					<button
 						onClick={handleAddUrl}
-						className="cursor-pointer text-background/40 hover:text-background"
+						className="cursor-pointer text-white/40 hover:text-white"
 						title="Add URL or YouTube link"
 					>
 						<FaPlus size={14} />
 					</button>
 					<button
 						onClick={() => fileInputRef.current?.click()}
-						className="cursor-pointer text-background/40 hover:text-background"
+						className="cursor-pointer text-white/40 hover:text-white"
 						title="Upload audio files"
 					>
 						<FaUpload size={14} />

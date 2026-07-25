@@ -70,7 +70,7 @@ function Task() {
 					}
 				}}
 				placeholder="Add your task"
-				className="max-h-6 flex-1 bg-transparent text-sm text-background border-b border-b-transparent focus:border-b-white transition-all duration-75 focus:outline-none placeholder:text-background/40"
+				className="max-h-6 flex-1 bg-transparent text-sm text-white border-b border-b-transparent focus:border-b-white transition-all duration-75 focus:outline-none placeholder:text-white/40"
 			/>
 			{taskItems.map((task, index) => (
 				<li
@@ -78,6 +78,7 @@ function Task() {
 					className="flex justify-start items-center gap-x-2"
 				>
 					<Checkbox
+						className="cursor-pointer"
 						checked={task.completed}
 						onCheckedChange={() => toggleTask(index)}
 					/>

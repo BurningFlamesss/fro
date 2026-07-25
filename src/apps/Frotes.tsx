@@ -26,8 +26,8 @@ function Frotes() {
 	}, [ensureDefaultTab]);
 
 	return (
-		<div className="flex flex-col bg-foreground text-background w-full h-full">
-			<div className="flex items-end gap-1 px-2 pt-2.5 border-b border-background/5">
+		<div className="flex flex-col bg-black text-white w-full h-full">
+			<div className="flex items-end gap-1 px-2 pt-2.5 border-b border-white/5">
 				<div className="flex-1 min-w-0 overflow-x-auto flex items-start gap-1 no-scrollbar">
 					{tabs?.map((tab) => {
 						return (
@@ -36,8 +36,8 @@ function Frotes() {
 								className={cn(
 									"group flex shrink-0 max-w-40 cursor-pointer items-center gap-2 rounded-t-xl px-3 py-2 text-xs",
 									tab.id === activeTabId
-										? "bg-background/10 text-background"
-										: "text-background/40 hover:bg-background/5",
+										? "bg-white/10 text-white"
+										: "text-white/40 hover:bg-white/5",
 								)}
 								onClick={() => selectTab(tab.id)}
 							>
@@ -83,7 +83,7 @@ function Frotes() {
 											closeTab(tab.id);
 										}}
 										className={cn(
-											"shrink-0 opacity-0 group-hover:opacity-100 text-background/50 hover:text-background cursor-pointer",
+											"shrink-0 opacity-0 group-hover:opacity-100 text-white/50 hover:text-white cursor-pointer",
 										)}
 									>
 										<PiX size={11} />
@@ -97,7 +97,7 @@ function Frotes() {
 					type="button"
 					aria-label="New tab"
 					onClick={() => addTab()}
-					className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-background/35 transition-colors hover:bg-background/5 hover:text-background/70"
+					className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-white/35 transition-colors hover:bg-white/5 hover:text-white/70"
 				>
 					<PiPlus size={15} />
 				</button>
@@ -105,7 +105,7 @@ function Frotes() {
 					type="button"
 					aria-label="Toggle preview"
 					onClick={() => setPreview(!preview)}
-					className="ml-auto flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-background/35 transition-colors hover:bg-background/5 hover:text-background/70"
+					className="ml-auto flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-white/35 transition-colors hover:bg-white/5 hover:text-white/70"
 				>
 					{preview ? <PiPencil size={14} /> : <PiEye size={14} />}
 				</button>
