@@ -7,6 +7,7 @@ import {
 	FaPlay,
 	FaPlus,
 	FaRepeat,
+	FaTrash,
 	FaUpload,
 	FaVolumeHigh,
 	FaVolumeXmark,
@@ -18,7 +19,6 @@ import {
 } from "#/components/ui/popover";
 import { cn } from "#/lib/utils";
 import { useMusicStore } from "#/store/music";
-import { useWindowStore } from "#/store/window";
 
 function extractYouTubeId(url: string): string | null {
 	const patterns = [
@@ -56,19 +56,6 @@ function Frosic() {
 			setCoverImageSource("/apps/Music.svg");
 		}
 	}, [track?.cover, track?.id]);
-
-	// Additional safety: if this window was the last one, stop music on unmount
-	useEffect(() => {
-		return () => {
-			const { windows } = useWindowStore.getState();
-			const openMusicWindows = Object.values(windows).filter(
-				(windowInstance) => windowInstance?.appId === "music",
-			);
-			if (openMusicWindows.length === 0) {
-				useMusicStore.getState().deactivate();
-			}
-		};
-	}, []);
 
 	const handleFileDrop = useCallback(
 		(acceptedFiles: File[]) => {
@@ -317,22 +304,44 @@ function Frosic() {
 						>
 							<div className="max-h-32 overflow-y-auto">
 								{musicStore.tracks.map((singleTrack, index) => (
-									<button
+									<div
 										key={singleTrack.id}
-										onClick={() => {
-											musicStore.loadTrack(index);
-											musicStore.setPlaying(true);
-										}}
-										className={cn(
-											"w-full text-left truncate px-2 py-1.5 rounded cursor-pointer",
-											index === musicStore.currentIndex
-												? "bg-background/10 text-background"
-												: "text-background/60 hover:bg-background/5",
-										)}
+										className="flex items-center gap-1 group"
 									>
-										{singleTrack.title} - {singleTrack.artist}
-									</button>
+										<button
+											onClick={() => {
+												musicStore.loadTrack(index);
+												musicStore.setPlaying(true);
+											}}
+											className={cn(
+												"flex-1 text-left truncate px-2 py-1.5 rounded cursor-pointer",
+												index === musicStore.currentIndex
+													? "bg-background/10 text-background"
+													: "text-background/60 hover:bg-background/5",
+											)}
+										>
+											{singleTrack.title} - {singleTrack.artist}
+										</button>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												musicStore.removeTrack(singleTrack.id);
+											}}
+											className="opacity-0 group-hover:opacity-100 text-background/40 hover:text-red-400 transition-opacity p-1 cursor-pointer"
+											title="Remove track"
+										>
+											<FaTrash size={12} />
+										</button>
+									</div>
 								))}
+								{musicStore.tracks.length > 0 && (
+									<button
+										onClick={() => musicStore.clearTracks()}
+										className="w-full mt-2 text-xs text-red-400 hover:underline cursor-pointer"
+									>
+										Clear playlist
+									</button>
+								)}
 							</div>
 						</PopoverContent>
 					</Popover>

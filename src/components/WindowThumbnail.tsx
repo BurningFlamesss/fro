@@ -12,7 +12,7 @@ const THUMB_HEIGHT = 100;
 
 const WindowThumbnail = memo(function WindowThumbnail({ win }: Props) {
 	const { closeWindow, focusWindow, previewCache } = useWindowStore();
-	const { deactivate } = useMusicStore();
+	const { stopPlayback } = useMusicStore();
 	if (!win) return null;
 
 	const { id, title, logo } = win;
@@ -22,7 +22,7 @@ const WindowThumbnail = memo(function WindowThumbnail({ win }: Props) {
 	const handleClose = (e: React.MouseEvent) => {
 		e.stopPropagation();
 		if (id.startsWith("music_")) {
-			deactivate();
+			stopPlayback();
 		}
 		closeWindow(id);
 	};

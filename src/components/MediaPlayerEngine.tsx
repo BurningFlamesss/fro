@@ -22,7 +22,7 @@ function MediaPlayerEngine() {
 		(state) => state.setYouTubePlayerAPI,
 	);
 	const setAudioElement = useMusicStore((state) => state.setAudioElement);
-	const deactivateMusic = useMusicStore((state) => state.deactivate);
+	const stopPlayback = useMusicStore((state) => state.stopPlayback);
 
 	useEffect(() => {
 		if (audioElementRef.current) {
@@ -32,7 +32,7 @@ function MediaPlayerEngine() {
 	}, [setAudioElement]);
 
 	useEffect(() => {
-		const checkAndStopIfNoWindows = () => {
+		const checkWindows = () => {
 			const { windows } = useWindowStore.getState();
 			const openMusicWindows = Object.values(windows).filter(
 				(windowInstance) => windowInstance?.appId === "music",
@@ -40,18 +40,18 @@ function MediaPlayerEngine() {
 			const currentCount = openMusicWindows.length;
 
 			if (currentCount === 0 && previousMusicWindowCountRef.current > 0) {
-				deactivateMusic();
+				stopPlayback();
 			}
 			previousMusicWindowCountRef.current = currentCount;
 		};
 
-		checkAndStopIfNoWindows();
+		checkWindows();
 		const unsubscribe = useWindowStore.subscribe(
 			(state) => state.windows,
-			checkAndStopIfNoWindows,
+			checkWindows,
 		);
 		return () => unsubscribe();
-	}, [deactivateMusic]);
+	}, [stopPlayback]);
 
 	useEffect(() => {
 		const audio = audioElementRef.current;

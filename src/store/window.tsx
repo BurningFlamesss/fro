@@ -9,6 +9,7 @@ import {
 	type WindowId,
 	Windows,
 } from "../constants/apps";
+import { useMusicStore } from "./music";
 
 interface WindowStore {
 	windows: typeof Windows;
@@ -137,8 +138,12 @@ export const useWindowStore = create<WindowStore>()(
 				}
 			}),
 
-		closeWindow: (windowId) =>
+		closeWindow: (windowId: WindowId) =>
 			set((state) => {
+				const win = state.windows[windowId];
+				if (win && win.appId === "music") {
+					useMusicStore.getState().stopPlayback();
+				}
 				delete state.windows[windowId];
 			}),
 
