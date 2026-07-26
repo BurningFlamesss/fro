@@ -51,16 +51,20 @@ export const useNoteStore = create<NoteStore>()(
 					identifier,
 					extension = "frote",
 				) => {
-					const existingFile = useFileSystemStore.getState().nodes[identifier ?? ""]
-					const fileId = existingFile ? existingFile.id :  useFileSystemStore
-						.getState()
-						.createNode(
-							"notes",
-							`${title}.${extension}`,
-							"file",
-							content,
-							identifier,
-						);
+					const existingFile =
+						useFileSystemStore.getState().nodes[identifier ?? ""];
+
+					const fileId = existingFile
+						? existingFile.id
+						: useFileSystemStore
+								.getState()
+								.createNode(
+									"notes",
+									`${title}.${extension}`,
+									"file",
+									content,
+									identifier,
+								);
 					const newTab: NoteTab = {
 						id: fileId,
 						title,

@@ -364,7 +364,7 @@ function Screen() {
 										)}
 									</button>
 								</ContextMenuTrigger>
-								<ContextMenuContent>
+								<ContextMenuContent className="z-100000002">
 									<ContextMenuItem
 										onClick={() =>
 											openApp("file_explorer", undefined, {

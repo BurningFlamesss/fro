@@ -491,19 +491,25 @@ function Taskbar() {
 							<TooltipTrigger className="cursor-default">
 								<FaWifi className="" />
 							</TooltipTrigger>
-							<TooltipContent className="px-3 py-1.5">Wi-Fi</TooltipContent>
+							<TooltipContent className="px-3 py-1.5 my-4">
+								Wi-Fi
+							</TooltipContent>
 						</Tooltip>
 						<Tooltip>
 							<TooltipTrigger className="cursor-default">
 								<HiSpeakerWave className="" />
 							</TooltipTrigger>
-							<TooltipContent className="px-3 py-1.5">Volume</TooltipContent>
+							<TooltipContent className="px-3 py-1.5 my-4">
+								Volume
+							</TooltipContent>
 						</Tooltip>
 						<Tooltip>
 							<TooltipTrigger className="cursor-default">
 								<FaBatteryThreeQuarters className="" />
 							</TooltipTrigger>
-							<TooltipContent className="px-3 py-1.5">Battery</TooltipContent>
+							<TooltipContent className="px-3 py-1.5 my-4">
+								Battery
+							</TooltipContent>
 						</Tooltip>
 					</div>
 
