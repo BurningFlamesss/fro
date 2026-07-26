@@ -89,7 +89,7 @@ const Toolbar = memo(function Toolbar({
 	}, [view, date, onNavigate]);
 
 	return (
-		<div className="flex items-center justify-between px-4 py-2 border-b border-white/5 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white rounded-t-xl select-none">
+		<div className="flex items-center justify-between px-4 py-2 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white select-none">
 			<div className="flex items-center gap-2">
 				<button
 					type="button"
@@ -110,7 +110,7 @@ const Toolbar = memo(function Toolbar({
 					variant="ghost"
 					size="sm"
 					onClick={onToday}
-					className="ml-2 text-xs cursor-pointer"
+					className="ml-2 text-xs cursor-pointer hover:text-black"
 				>
 					Navigate to Today
 				</Button>
@@ -1222,7 +1222,7 @@ function Frolendar() {
 	}, [view, date]);
 
 	return (
-		<div className="w-full h-full flex flex-col rounded-xl overflow-hidden bg-transparent">
+		<div className="w-full h-full flex flex-col overflow-hidden bg-transparent">
 			<Toolbar
 				view={view}
 				onViewChange={setView}

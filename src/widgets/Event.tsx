@@ -5,7 +5,7 @@ function Event() {
 	const { events } = useCalendarStore();
 	const now = new Date();
 	const upcoming = events
-		.filter((event) => parseDate(event.start) >= now)
+		.filter((event) => parseDate(event.end) >= now)
 		.sort(
 			(a, b) =>
 				(parseDate(a.start)?.getTime() ?? 0) -
