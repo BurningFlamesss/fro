@@ -51,7 +51,8 @@ export const useNoteStore = create<NoteStore>()(
 					identifier,
 					extension = "frote",
 				) => {
-					const fileId = useFileSystemStore
+					const existingFile = useFileSystemStore.getState().nodes[identifier ?? ""]
+					const fileId = existingFile ? existingFile.id :  useFileSystemStore
 						.getState()
 						.createNode(
 							"notes",
@@ -105,7 +106,9 @@ export const useNoteStore = create<NoteStore>()(
 				updateContent: (id, content) =>
 					set((state) => {
 						const tab = state.tabs.find((tab) => tab.id === id);
+
 						if (!tab) return;
+
 						tab.content = content;
 
 						const fs = useFileSystemStore.getState();

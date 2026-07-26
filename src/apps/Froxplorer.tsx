@@ -270,7 +270,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 				case "notes": {
 					const tab = tabs.find((tab) => tab.id === node.id);
 
-					if (!tab) addTab(name, node.content, node.id);
+					if (!tab) addTab(name, node.content, node.id, extension);
 					else selectTab(node.id);
 
 					openApp(key);
