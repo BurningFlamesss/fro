@@ -58,3 +58,29 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
 4. Tasks (Shows the tasks)
 5. Pomodoro (Starts pomodoro timer)
 6. Events (Shows the upcoming events)
+
+## Get started with contribution
+
+Step 1: Clone
+```bash
+git clone https://github.com/BurningFlamesss/fro
+```
+
+Step 2: Install deps
+```bash
+npm i
+```
+
+Step 3: Rename `.env.example` to `.env.local` and change the variables
+
+Step 4: Run either the dev server or the production server
+```bash
+npm run dev
+npm run build
+```
+
+Step 5 (Optional): 
+1. If you want to add a widget or application:
+- Goto src/widgets or src/apps to create own widget or application and then,
+- Register that in /src/constants/widgets and /src/constants/widgetsAppDefinition (for widgets) or /src/constants/apps (for application),
+2. Else, you can also goto /src/store/launcher to add your Froncher compatible application.
