@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "#/lib/utils.ts";
 import breakGif from "../../public/widgets/pomodoro/break.gif";
 import breakBtn from "../../public/widgets/pomodoro/break.png";
@@ -12,11 +12,11 @@ import workBtn from "../../public/widgets/pomodoro/work.png";
 import workBtnClicked from "../../public/widgets/pomodoro/work-clicked.png";
 
 const cheerMessages = [
-	"You can do it!",
-	"I believe in you",
-	"You're amazing",
-	"Keep going",
 	"Stay Frokused",
+	"You can do it!",
+	"Fro believe in you",
+	"You're amazing",
+	"Keep Froking",
 ];
 
 const breakMessages = [
@@ -46,7 +46,22 @@ function Pomodoro() {
 	const [workButtonImage, setWorkButtonImage] = useState(workBtn);
 	const [image, setImage] = useState(playImg);
 	const [gifImage, setGifImage] = useState(idleGif);
-	const frokAudio = new Audio(frokSound);
+
+	const frokAudioRef = useRef<HTMLAudioElement | null>(null);
+	const endTimeRef = useRef<number>(0);
+	const animationFrameRef = useRef<number>(0);
+	const totalDurationRef = useRef<number>(25 * 60);
+
+	useEffect(() => {
+		frokAudioRef.current = new Audio(frokSound);
+
+		return () => {
+			if (frokAudioRef.current) {
+				frokAudioRef.current.pause();
+				frokAudioRef.current = null;
+			}
+		};
+	}, []);
 
 	useEffect(() => {
 		let messageInterval: NodeJS.Timeout;
@@ -68,32 +83,43 @@ function Pomodoro() {
 	}, [isRunning, isBreak]);
 
 	useEffect(() => {
-		let timer: NodeJS.Timeout;
-
-		if (isRunning && timeLeft > 0) {
-			timer = setInterval(() => {
-				setTimeLeft((prev) => prev - 1);
-			}, 1000);
+		if (!isRunning) {
+			cancelAnimationFrame(animationFrameRef.current);
+			return;
 		}
 
-		return () => clearInterval(timer);
-	}, [isRunning, timeLeft]);
+		const updateTimer = () => {
+			const now = Date.now();
+			const remaining = Math.max(
+				0,
+				Math.ceil((endTimeRef.current - now) / 1000),
+			);
 
-	useEffect(() => {
-		switchMode(false);
-	}, []);
+			setTimeLeft((prev) => {
+				if (remaining !== prev) return remaining;
 
-	useEffect(() => {
-		if (timeLeft === 0 && isRunning) {
-			frokAudio.play().catch((err) => {
-				console.error("Audio play failed:", err);
+				return prev;
 			});
-			setIsRunning(false);
-			setImage(playImg);
-			setGifImage(idleGif);
-			setTimeLeft(isBreak ? 5 * 60 : 25 * 60);
-		}
-	}, [timeLeft]);
+
+			if (remaining > 0) {
+				animationFrameRef.current = requestAnimationFrame(updateTimer);
+			} else {
+				setIsRunning(false);
+				setImage(playImg);
+				setGifImage(idleGif);
+				setTimeLeft(totalDurationRef.current);
+
+				frokAudioRef.current?.play().catch(() => {});
+			}
+		};
+
+		const remainingSeconds = timeLeft;
+
+		endTimeRef.current = Date.now() + remainingSeconds * 1000;
+		animationFrameRef.current = requestAnimationFrame(updateTimer);
+
+		return () => cancelAnimationFrame(animationFrameRef.current);
+	}, [isRunning]);
 
 	const switchMode = (breakMode: boolean) => {
 		setIsBreak(breakMode);
@@ -102,8 +128,11 @@ function Pomodoro() {
 		setBreakButtonImage(breakMode ? breakBtnClicked : breakBtn);
 		setWorkButtonImage(breakMode ? workBtn : workBtnClicked);
 		setGifImage(idleGif);
+		setImage(playImg);
 
-		setTimeLeft(breakMode ? 5 * 60 : 25 * 60);
+		const newDuration = breakMode ? 5 * 60 : 25 * 60;
+		totalDurationRef.current = newDuration;
+		setTimeLeft(newDuration);
 	};
 
 	const handleClick = () => {
@@ -113,7 +142,6 @@ function Pomodoro() {
 			setImage(resetImg);
 		} else {
 			setIsRunning(false);
-			setTimeLeft(isBreak ? 5 * 60 : 25 * 60);
 			setGifImage(idleGif);
 			setImage(playImg);
 		}
