@@ -84,3 +84,18 @@ Step 5 (Optional):
 - Goto src/widgets or src/apps to create own widget or application and then,
 - Register that in /src/constants/widgets and /src/constants/widgetsAppDefinition (for widgets) or /src/constants/apps (for application),
 2. Else, you can also goto /src/store/launcher to add your Froncher compatible application.
+
+## AI Declarations
+
+- to ideate about the data structure to be use for the apps and windows, to use react-rnd to manage the maximum viewport a window could occupy, to make the preview of window cheap in computation, to make the drag n drop of the apps from taskbar to desired position working efficiently
+- to have a starting point for the UI of Frotting, Frowser, and Frosic
+- to make the frolendar app work seemlessly with the selected time block, and event management properly
+- in froxplorer to make the upload of the file and folder logic intact
+- to resolve and add the working logic for YouTube music in Frosic
+- Widgets drag n drop functionality
+- to investigate the issue of the todo tasks, note and fs not working properly but eventually I found an elegant solution so it's not actually AI that did the task
+
+- **The place where I used excessively is Frolendar (Calendar) and Frosic (Music Player).** 
+
+I had also stated the AI Generated code in the commit message as well as in the top of the file (if applicable).
+I may have used AI on approximately 3-4 hours of my project.
